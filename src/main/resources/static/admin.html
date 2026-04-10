@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: #f4f7fb;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #1e3c72;
+    color: white;
+    position: fixed;
+    padding: 20px;
+}
+
+.sidebar h2 { margin-bottom: 20px; }
+
+.sidebar a {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #2a5298;
+}
+
+/* MAIN */
+.main {
+    margin-left: 240px;
+    padding: 20px;
+}
+
+/* CARD */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+
+.card:hover { transform: translateY(-3px); }
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+button {
+    padding: 10px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #125ea8;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+input[type="number"] {
+    width: 80px;
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.row label {
+    font-weight: bold;
+}
+
+.row input {
+    width: 120px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="#cylinder">Cylinder</a>
+    <a href="#employee">Employee</a>
+    <a href="#sales">Sales</a>
+    <a href="#maintenance">Maintenance</a>
+
+    <button onclick="openDashboard()">Dashboard</button>
+    <a href="#" onclick="logout()">Logout</a>
+</div>
+
+<div class="main">
+
+<!-- CYLINDER -->
+<div class="card" id="cylinder">
+<h2>Add Cylinder</h2>
+<input type="date" id="cdate">
+<select id="ctype">
+<option value="domestic">Domestic</option>
+<option value="commercial">Commercial</option>
+<option value="5kg">5kg</option>
+</select>
+<input type="number" id="cprice" placeholder="Price">
+<button onclick="addCylinder()">Add</button>
+
+<h3>Update Price</h3>
+<select id="utype">
+<option value="">Select Type</option>
+<option value="domestic">Domestic</option>
+<option value="commercial">Commercial</option>
+<option value="5kg">5kg</option>
+</select>
+<input id="uprice" placeholder="New Price">
+<button onclick="updatePrice()">Update</button>
+</div>
+
+<!-- EMPLOYEE -->
+<div class="card" id="employee">
+<h2>Add Employee</h2>
+<input id="ename" placeholder="Name">
+<input id="esalary" placeholder="Salary">
+<button onclick="addEmployee()">Add</button>
+
+<h3>Employee List</h3>
+<table>
+<tr><th>Name</th><th>Salary</th><th>Action</th></tr>
+<tbody id="empTable"></tbody>
+</table>
+</div>
+
+<!-- SALES -->
+<div class="card" id="sales">
+<h2>Add Sales</h2>
+
+<input type="date" id="sdate">
+
+<div class="row">
+    <label>Domestic</label>
+    <input type="number" id="domesticQty" oninput="calculate()">
+</div>
+
+<div class="row">
+    <label>Commercial</label>
+    <input type="number" id="commercialQty" oninput="calculate()">
+</div>
+
+<div class="row">
+    <label>5kg</label>
+<input type="number" id="smallQty" oninput="calculate()">
+</div>
+
+<h3 id="totalPrice"></h3>
+
+<button onclick="addSales()">Add Sales</button>
+</div>
+
+<!-- MAINTENANCE -->
+<div class="card" id="maintenance">
+<h2>Maintenance</h2>
+<input type="date" id="mdate">
+<input id="fuel" placeholder="Fuel">
+<input id="other" placeholder="Other">
+
+<select id="empName"></select>
+
+<input id="empPay" placeholder="Employee Payment">
+<input id="bank" placeholder="Bank">
+<button onclick="addMaintenance()">Add</button>
+</div>
+
+</div>
+
+<script>
+
+const API = "http://localhost:8080";
+
+// LOGIN CHECK
+if (!sessionStorage.getItem("login") && !localStorage.getItem("login")) {
+    alert("Login required ❌");
+    window.location.href = "login.html";
+}
+
+// LOGOUT
+function logout(){
+    sessionStorage.clear();
+    localStorage.removeItem("login"); // remove remember login
+
+    // ✅ redirect to HOME page
+    window.location.href = "index.html";
+}
+// ================= EMPLOYEE =================
+
+async function addEmployee(){
+    if(!ename.value || !esalary.value){
+        alert("Fill all fields");
+        return;
+    }
+
+    try{
+        await fetch(`${API}/addEmployee`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name: ename.value,
+                salary: esalary.value
+            })
+        });
+
+        alert("Employee Added");
+        ename.value = "";
+        esalary.value = "";
+        loadEmployees();
+
+    }catch(err){
+        alert("Error adding employee");
+    }
+}
+
+async function loadEmployees(){
+    let res = await fetch(`${API}/getEmployee`);
+    let data = await res.json();
+
+    let table = document.getElementById("empTable");
+    table.innerHTML = "";
+
+    data.forEach(e=>{
+        table.innerHTML += `
+        <tr>
+            <td>${e.name}</td>
+            <td><input type="number" data-name="${e.name}" value="${e.salary}"></td>
+            <td>
+                <button onclick="updateSalary('${e.name}')">Update</button>
+                <button onclick="deleteEmp('${e.name}')">Delete</button>
+            </td>
+        </tr>`;
+    });
+}
+
+async function deleteEmp(name){
+    if(!confirm("Delete employee?")) return;
+
+    await fetch(`${API}/deleteEmployee/${encodeURIComponent(name)}`,{
+        method:"DELETE"
+    });
+
+    loadEmployees();
+}
+
+async function updateSalary(name){
+    let input = document.querySelector(`input[data-name="${name}"]`);
+    let salary = input.value;
+
+    await fetch(`${API}/updateEmployee`,{
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ name, salary })
+    });
+
+    alert("Updated");
+}
+
+// ================= CYLINDER =================
+
+async function addCylinder(){
+    await fetch(`${API}/addCylinder`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            date:cdate.value,
+            type:ctype.value,
+            price:cprice.value
+        })
+    });
+    alert("Added");
+}
+
+async function updatePrice(){
+    await fetch(`${API}/updatePrice`,{
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            type:utype.value,
+            price:uprice.value
+        })
+    });
+    alert("Updated");
+}
+
+// ================= SALES =================
+
+let priceMap = {};
+
+async function loadPrices(){
+
+    try{
+        let res = await fetch(`${API}/getCylinder`);
+        let data = await res.json();
+
+        let latest = {};
+
+        data.forEach(c=>{
+            if(!latest[c.type] || new Date(c.date) > new Date(latest[c.type].date)){
+                latest[c.type] = c;
+            }
+        });
+
+        priceMap = {}; // reset
+
+        for(let t in latest){
+            priceMap[t] = latest[t].price;
+        }
+
+        console.log("Price Map Loaded:", priceMap);
+
+    }catch(err){
+        console.error("Price load error", err);
+    }
+}
+
+function calculate(){
+
+    let d = parseInt(document.getElementById("domesticQty").value) || 0;
+    let c = parseInt(document.getElementById("commercialQty").value) || 0;
+    let s = parseInt(document.getElementById("smallQty").value) || 0;
+
+    let total =
+        (d * (priceMap["domestic"] || 0)) +
+        (c * (priceMap["commercial"] || 0)) +
+        (s * (priceMap["5kg"] || 0));
+
+    // 🔥 ALWAYS SHOW TOTAL (even 0)
+    document.getElementById("totalPrice").innerText =
+        "Total Price: ₹ " + total.toFixed(2);
+}
+
+async function addSales(){
+
+    let date = document.getElementById("sdate").value;
+
+    let d = parseInt(document.getElementById("domesticQty").value) || 0;
+    let c = parseInt(document.getElementById("commercialQty").value) || 0;
+    let s = parseInt(document.getElementById("smallQty").value) || 0;
+
+    if(!date || (d===0 && c===0 && s===0)){
+        alert("Enter date and at least one quantity");
+        return;
+    }
+
+    let body = {
+        date: date,
+        domestic: d,
+        commercial: c,
+        small: s
+    };
+
+    try{
+        let res = await fetch(`${API}/addSales`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(body)
+        });
+
+        if(!res.ok) throw new Error();
+
+        alert("Sales Added ✅");
+
+        // clear form
+        document.getElementById("domesticQty").value = "";
+        document.getElementById("commercialQty").value = "";
+        document.getElementById("smallQty").value = "";
+        document.getElementById("totalPrice").innerText = "";
+
+    }catch(err){
+        alert("Failed to add sales ❌");
+    }
+}
+// ================= MAINTENANCE =================
+
+async function loadEmployeeDropdown(){
+    let res = await fetch(`${API}/getEmployee`);
+    let data = await res.json();
+
+    let select = document.getElementById("empName");
+    select.innerHTML = "<option>Select Employee</option>";
+
+    data.forEach(e=>{
+        let opt = document.createElement("option");
+        opt.value = e.name;
+        opt.textContent = e.name;
+        select.appendChild(opt);
+    });
+}
+
+async function addMaintenance(){
+
+    await fetch(`${API}/addMaintenance`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            date:mdate.value,
+            fuel:fuel.value||0,
+            otherExpense:other.value||0,
+            employeeName:empName.value,
+            employeePayment:empPay.value||0,
+            bankDeposit:bank.value||0
+        })
+    });
+
+    alert("Added");
+}
+
+// ================= INIT =================
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    loadEmployees();
+    loadEmployeeDropdown();
+    loadPrices();
+
+    document.getElementById("qty").addEventListener("input", calculate);
+    document.getElementById("stype").addEventListener("change", calculate);
+});
+
+function openDashboard(){
+    window.location.href = "dashboard.html";
+}
+
+</script>
+</body>
+</html>
