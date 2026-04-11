@@ -464,11 +464,17 @@ button:hover {
 // Cylinder
 // ================= CYLINDER PAGINATION =================
 
+const BASE_URL = "https://gas-agency-website-1.onrender.com";
+//================= FIX: FORCE REFRESH DATA =================
+function reloadData(){
+    location.reload();
+}
+
 let cylinderData = [];
 let cylinderPage = 1;
 const cylinderRows = 5;
-const BASE_URL = "https://gas-agency-website-1.onrender.com";
-fetch('${BASE_URL}/getCylinder')
+
+fetch(`${BASE_URL}/getCylinder`)
 .then(res => res.json())
 .then(data => {
     cylinderData = data;
@@ -476,7 +482,6 @@ fetch('${BASE_URL}/getCylinder')
 });
 
 function renderCylinder() {
-
     let table = document.getElementById("cylinderTable");
     table.innerHTML = "";
 
@@ -490,7 +495,7 @@ function renderCylinder() {
         <tr>
             <td>${c.date}</td>
             <td>${c.type}</td>
-            <td>${c.price}</td>
+            <td>${Number(c.price)}</td>
         </tr>`;
     });
 
@@ -514,7 +519,7 @@ function prevCylinder() {
     }
 }
 // Employee
-fetch("${BASE_URL}/getEmployee")
+fetch(`${BASE_URL}/getEmployee`)
 .then(res => res.json())
 .then(data => {
     let table = document.getElementById("employeeTable");
@@ -534,39 +539,33 @@ let salesData = [];
 let currentPage = 1;
 const rowsPerPage = 5;
 
-fetch("${BASE_URL}/getSales")
+fetch(`${BASE_URL}/getSales`)
 .then(res => res.json())
 .then(data => {
-
     salesData = data;
     renderTable();
     loadChart();
 });
 
 function renderTable() {
-
     let table = document.getElementById("salesTable");
     table.innerHTML = "";
 
     let start = (currentPage - 1) * rowsPerPage;
     let end = start + rowsPerPage;
+
     let pageData = salesData.slice(start, end);
 
     pageData.forEach(s => {
-
-        let isAdmin = sessionStorage.getItem("login");
-
         table.innerHTML += `
         <tr>
-            <td>
-                ${isAdmin ? `<button style="background:#e53935;" onclick="deleteSale(${s.id})">Delete</button>` : ''}
-            </td>
             <td>${s.date}</td>
-            <td>${s.domestic}</td>
-            <td>${s.commercial}</td>
-            <td>${s.small}</td>
+            <td>${Number(s.domestic)}</td>
+            <td>${Number(s.commercial)}</td>
+            <td>${Number(s.small)}</td>
         </tr>`;
     });
+
 
     if(pageData.length === 0){
         table.innerHTML = "<tr><td colspan='5'>No Data Found</td></tr>";
@@ -596,7 +595,11 @@ function loadChart() {
 
     salesData.forEach(s => {
         dates.push(s.date);
-        totals.push(s.domestic + s.commercial + s.small);
+        totals.push(
+            Number(s.domestic) +
+            Number(s.commercial) +
+            Number(s.small)
+        );
     });
 
     new Chart(document.getElementById("salesChart"), {
@@ -616,7 +619,7 @@ let maintenanceData = [];
 let maintenancePage = 1;
 const maintenanceRows = 5;
 
-fetch("${BASE_URL}/getMaintenance")
+fetch(`${BASE_URL}/getMaintenance`)
 .then(res => res.json())
 .then(data => {
     maintenanceData = data;
@@ -673,7 +676,7 @@ function getTotal() {
     .then(data => {
         document.getElementById("totalResult").innerText =
             "Total Qty: " + data.quantity +
-            " | Total Amount: \u20B9" + data.amount;
+            " | Total Amount: \u20B9" + (data.amount || 0);
     });
 }
 // Monthly
@@ -685,7 +688,7 @@ function getMonthly() {
     .then(data => {
         document.getElementById("monthlyResult").innerText =
             "Total Qty: " + data.quantity +
-            " | Total Amount: \u20B9 " + data.amount;
+            " | Total Amount: \u20B9 " + (data.amount || 0);
     });
 }
 
@@ -704,10 +707,12 @@ function goHome() {
 }
 
 function logout() {
-    sessionStorage.removeItem("login");
+    sessionStorage.clear();
+    localStorage.clear();
     alert("Logged out");
-    window.location.href = "login.html";
+    window.location.href = "index.html"; // ✅ HOME
 }
+
 //Date-wise maintenance
 function getMaintenanceTotal() {
     let date = document.getElementById("mDate").value;
@@ -734,45 +739,46 @@ function getMaintenanceMonth() {
 
 // Total sales
 function getSalesSummary() {
-    fetch("${BASE_URL}/sales/total")
+    fetch(`${BASE_URL}/sales/total`)
     .then(res => res.json())
     .then(data => {
         document.getElementById("salesSummary").innerText =
             "Total Qty: " + data.quantity +
-            " | Total Amount: \u20B9  " + data.amount;
+            " | Total Amount: \u20B9  " + (data.amount || 0);
     });
 }
 // TOTAL SALES CARD
-fetch("${BASE_URL}/sales/total")
+fetch(`${BASE_URL}/sales/total`)
 .then(res => res.json())
 .then(data => {
     document.getElementById("totalSalesCard").innerText =
-        "\u20B9" + data.amount;
+    	"\u20B9"+ (data.amount ?? 0);
 });
 
-// TOTAL EMPLOYEE CARD
-fetch("${BASE_URL}/getEmployee")
+fetch(`${BASE_URL}/getEmployee`)
 .then(res => res.json())
 .then(data => {
     document.getElementById("totalEmployeeCard").innerText =
-        data.length;
+        data?.length || 0;
 });
 
-// TOTAL MAINTENANCE CARD
-fetch("${BASE_URL}/getMaintenance")
+fetch(`${BASE_URL}/getMaintenance`)
 .then(res => res.json())
 .then(data => {
 
     let total = 0;
 
     data.forEach(m => {
-        total += m.fuel + m.otherExpense +
-                 m.employeePayment + m.bankDeposit;
+        total += Number(m.fuel) +
+                 Number(m.otherExpense) +
+                 Number(m.employeePayment) +
+                 Number(m.bankDeposit);
     });
 
     document.getElementById("totalMaintenanceCard").innerText =
         "\u20B9 " + total;
 });
+
 // DOWNLOAD FUNCTION
 
 

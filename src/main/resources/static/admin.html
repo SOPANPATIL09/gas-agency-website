@@ -203,18 +203,22 @@ input[type="number"] {
 
 const API = "https://gas-agency-website-1.onrender.com"; 
 // LOGIN CHECK
-if (!sessionStorage.getItem("login") && !localStorage.getItem("login")) {
+if (!sessionStorage.getItem("login")) {
     alert("Login required ❌");
     window.location.href = "login.html";
 }
 
+
 // LOGOUT
 function logout(){
     sessionStorage.clear();
-    localStorage.removeItem("login"); // remove remember login
-
-    // ✅ redirect to HOME page
-    window.location.href = "index.html";
+    localStorage.clear();
+    window.location.href = "index.html"; // ✅ HOME PAGE
+}
+function refresh(){
+    setTimeout(()=>{
+        location.reload();
+    },500);
 }
 // ================= EMPLOYEE =================
 
