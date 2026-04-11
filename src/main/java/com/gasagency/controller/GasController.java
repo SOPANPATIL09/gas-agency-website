@@ -46,7 +46,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class GasController {
 
     @Autowired
