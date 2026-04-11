@@ -6,202 +6,202 @@
 
 <style>
 body {
-    margin: 0;
-    font-family: 'Segoe UI';
-    background: #f4f7fb;
+	margin: 0;
+	font-family: 'Segoe UI';
+	background: #f4f7fb;
 }
 
 /* SIDEBAR */
 .sidebar {
-    width: 220px;
-    height: 100vh;
-    background: #1e3c72;
-    color: white;
-    position: fixed;
-    padding: 20px;
+	width: 220px;
+	height: 100vh;
+	background: #1e3c72;
+	color: white;
+	position: fixed;
+	padding: 20px;
 }
 
-.sidebar h2 { margin-bottom: 20px; }
+.sidebar h2 {
+	margin-bottom: 20px;
+}
 
 .sidebar a {
-    display: block;
-    padding: 10px;
-    color: white;
-    text-decoration: none;
-    margin-bottom: 10px;
-    border-radius: 5px;
+	display: block;
+	padding: 10px;
+	color: white;
+	text-decoration: none;
+	margin-bottom: 10px;
+	border-radius: 5px;
 }
 
-.sidebar a:hover,
-.sidebar a.active {
-    background: #2a5298;
+.sidebar a:hover, .sidebar a.active {
+	background: #2a5298;
 }
 
 /* MAIN */
 .main {
-    margin-left: 240px;
-    padding: 20px;
+	margin-left: 240px;
+	padding: 20px;
 }
 
 /* CARD */
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: 0.2s;
+	background: white;
+	padding: 20px;
+	border-radius: 10px;
+	margin-bottom: 20px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+	transition: 0.2s;
 }
 
-.card:hover { transform: translateY(-3px); }
+.card:hover {
+	transform: translateY(-3px);
+}
 
 input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
+	width: 100%;
+	padding: 10px;
+	margin: 5px 0;
 }
 
 button {
-    padding: 10px;
-    background: #1976d2;
-    color: white;
-    border: none;
-    cursor: pointer;
+	padding: 10px;
+	background: #1976d2;
+	color: white;
+	border: none;
+	cursor: pointer;
 }
 
 button:hover {
-    background: #125ea8;
+	background: #125ea8;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+	width: 100%;
+	border-collapse: collapse;
 }
 
 th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
+	border: 1px solid #ddd;
+	padding: 8px;
+	text-align: center;
 }
 
 input[type="number"] {
-    width: 80px;
+	width: 80px;
 }
+
 .row {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
+	display: flex;
+	justify-content: space-between;
+	margin: 8px 0;
 }
 
 .row label {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .row input {
-    width: 120px;
+	width: 120px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>Admin Panel</h2>
-    <a href="#cylinder">Cylinder</a>
-    <a href="#employee">Employee</a>
-    <a href="#sales">Sales</a>
-    <a href="#maintenance">Maintenance</a>
+	<!-- SIDEBAR -->
+	<div class="sidebar">
+		<h2>Admin Panel</h2>
+		<a href="#cylinder">Cylinder</a> <a href="#employee">Employee</a> <a
+			href="#sales">Sales</a> <a href="#maintenance">Maintenance</a>
 
-    <button onclick="openDashboard()">Dashboard</button>
-    <a href="#" onclick="logout()">Logout</a>
-</div>
+		<button onclick="openDashboard()">Dashboard</button>
+		<a href="#" onclick="logout()">Logout</a>
+	</div>
 
-<div class="main">
+	<div class="main">
 
-<!-- CYLINDER -->
-<div class="card" id="cylinder">
-<h2>Add Cylinder</h2>
-<input type="date" id="cdate">
-<select id="ctype">
-<option value="domestic">Domestic</option>
-<option value="commercial">Commercial</option>
-<option value="5kg">5kg</option>
-</select>
-<input type="number" id="cprice" placeholder="Price">
-<button onclick="addCylinder()">Add</button>
+		<!-- CYLINDER -->
+		<div class="card" id="cylinder">
+			<h2>Add Cylinder</h2>
+			<input type="date" id="cdate"> <select id="ctype">
+				<option value="domestic">Domestic</option>
+				<option value="commercial">Commercial</option>
+				<option value="5kg">5kg</option>
+			</select> <input type="number" id="cprice" placeholder="Price">
+			<button onclick="addCylinder()">Add</button>
 
-<h3>Update Price</h3>
-<select id="utype">
-<option value="">Select Type</option>
-<option value="domestic">Domestic</option>
-<option value="commercial">Commercial</option>
-<option value="5kg">5kg</option>
-</select>
-<input id="uprice" placeholder="New Price">
-<button onclick="updatePrice()">Update</button>
-</div>
+			<h3>Update Price</h3>
+			<select id="utype">
+				<option value="">Select Type</option>
+				<option value="domestic">Domestic</option>
+				<option value="commercial">Commercial</option>
+				<option value="5kg">5kg</option>
+			</select> <input id="uprice" placeholder="New Price">
+			<button onclick="updatePrice()">Update</button>
+		</div>
 
-<!-- EMPLOYEE -->
-<div class="card" id="employee">
-<h2>Add Employee</h2>
-<input id="ename" placeholder="Name">
-<input id="esalary" placeholder="Salary">
-<button onclick="addEmployee()">Add</button>
+		<!-- EMPLOYEE -->
+		<div class="card" id="employee">
+			<h2>Add Employee</h2>
+			<input id="ename" placeholder="Name"> <input id="esalary"
+				placeholder="Salary">
+			<button onclick="addEmployee()">Add</button>
 
-<h3>Employee List</h3>
-<table>
-<tr><th>Name</th><th>Salary</th><th>Action</th></tr>
-<tbody id="empTable"></tbody>
-</table>
-</div>
+			<h3>Employee List</h3>
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Salary</th>
+					<th>Action</th>
+				</tr>
+				<tbody id="empTable"></tbody>
+			</table>
+		</div>
 
-<!-- SALES -->
-<div class="card" id="sales">
-<h2>Add Sales</h2>
+		<!-- SALES -->
+		<div class="card" id="sales">
+			<h2>Add Sales</h2>
 
-<input type="date" id="sdate">
+			<input type="date" id="sdate">
 
-<div class="row">
-    <label>Domestic</label>
-    <input type="number" id="domesticQty" oninput="calculate()">
-</div>
+			<div class="row">
+				<label>Domestic</label> <input type="number" id="domesticQty"
+					oninput="calculate()">
+			</div>
 
-<div class="row">
-    <label>Commercial</label>
-    <input type="number" id="commercialQty" oninput="calculate()">
-</div>
+			<div class="row">
+				<label>Commercial</label> <input type="number" id="commercialQty"
+					oninput="calculate()">
+			</div>
 
-<div class="row">
-    <label>5kg</label>
-<input type="number" id="smallQty" oninput="calculate()">
-</div>
+			<div class="row">
+				<label>5kg</label> <input type="number" id="smallQty"
+					oninput="calculate()">
+			</div>
 
-<h3 id="totalPrice"></h3>
+			<h3 id="totalPrice"></h3>
 
-<button onclick="addSales()">Add Sales</button>
-</div>
+			<button onclick="addSales()">Add Sales</button>
+		</div>
 
-<!-- MAINTENANCE -->
-<div class="card" id="maintenance">
-<h2>Maintenance</h2>
-<input type="date" id="mdate">
-<input id="fuel" placeholder="Fuel">
-<input id="other" placeholder="Other">
+		<!-- MAINTENANCE -->
+		<div class="card" id="maintenance">
+			<h2>Maintenance</h2>
+			<input type="date" id="mdate"> <input id="fuel"
+				placeholder="Fuel"> <input id="other" placeholder="Other">
 
-<select id="empName"></select>
+			<select id="empName"></select> <input id="empPay"
+				placeholder="Employee Payment"> <input id="bank"
+				placeholder="Bank">
+			<button onclick="addMaintenance()">Add</button>
+		</div>
 
-<input id="empPay" placeholder="Employee Payment">
-<input id="bank" placeholder="Bank">
-<button onclick="addMaintenance()">Add</button>
-</div>
+	</div>
 
-</div>
+	<script>
 
-<script>
-
-const API = "http://localhost:8080";
-
+const API = "https://gas-agency-website-1.onrender.com"; 
 // LOGIN CHECK
 if (!sessionStorage.getItem("login") && !localStorage.getItem("login")) {
     alert("Login required ❌");
@@ -444,8 +444,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
     loadEmployeeDropdown();
     loadPrices();
 
-    document.getElementById("qty").addEventListener("input", calculate);
-    document.getElementById("stype").addEventListener("change", calculate);
+    let qty = document.getElementById("qty");
+    let stype = document.getElementById("stype");
+
+    if (qty) qty.addEventListener("input", calculate);
+    if (stype) stype.addEventListener("change", calculate);
 });
 
 function openDashboard(){
