@@ -548,6 +548,7 @@ fetch(`${BASE_URL}/getSales`)
 });
 
 function renderTable() {
+
     let table = document.getElementById("salesTable");
     table.innerHTML = "";
 
@@ -556,16 +557,21 @@ function renderTable() {
 
     let pageData = salesData.slice(start, end);
 
+    let isAdmin = sessionStorage.getItem("login"); // ✅ important
+
     pageData.forEach(s => {
+
         table.innerHTML += `
         <tr>
+            <td>
+                ${isAdmin ? `<button style="background:#e53935;" onclick="deleteSale(${s.id})">Delete</button>` : ''}
+            </td>
             <td>${s.date}</td>
             <td>${Number(s.domestic)}</td>
             <td>${Number(s.commercial)}</td>
             <td>${Number(s.small)}</td>
         </tr>`;
     });
-
 
     if(pageData.length === 0){
         table.innerHTML = "<tr><td colspan='5'>No Data Found</td></tr>";
