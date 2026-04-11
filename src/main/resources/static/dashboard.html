@@ -467,8 +467,8 @@ button:hover {
 let cylinderData = [];
 let cylinderPage = 1;
 const cylinderRows = 5;
-
-fetch("http://localhost:8080/getCylinder")
+const BASE_URL = "https://gas-agency-website-1.onrender.com";
+fetch('${BASE_URL}/getCylinder')
 .then(res => res.json())
 .then(data => {
     cylinderData = data;
@@ -514,7 +514,7 @@ function prevCylinder() {
     }
 }
 // Employee
-fetch("http://localhost:8080/getEmployee")
+fetch("${BASE_URL}/getEmployee")
 .then(res => res.json())
 .then(data => {
     let table = document.getElementById("employeeTable");
@@ -534,7 +534,7 @@ let salesData = [];
 let currentPage = 1;
 const rowsPerPage = 5;
 
-fetch("http://localhost:8080/getSales")
+fetch("${BASE_URL}/getSales")
 .then(res => res.json())
 .then(data => {
 
@@ -616,7 +616,7 @@ let maintenanceData = [];
 let maintenancePage = 1;
 const maintenanceRows = 5;
 
-fetch("http://localhost:8080/getMaintenance")
+fetch("${BASE_URL}/getMaintenance")
 .then(res => res.json())
 .then(data => {
     maintenanceData = data;
@@ -668,7 +668,7 @@ function prevMaintenance() {
 function getTotal() {
     let date = document.getElementById("dateInput").value;
 
-    fetch(`http://localhost:8080/total/${date}`)
+    fetch(`${BASE_URL}/total/${date}`)
     .then(res => res.json())
     .then(data => {
         document.getElementById("totalResult").innerText =
@@ -680,7 +680,7 @@ function getTotal() {
 function getMonthly() {
     let month = document.getElementById("monthInput").value;
 
-    fetch(`http://localhost:8080/monthlyAmount/${month}`)
+    fetch(`${BASE_URL}/monthlyAmount/${month}`)
     .then(res => res.json())
     .then(data => {
         document.getElementById("monthlyResult").innerText =
@@ -712,7 +712,7 @@ function logout() {
 function getMaintenanceTotal() {
     let date = document.getElementById("mDate").value;
 
-    fetch(`http://localhost:8080/maintenance/total/${date}`)
+    fetch(`${BASE_URL}/maintenance/total/${date}`)
     .then(res => res.text())
     .then(data => {
         document.getElementById("mTotal").innerText =
@@ -724,7 +724,7 @@ function getMaintenanceTotal() {
 function getMaintenanceMonth() {
     let month = document.getElementById("mMonth").value;
 
-    fetch(`http://localhost:8080/maintenance/month/${month}`)
+    fetch(`${BASE_URL}/maintenance/month/${month}`)
     .then(res => res.text())
     .then(data => {
         document.getElementById("mMonthTotal").innerText =
@@ -734,7 +734,7 @@ function getMaintenanceMonth() {
 
 // Total sales
 function getSalesSummary() {
-    fetch("http://localhost:8080/sales/total")
+    fetch("${BASE_URL}/sales/total")
     .then(res => res.json())
     .then(data => {
         document.getElementById("salesSummary").innerText =
@@ -743,7 +743,7 @@ function getSalesSummary() {
     });
 }
 // TOTAL SALES CARD
-fetch("http://localhost:8080/sales/total")
+fetch("${BASE_URL}/sales/total")
 .then(res => res.json())
 .then(data => {
     document.getElementById("totalSalesCard").innerText =
@@ -751,7 +751,7 @@ fetch("http://localhost:8080/sales/total")
 });
 
 // TOTAL EMPLOYEE CARD
-fetch("http://localhost:8080/getEmployee")
+fetch("${BASE_URL}/getEmployee")
 .then(res => res.json())
 .then(data => {
     document.getElementById("totalEmployeeCard").innerText =
@@ -759,7 +759,7 @@ fetch("http://localhost:8080/getEmployee")
 });
 
 // TOTAL MAINTENANCE CARD
-fetch("http://localhost:8080/getMaintenance")
+fetch("${BASE_URL}/getMaintenance")
 .then(res => res.json())
 .then(data => {
 
@@ -774,6 +774,9 @@ fetch("http://localhost:8080/getMaintenance")
         "\u20B9 " + total;
 });
 // DOWNLOAD FUNCTION
+
+
+
 function downloadFile(url) {
     window.open(url, "_blank");
 }
@@ -781,23 +784,23 @@ function downloadFile(url) {
 // DAILY
 function downloadDaily() {
     let date = document.getElementById("rDate").value;
-    downloadFile(`http://localhost:8080/report/daily/${date}`);
+    downloadFile(`${BASE_URL}/report/daily/${date}`);
 }
 
 // MONTHLY
 function downloadMonthly() {
     let month = document.getElementById("rMonth").value;
-    downloadFile(`http://localhost:8080/report/month/${month}`);
+    downloadFile(`${BASE_URL}/report/month/${month}`);
 }
 
 // YEARLY
 function downloadYearly() {
     let year = document.getElementById("rYear").value;
-    downloadFile(`http://localhost:8080/report/year/${year}`);
-}function downloadPDF() {
-    let d = document.getElementById("rDate").value;
-    window.open(`/report/pdf/${d}`);
-}function downloadPDF() {
+    downloadFile(`${BASE_URL}/report/year/${year}`);
+}
+
+// PDF (Single - FIXED)
+function downloadPDF() {
     let date = document.getElementById("rDate").value;
 
     if (!date) {
@@ -805,26 +808,33 @@ function downloadYearly() {
         return;
     }
 
-    window.open(`http://localhost:8080/report/pdf/${date}`);
-}function downloadMonthlyPDF() {
-    let m = document.getElementById("rMonth").value;
-    window.open(`/report/pdf/month/${m}`);
+    window.open(`${BASE_URL}/report/pdf/${date}`);
 }
 
+// Monthly PDF
+function downloadMonthlyPDF() {
+    let m = document.getElementById("rMonth").value;
+    window.open(`${BASE_URL}/report/pdf/month/${m}`);
+}
+
+// Yearly PDF
 function downloadYearlyPDF() {
     let y = document.getElementById("rYear").value;
-    window.open(`/report/pdf/year/${y}`);
+    window.open(`${BASE_URL}/report/pdf/year/${y}`);
 }
-if(!sessionStorage.getItem("login")){
+
+// Navigation
+if (!sessionStorage.getItem("login")) {
     document.querySelector(".nav-buttons").innerHTML = `
         <button onclick="goHome()">Home</button>
         <button onclick="goAdmin()">Login</button>
     `;
-}function deleteSale(id) {
+}
+function deleteSale(id) {
 
     if(!confirm("Are you sure you want to delete this record?")) return;
 
-    fetch(`http://localhost:8080/deleteSales/${id}`, {
+    fetch(`${BASE_URL}/deleteSales/${id}`, {
         method: "DELETE"
     })
     .then(() => {

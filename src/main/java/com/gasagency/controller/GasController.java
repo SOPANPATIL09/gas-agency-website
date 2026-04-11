@@ -78,7 +78,7 @@ public class GasController {
         password = password.trim();
 
         // ✅ Check login
-        if("admin".equals(username) && "admin@123".equals(password)){
+        if("admin".equals(username) && "Sudip@123".equals(password)){
             return ResponseEntity.ok("success");
         }
 
