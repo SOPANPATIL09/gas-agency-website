@@ -1,464 +1,887 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gas Agency — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c27;
+  --surface2: #1e2333;
+  --border: #2a3050;
+  --accent: #4f8ef7;
+  --accent-dim: rgba(79,142,247,0.12);
+  --success: #3ecf8e;
+  --danger: #f76f6f;
+  --warning: #f7b94f;
+  --text: #e8ecf4;
+  --muted: #7b8299;
+  --sidebar-w: 230px;
+  --radius: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-	margin: 0;
-	font-family: 'Segoe UI';
-	background: #f4f7fb;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
 }
 
-/* SIDEBAR */
+/* ── SIDEBAR ── */
 .sidebar {
-	width: 220px;
-	height: 100vh;
-	background: #1e3c72;
-	color: white;
-	position: fixed;
-	padding: 20px;
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  z-index: 100;
+  transition: transform 0.3s;
 }
 
-.sidebar h2 {
-	margin-bottom: 20px;
+.sidebar-header {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
 }
 
-.sidebar a {
-	display: block;
-	padding: 10px;
-	color: white;
-	text-decoration: none;
-	margin-bottom: 10px;
-	border-radius: 5px;
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.sidebar a:hover, .sidebar a.active {
-	background: #2a5298;
+.sidebar-logo .icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
 }
 
-/* MAIN */
+.sidebar-logo h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.sidebar-logo span {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+nav a .nav-icon { font-size: 16px; }
+
+nav a:hover { color: var(--text); background: var(--surface2); }
+nav a.active { color: var(--accent); background: var(--accent-dim); }
+
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-footer button, .sidebar-footer a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  border: none;
+  width: 100%;
+  font-family: inherit;
+}
+
+.btn-dashboard {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-dashboard:hover { background: #3a7ce8; }
+
+.btn-logout {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border) !important;
+}
+
+.btn-logout:hover { color: var(--danger); border-color: var(--danger) !important; }
+
+/* ── HAMBURGER (mobile) ── */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 14px; left: 14px;
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 20px;
+}
+
+/* ── MAIN ── */
 .main {
-	margin-left: 240px;
-	padding: 20px;
+  margin-left: var(--sidebar-w);
+  padding: 32px;
+  max-width: 900px;
 }
 
-/* CARD */
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.page-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+/* ── CARD ── */
 .card {
-	background: white;
-	padding: 20px;
-	border-radius: 10px;
-	margin-bottom: 20px;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-	transition: 0.2s;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
 }
 
-.card:hover {
-	transform: translateY(-3px);
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title .badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* ── FORM ELEMENTS ── */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
 }
 
 input, select {
-	width: 100%;
-	padding: 10px;
-	margin: 5px 0;
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-button {
-	padding: 10px;
-	background: #1976d2;
-	color: white;
-	border: none;
-	cursor: pointer;
+input::placeholder { color: var(--muted); }
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
-button:hover {
-	background: #125ea8;
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237b8299' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
 }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #3a7ce8; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-danger { background: rgba(247,111,111,0.15); color: var(--danger); border: 1px solid rgba(247,111,111,0.3); }
+.btn-danger:hover { background: rgba(247,111,111,0.25); }
+.btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+#toast.show { transform: translateY(0); opacity: 1; }
+#toast.success { background: var(--success); color: #0a1f14; }
+#toast.error { background: var(--danger); color: #fff; }
+#toast.info { background: var(--accent); color: #fff; }
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; margin-top: 14px; }
 
 table {
-	width: 100%;
-	border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
 }
 
-th, td {
-	border: 1px solid #ddd;
-	padding: 8px;
-	text-align: center;
+thead tr { border-bottom: 1px solid var(--border); }
+th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  font-weight: 600;
 }
 
-input[type="number"] {
-	width: 80px;
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
 }
 
-.row {
-	display: flex;
-	justify-content: space-between;
-	margin: 8px 0;
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface2); }
+
+td input {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: 'DM Mono', monospace;
 }
 
-.row label {
-	font-weight: bold;
+/* ── TOTAL DISPLAY ── */
+.total-box {
+  background: var(--accent-dim);
+  border: 1px solid rgba(79,142,247,0.25);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  display: none;
 }
 
-.row input {
-	width: 120px;
+.total-box.visible { display: block; }
+
+/* ── SECTION LABEL ── */
+.section-sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 20px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── OVERLAY ── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 99;
+}
+
+.overlay.show { display: block; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 20px 16px;
+    padding-top: 60px;
+  }
+
+  .form-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
-
 <body>
 
-	<!-- SIDEBAR -->
-	<div class="sidebar">
-		<h2>Admin Panel</h2>
-		<a href="#cylinder">Cylinder</a> <a href="#employee">Employee</a> <a
-			href="#sales">Sales</a> <a href="#maintenance">Maintenance</a>
+<!-- HAMBURGER -->
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-		<button onclick="openDashboard()">Dashboard</button>
-		<a href="#" onclick="logout()">Logout</a>
-	</div>
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="icon">🔥</div>
+      <div>
+        <h2>Gas Agency</h2>
+        <span>Admin Panel</span>
+      </div>
+    </div>
+  </div>
 
-	<div class="main">
+  <nav>
+    <a href="#cylinder" class="active" onclick="setActive(this)">
+      <span class="nav-icon">🛢️</span> Cylinder
+    </a>
+    <a href="#employee" onclick="setActive(this)">
+      <span class="nav-icon">👤</span> Employee
+    </a>
+    <a href="#sales" onclick="setActive(this)">
+      <span class="nav-icon">📊</span> Sales
+    </a>
+    <a href="#maintenance" onclick="setActive(this)">
+      <span class="nav-icon">🔧</span> Maintenance
+    </a>
+  </nav>
 
-		<!-- CYLINDER -->
-		<div class="card" id="cylinder">
-			<h2>Add Cylinder</h2>
-			<input type="date" id="cdate"> <select id="ctype">
-				<option value="domestic">Domestic</option>
-				<option value="commercial">Commercial</option>
-				<option value="5kg">5kg</option>
-			</select> <input type="number" id="cprice" placeholder="Price">
-			<button onclick="addCylinder()">Add</button>
+  <div class="sidebar-footer">
+    <button class="btn-dashboard" onclick="openDashboard()">📈 Dashboard</button>
+    <a href="#" class="btn-logout" onclick="logout()">🚪 Logout</a>
+  </div>
+</div>
 
-			<h3>Update Price</h3>
-			<select id="utype">
-				<option value="">Select Type</option>
-				<option value="domestic">Domestic</option>
-				<option value="commercial">Commercial</option>
-				<option value="5kg">5kg</option>
-			</select> <input id="uprice" placeholder="New Price">
-			<button onclick="updatePrice()">Update</button>
-		</div>
+<!-- MAIN -->
+<div class="main">
+  <div class="page-title">Admin Panel</div>
+  <div class="page-sub">Manage cylinders, employees, sales & maintenance</div>
 
-		<!-- EMPLOYEE -->
-		<div class="card" id="employee">
-			<h2>Add Employee</h2>
-			<input id="ename" placeholder="Name"> <input id="esalary"
-				placeholder="Salary">
-			<button onclick="addEmployee()">Add</button>
+  <!-- CYLINDER -->
+  <div class="card" id="cylinder">
+    <div class="card-title">🛢️ Add Cylinder <span class="badge">Inventory</span></div>
 
-			<h3>Employee List</h3>
-			<table>
-				<tr>
-					<th>Name</th>
-					<th>Salary</th>
-					<th>Action</th>
-				</tr>
-				<tbody id="empTable"></tbody>
-			</table>
-		</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="cdate">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="ctype">
+          <option value="domestic">Domestic</option>
+          <option value="commercial">Commercial</option>
+          <option value="5kg">5 kg</option>
+        </select>
+      </div>
+    </div>
 
-		<!-- SALES -->
-		<div class="card" id="sales">
-			<h2>Add Sales</h2>
+    <div class="form-group">
+      <label>Price (₹)</label>
+      <input type="number" id="cprice" placeholder="Enter price">
+    </div>
 
-			<input type="date" id="sdate">
+    <button class="btn btn-primary" onclick="addCylinder()">+ Add Cylinder</button>
 
-			<div class="row">
-				<label>Domestic</label> <input type="number" id="domesticQty"
-					oninput="calculate()">
-			</div>
+    <hr class="divider">
 
-			<div class="row">
-				<label>Commercial</label> <input type="number" id="commercialQty"
-					oninput="calculate()">
-			</div>
+    <div class="section-sub">Update Price</div>
 
-			<div class="row">
-				<label>5kg</label> <input type="number" id="smallQty"
-					oninput="calculate()">
-			</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="utype">
+          <option value="">Select Type</option>
+          <option value="domestic">Domestic</option>
+          <option value="commercial">Commercial</option>
+          <option value="5kg">5 kg</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>New Price (₹)</label>
+        <input id="uprice" type="number" placeholder="Enter new price">
+      </div>
+    </div>
 
-			<h3 id="totalPrice"></h3>
+    <button class="btn btn-ghost" onclick="updatePrice()">↻ Update Price</button>
+  </div>
 
-			<button onclick="addSales()">Add Sales</button>
-		</div>
+  <!-- EMPLOYEE -->
+  <div class="card" id="employee">
+    <div class="card-title">👤 Employee Management <span class="badge">HR</span></div>
 
-		<!-- MAINTENANCE -->
-		<div class="card" id="maintenance">
-			<h2>Maintenance</h2>
-			<input type="date" id="mdate"> <input id="fuel"
-				placeholder="Fuel"> <input id="other" placeholder="Other">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input id="ename" placeholder="Employee name">
+      </div>
+      <div class="form-group">
+        <label>Monthly Salary (₹)</label>
+        <input id="esalary" type="number" placeholder="Enter salary">
+      </div>
+    </div>
 
-			<select id="empName"></select> <input id="empPay"
-				placeholder="Employee Payment"> <input id="bank"
-				placeholder="Bank">
-			<button onclick="addMaintenance()">Add</button>
-		</div>
+    <button class="btn btn-primary" onclick="addEmployee()">+ Add Employee</button>
 
-	</div>
+    <div class="section-sub" style="margin-top:20px">Employee List</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Salary (₹)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="empTable">
+          <tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-	<script>
+  <!-- SALES -->
+  <div class="card" id="sales">
+    <div class="card-title">📊 Add Sales <span class="badge">Daily</span></div>
 
-const API = "https://gas-agency-website-1.onrender.com"; 
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" id="sdate">
+    </div>
+
+    <div class="section-sub">Quantity Sold</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Domestic Cylinders</label>
+        <input type="number" id="domesticQty" placeholder="0" min="0" oninput="calculate()">
+      </div>
+      <div class="form-group">
+        <label>Commercial Cylinders</label>
+        <input type="number" id="commercialQty" placeholder="0" min="0" oninput="calculate()">
+      </div>
+    </div>
+
+    <div class="form-group" style="max-width:220px">
+      <label>5 kg Cylinders</label>
+      <input type="number" id="smallQty" placeholder="0" min="0" oninput="calculate()">
+    </div>
+
+    <div class="total-box" id="totalPrice">₹ 0.00</div>
+
+    <button class="btn btn-primary" onclick="addSales()">✓ Submit Sales</button>
+  </div>
+
+  <!-- MAINTENANCE -->
+  <div class="card" id="maintenance">
+    <div class="card-title">🔧 Maintenance Log <span class="badge">Expenses</span></div>
+
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" id="mdate">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fuel Expense (₹)</label>
+        <input id="fuel" type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Other Expense (₹)</label>
+        <input id="other" type="number" placeholder="0">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Employee</label>
+        <select id="empName">
+          <option value="">Select Employee</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Employee Payment (₹)</label>
+        <input id="empPay" type="number" placeholder="0">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Bank Deposit (₹)</label>
+      <input id="bank" type="number" placeholder="0">
+    </div>
+
+    <button class="btn btn-primary" onclick="addMaintenance()">+ Add Record</button>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+const API = "https://gas-agency-website-1.onrender.com";
+
 // LOGIN CHECK
 if (!sessionStorage.getItem("login")) {
-    alert("Login required ❌");
-    window.location.href = "login.html";
+  showToast("Login required ❌", "error");
+  setTimeout(() => window.location.href = "login.html", 1500);
 }
 
+// TOAST
+function showToast(msg, type = "info") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.className = "", 3000);
+}
+
+// SIDEBAR (mobile)
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+function setActive(el) {
+  document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+  el.classList.add("active");
+  if (window.innerWidth <= 768) toggleSidebar();
+}
 
 // LOGOUT
-function logout(){
-    sessionStorage.clear();
-    localStorage.clear();
-    window.location.href = "index.html"; // ✅ HOME PAGE
-}
-function refresh(){
-    setTimeout(()=>{
-        location.reload();
-    },500);
-}
-// ================= EMPLOYEE =================
-
-async function addEmployee(){
-    if(!ename.value || !esalary.value){
-        alert("Fill all fields");
-        return;
-    }
-
-    try{
-        await fetch(`${API}/addEmployee`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                name: ename.value,
-                salary: esalary.value
-            })
-        });
-
-        alert("Employee Added");
-        ename.value = "";
-        esalary.value = "";
-        loadEmployees();
-
-    }catch(err){
-        alert("Error adding employee");
-    }
+function logout() {
+  sessionStorage.clear();
+  localStorage.clear();
+  window.location.href = "index.html";
 }
 
-async function loadEmployees(){
-    let res = await fetch(`${API}/getEmployee`);
-    let data = await res.json();
+// ── EMPLOYEE ──
 
-    let table = document.getElementById("empTable");
-    table.innerHTML = "";
+async function addEmployee() {
+  const name = document.getElementById("ename").value.trim();
+  const salary = document.getElementById("esalary").value;
+  if (!name || !salary) { showToast("Please fill all fields", "error"); return; }
 
-    data.forEach(e=>{
-        table.innerHTML += `
-        <tr>
-            <td>${e.name}</td>
-            <td><input type="number" data-name="${e.name}" value="${e.salary}"></td>
-            <td>
-                <button onclick="updateSalary('${e.name}')">Update</button>
-                <button onclick="deleteEmp('${e.name}')">Delete</button>
-            </td>
-        </tr>`;
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "Adding...";
+
+  try {
+    await fetch(`${API}/addEmployee`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, salary })
     });
-}
-
-async function deleteEmp(name){
-    if(!confirm("Delete employee?")) return;
-
-    await fetch(`${API}/deleteEmployee/${encodeURIComponent(name)}`,{
-        method:"DELETE"
-    });
-
+    showToast("Employee added ✓", "success");
+    document.getElementById("ename").value = "";
+    document.getElementById("esalary").value = "";
     loadEmployees();
+  } catch (err) {
+    showToast("Failed to add employee", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "+ Add Employee";
+  }
 }
 
-async function updateSalary(name){
-    let input = document.querySelector(`input[data-name="${name}"]`);
-    let salary = input.value;
+async function loadEmployees() {
+  try {
+    const res = await fetch(`${API}/getEmployee`);
+    const data = await res.json();
+    const table = document.getElementById("empTable");
 
-    await fetch(`${API}/updateEmployee`,{
-        method:"PUT",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({ name, salary })
+    if (!data.length) {
+      table.innerHTML = `<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">No employees found</td></tr>`;
+      return;
+    }
+
+    table.innerHTML = data.map(e => `
+      <tr>
+        <td style="font-weight:600">${e.name}</td>
+        <td><input type="number" data-name="${e.name}" value="${e.salary}" style="width:140px"></td>
+        <td style="display:flex;gap:6px">
+          <button class="btn btn-sm btn-ghost" onclick="updateSalary('${e.name}')">Update</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteEmp('${e.name}')">Delete</button>
+        </td>
+      </tr>`).join("");
+  } catch (err) {
+    showToast("Could not load employees", "error");
+  }
+}
+
+async function deleteEmp(name) {
+  if (!confirm(`Delete "${name}"?`)) return;
+  try {
+    await fetch(`${API}/deleteEmployee/${encodeURIComponent(name)}`, { method: "DELETE" });
+    showToast(`${name} deleted`, "info");
+    loadEmployees();
+  } catch { showToast("Delete failed", "error"); }
+}
+
+async function updateSalary(name) {
+  const input = document.querySelector(`input[data-name="${name}"]`);
+  try {
+    await fetch(`${API}/updateEmployee`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, salary: input.value })
     });
-
-    alert("Updated");
+    showToast("Salary updated ✓", "success");
+  } catch { showToast("Update failed", "error"); }
 }
 
-// ================= CYLINDER =================
+// ── CYLINDER ──
 
-async function addCylinder(){
-    await fetch(`${API}/addCylinder`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            date:cdate.value,
-            type:ctype.value,
-            price:cprice.value
-        })
+async function addCylinder() {
+  const date = document.getElementById("cdate").value;
+  const type = document.getElementById("ctype").value;
+  const price = document.getElementById("cprice").value;
+
+  if (!date || !price) { showToast("Please fill all fields", "error"); return; }
+
+  try {
+    await fetch(`${API}/addCylinder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, type, price })
     });
-    alert("Added");
+    showToast("Cylinder added ✓", "success");
+    document.getElementById("cprice").value = "";
+  } catch { showToast("Failed to add cylinder", "error"); }
 }
 
-async function updatePrice(){
-    await fetch(`${API}/updatePrice`,{
-        method:"PUT",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            type:utype.value,
-            price:uprice.value
-        })
+async function updatePrice() {
+  const type = document.getElementById("utype").value;
+  const price = document.getElementById("uprice").value;
+
+  if (!type || !price) { showToast("Select type and enter price", "error"); return; }
+
+  try {
+    await fetch(`${API}/updatePrice`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, price })
     });
-    alert("Updated");
+    showToast("Price updated ✓", "success");
+    loadPrices();
+    document.getElementById("uprice").value = "";
+  } catch { showToast("Update failed", "error"); }
 }
 
-// ================= SALES =================
+// ── SALES ──
 
 let priceMap = {};
 
-async function loadPrices(){
-
-    try{
-        let res = await fetch(`${API}/getCylinder`);
-        let data = await res.json();
-
-        let latest = {};
-
-        data.forEach(c=>{
-            if(!latest[c.type] || new Date(c.date) > new Date(latest[c.type].date)){
-                latest[c.type] = c;
-            }
-        });
-
-        priceMap = {}; // reset
-
-        for(let t in latest){
-            priceMap[t] = latest[t].price;
-        }
-
-        console.log("Price Map Loaded:", priceMap);
-
-    }catch(err){
-        console.error("Price load error", err);
-    }
-}
-
-function calculate(){
-
-    let d = parseInt(document.getElementById("domesticQty").value) || 0;
-    let c = parseInt(document.getElementById("commercialQty").value) || 0;
-    let s = parseInt(document.getElementById("smallQty").value) || 0;
-
-    let total =
-        (d * (priceMap["domestic"] || 0)) +
-        (c * (priceMap["commercial"] || 0)) +
-        (s * (priceMap["5kg"] || 0));
-
-    // 🔥 ALWAYS SHOW TOTAL (even 0)
-    document.getElementById("totalPrice").innerText =
-        "Total Price: ₹ " + total.toFixed(2);
-}
-
-async function addSales(){
-
-    let date = document.getElementById("sdate").value;
-
-    let d = parseInt(document.getElementById("domesticQty").value) || 0;
-    let c = parseInt(document.getElementById("commercialQty").value) || 0;
-    let s = parseInt(document.getElementById("smallQty").value) || 0;
-
-    if(!date || (d===0 && c===0 && s===0)){
-        alert("Enter date and at least one quantity");
-        return;
-    }
-
-    let body = {
-        date: date,
-        domestic: d,
-        commercial: c,
-        small: s
-    };
-
-    try{
-        let res = await fetch(`${API}/addSales`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(body)
-        });
-
-        if(!res.ok) throw new Error();
-
-        alert("Sales Added ✅");
-
-        // clear form
-        document.getElementById("domesticQty").value = "";
-        document.getElementById("commercialQty").value = "";
-        document.getElementById("smallQty").value = "";
-        document.getElementById("totalPrice").innerText = "";
-
-    }catch(err){
-        alert("Failed to add sales ❌");
-    }
-}
-// ================= MAINTENANCE =================
-
-async function loadEmployeeDropdown(){
-    let res = await fetch(`${API}/getEmployee`);
-    let data = await res.json();
-
-    let select = document.getElementById("empName");
-    select.innerHTML = "<option>Select Employee</option>";
-
-    data.forEach(e=>{
-        let opt = document.createElement("option");
-        opt.value = e.name;
-        opt.textContent = e.name;
-        select.appendChild(opt);
+async function loadPrices() {
+  try {
+    const res = await fetch(`${API}/getCylinder`);
+    const data = await res.json();
+    const latest = {};
+    data.forEach(c => {
+      if (!latest[c.type] || new Date(c.date) > new Date(latest[c.type].date)) {
+        latest[c.type] = c;
+      }
     });
+    priceMap = {};
+    for (let t in latest) priceMap[t] = latest[t].price;
+  } catch (err) {
+    console.error("Price load error", err);
+  }
 }
 
-async function addMaintenance(){
+function calculate() {
+  const d = parseInt(document.getElementById("domesticQty").value) || 0;
+  const c = parseInt(document.getElementById("commercialQty").value) || 0;
+  const s = parseInt(document.getElementById("smallQty").value) || 0;
+  const total =
+    (d * (priceMap["domestic"] || 0)) +
+    (c * (priceMap["commercial"] || 0)) +
+    (s * (priceMap["5kg"] || 0));
 
-    await fetch(`${API}/addMaintenance`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            date:mdate.value,
-            fuel:fuel.value||0,
-            otherExpense:other.value||0,
-            employeeName:empName.value,
-            employeePayment:empPay.value||0,
-            bankDeposit:bank.value||0
-        })
+  const box = document.getElementById("totalPrice");
+  if (d || c || s) {
+    box.textContent = `Total: ₹ ${total.toFixed(2)}`;
+    box.classList.add("visible");
+  } else {
+    box.classList.remove("visible");
+  }
+}
+
+async function addSales() {
+  const date = document.getElementById("sdate").value;
+  const d = parseInt(document.getElementById("domesticQty").value) || 0;
+  const c = parseInt(document.getElementById("commercialQty").value) || 0;
+  const s = parseInt(document.getElementById("smallQty").value) || 0;
+
+  if (!date) { showToast("Please select a date", "error"); return; }
+  if (d === 0 && c === 0 && s === 0) { showToast("Enter at least one quantity", "error"); return; }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  try {
+    const res = await fetch(`${API}/addSales`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date, domestic: d, commercial: c, small: s })
     });
-
-    alert("Added");
+    if (!res.ok) throw new Error();
+    showToast("Sales submitted ✓", "success");
+    ["domesticQty", "commercialQty", "smallQty"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("totalPrice").classList.remove("visible");
+  } catch {
+    showToast("Failed to submit sales", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "✓ Submit Sales";
+  }
 }
 
-// ================= INIT =================
+// ── MAINTENANCE ──
 
-document.addEventListener("DOMContentLoaded", ()=>{
-    loadEmployees();
-    loadEmployeeDropdown();
-    loadPrices();
+async function loadEmployeeDropdown() {
+  try {
+    const res = await fetch(`${API}/getEmployee`);
+    const data = await res.json();
+    const sel = document.getElementById("empName");
+    sel.innerHTML = `<option value="">Select Employee</option>`;
+    data.forEach(e => {
+      const opt = document.createElement("option");
+      opt.value = e.name;
+      opt.textContent = e.name;
+      sel.appendChild(opt);
+    });
+  } catch { console.error("Dropdown load failed"); }
+}
 
-    let qty = document.getElementById("qty");
-    let stype = document.getElementById("stype");
+async function addMaintenance() {
+  const date = document.getElementById("mdate").value;
+  if (!date) { showToast("Please select a date", "error"); return; }
 
-    if (qty) qty.addEventListener("input", calculate);
-    if (stype) stype.addEventListener("change", calculate);
+  try {
+    await fetch(`${API}/addMaintenance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        date,
+        fuel: document.getElementById("fuel").value || 0,
+        otherExpense: document.getElementById("other").value || 0,
+        employeeName: document.getElementById("empName").value,
+        employeePayment: document.getElementById("empPay").value || 0,
+        bankDeposit: document.getElementById("bank").value || 0
+      })
+    });
+    showToast("Maintenance record added ✓", "success");
+    ["mdate", "fuel", "other", "empPay", "bank"].forEach(id => document.getElementById(id).value = "");
+  } catch { showToast("Failed to add record", "error"); }
+}
+
+// ── INIT ──
+document.addEventListener("DOMContentLoaded", () => {
+  loadEmployees();
+  loadEmployeeDropdown();
+  loadPrices();
 });
 
-function openDashboard(){
-    window.location.href = "dashboard.html";
-}
-
+function openDashboard() { window.location.href = "dashboard.html"; }
 </script>
 </body>
 </html>
