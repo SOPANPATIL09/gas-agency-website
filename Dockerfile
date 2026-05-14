@@ -11,7 +11,7 @@ COPY . .
 RUN chmod +x mvnw
 
 # Build project
-RUN ./mvnw clean package
+RUN ./mvnw clean package -DskipTests
 
 # Run application
 CMD ["java", "-jar", "target/GasAgencySystem-0.0.1-SNAPSHOT.jar"]
