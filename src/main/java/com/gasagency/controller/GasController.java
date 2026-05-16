@@ -135,13 +135,79 @@ public class GasController {
     @PostMapping("/addSales")
     public Sales addSales(@RequestBody Sales s) {
 
-        if(s.getProductName() != null) {
-            Product p = productRepo.findByProductName(s.getProductName());
+        // PRODUCT PRICE
+    	if(s.getProductName() != null &&
+    			   !s.getProductName().trim().isEmpty()) {
 
-            if(p != null) {
-                s.setProductPrice(p.getPrice());
-            }
+    			    List<Product> products =
+    			    productRepo.findAll();
+
+    			    for(Product p : products) {
+
+    			        if(
+    			        p.getProductName()
+    			        .trim()
+    			        .equalsIgnoreCase(
+    			            s.getProductName().trim()
+    			        )) {
+
+    			            s.setProductPrice(
+    			                p.getPrice()
+    			            );
+
+    			            s.setProductTotal(
+    			                s.getProductQty() *
+    			                p.getPrice()
+    			            );
+
+    			            break;
+    			        }
+    			    }
+    			}
+        // CYLINDER PRICE
+        Cylinder cylinder =
+        		cylinderRepo.findTopByTypeOrderByIdDesc(
+        		s.getCylinderType()
+        		);
+
+        if(cylinder != null) {
+
+            s.setCylinderPrice(cylinder.getPrice());
+
+            s.setCylinderTotal(
+                s.getCylinderQty() * cylinder.getPrice()
+            );
         }
+
+        // OLD FIELD SUPPORT
+        if("domestic".equalsIgnoreCase(
+        		s.getCylinderType())) {
+
+        		    s.setDomestic(
+        		        s.getCylinderQty()
+        		    );
+        		}
+
+        		if("commercial".equalsIgnoreCase(
+        		s.getCylinderType())) {
+
+        		    s.setCommercial(
+        		        s.getCylinderQty()
+        		    );
+        		}
+
+        		if("5kg".equalsIgnoreCase(
+        		s.getCylinderType())) {
+
+        		    s.setSmall(
+        		        s.getCylinderQty()
+        		    );
+        		}
+        // GRAND TOTAL
+        s.setTotalAmount(
+            s.getCylinderTotal() +
+            s.getProductTotal()
+        );
 
         return salesRepo.save(s);
     }
