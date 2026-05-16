@@ -236,21 +236,64 @@ public class GasController {
 
     // ==================== DATE-WISE TOTAL ====================
     @GetMapping("/total/{date}")
-    public Map<String, Object> getTotal(@PathVariable String date) {
-        double[] prices = getPrices();
+    public Map<String, Object> getTotal(
+    @PathVariable String date) {
+
         int totalQty = 0;
+
         double totalAmount = 0;
+
+        double cylinderAmount = 0;
+
+        double productAmount = 0;
+
+        double cash = 0;
+
+        double online = 0;
+
         for (Sales s : salesRepo.findAll()) {
-            if (s.getDate().equals(date)) {
-                totalQty   += s.getDomestic() + s.getCommercial() + s.getSmall();
-                totalAmount += (s.getDomestic()   * prices[0])
-                             + (s.getCommercial() * prices[1])
-                             + (s.getSmall()      * prices[2]);
+
+            if (s.getDate() != null &&
+                s.getDate().equals(date)) {
+
+                totalQty +=
+                    s.getCylinderQty() +
+                    s.getProductQty();
+
+                cylinderAmount +=
+                    s.getCylinderTotal();
+
+                productAmount +=
+                    s.getProductTotal();
+
+                cash +=
+                    s.getCashReceived();
+
+                online +=
+                    s.getOnlineReceived();
+
+                totalAmount +=
+                    s.getTotalAmount();
             }
         }
-        Map<String, Object> result = new HashMap<>();
+
+        Map<String, Object> result =
+        new HashMap<>();
+
         result.put("quantity", totalQty);
-        result.put("amount",   totalAmount);
+
+        result.put("amount", totalAmount);
+
+        result.put("cylinderAmount",
+            cylinderAmount);
+
+        result.put("productAmount",
+            productAmount);
+
+        result.put("cash", cash);
+
+        result.put("online", online);
+
         return result;
     }
 
@@ -551,18 +594,50 @@ public class GasController {
         double dp = prices[0], cp = prices[1], sp = prices[2];
 
         // ── SALES TOTALS ──
-        int dom = 0, com = 0, sml = 0;
+     // ── NEW SALES TOTALS ──
+
+        double cylinderTotal = 0;
+        double productTotal = 0;
+
+        double cashTotal = 0;
+        double onlineTotal = 0;
+
+        int cylinderQty = 0;
+        int productQty = 0;
+
+        List<Sales> filteredSales = new ArrayList<>();
+
         for (Sales s : salesRepo.findAll()) {
-            boolean match = (date   != null && s.getDate().equals(date))
-                         || (prefix != null && s.getDate().startsWith(prefix));
+
+            boolean match =
+            (date != null && s.getDate() != null &&
+             s.getDate().equals(date))
+
+            ||
+
+            (prefix != null && s.getDate() != null &&
+             s.getDate().startsWith(prefix));
+
             if (match) {
-                dom += s.getDomestic();
-                com += s.getCommercial();
-                sml += s.getSmall();
+
+                filteredSales.add(s);
+
+                cylinderQty += s.getCylinderQty();
+
+                productQty += s.getProductQty();
+
+                cylinderTotal += s.getCylinderTotal();
+
+                productTotal += s.getProductTotal();
+
+                cashTotal += s.getCashReceived();
+
+                onlineTotal += s.getOnlineReceived();
             }
         }
-        double dAmt = dom * dp, cAmt = com * cp, sAmt = sml * sp;
-        double totalSales = dAmt + cAmt + sAmt;
+
+        double totalSales =
+        cylinderTotal + productTotal;
 
         // ── MAINTENANCE TOTALS ──
         double fuel = 0, other = 0, emp = 0, bank = 0;
@@ -599,33 +674,352 @@ public class GasController {
                 .setBold().setFontSize(12).setFontColor(NAVY).setMarginBottom(3));
         doc.add(new LineSeparator(new SolidLine(2f)).setStrokeColor(NAVY).setMarginBottom(5));
 
-        Table st = new Table(new float[]{170f, 90f, 120f, 130f}).setWidth(PW);
-        for (String h : new String[]{"Cylinder Type", "Qty Sold", "Unit Price (Rs.)", "Amount (Rs.)"}) {
-            TextAlignment ta = h.equals("Cylinder Type") ? TextAlignment.LEFT
-                             : h.equals("Qty Sold")      ? TextAlignment.CENTER
-                             : TextAlignment.RIGHT;
-            st.addHeaderCell(new Cell()
-                    .add(new Paragraph(h).setFontColor(WHITE).setBold().setFontSize(10).setTextAlignment(ta))
-                    .setBackgroundColor(NAVY).setBorder(Border.NO_BORDER)
-                    .setPaddingTop(10).setPaddingBottom(10).setPaddingLeft(12).setPaddingRight(12));
-        }
-        Object[][] srows = {
-            {"Domestic",   dom, dp, dAmt},
-            {"Commercial", com, cp, cAmt},
-            {"5 kg",       sml, sp, sAmt},
+     // ── MODERN SALES TABLE ──
+
+        doc.add(new Paragraph("Sales Summary")
+        .setBold()
+        .setFontSize(12)
+        .setFontColor(NAVY)
+        .setMarginBottom(3));
+
+        doc.add(
+        new LineSeparator(
+        new SolidLine(2f))
+        .setStrokeColor(NAVY)
+        .setMarginBottom(5)
+        );
+
+        Table st =
+        new Table(
+        new float[]{120f,70f,90f,90f,70f,70f}
+        ).setWidth(PW);
+
+        String[] headers = {
+
+        "Section",
+        "Qty",
+        "Amount",
+        "Cash",
+        "Online",
+        "Total"
+
         };
-        boolean alt = false;
-        for (Object[] row : srows) {
-            DeviceRgb bg = alt ? GRAYLIT : WHITE; alt = !alt;
-            st.addCell(pdfCell(row[0].toString(), bg, TextAlignment.LEFT,   false, GRAYLINE));
-            st.addCell(pdfCell(row[1].toString(), bg, TextAlignment.CENTER, false, GRAYLINE));
-            st.addCell(pdfCell(String.format("%,.2f", ((Number) row[2]).doubleValue()), bg, TextAlignment.RIGHT, false, GRAYLINE));
-            st.addCell(pdfCell(String.format("%,.2f", ((Number) row[3]).doubleValue()), bg, TextAlignment.RIGHT, true,  GRAYLINE));
+
+        for(String h : headers) {
+
+        st.addHeaderCell(
+
+        new Cell()
+
+        .add(new Paragraph(h)
+        .setFontColor(WHITE)
+        .setBold()
+        .setFontSize(10))
+
+        .setBackgroundColor(NAVY)
+
+        .setBorder(Border.NO_BORDER)
+
+        .setPadding(10)
+
+        );
+
         }
-        st.addCell(pdfCell("TOTAL",                            BLUEMID, TextAlignment.LEFT,   true,  NAVY));
-        st.addCell(pdfCell(String.valueOf(dom + com + sml),    BLUEMID, TextAlignment.CENTER, true,  NAVY));
-        st.addCell(pdfCell("",                                 BLUEMID, TextAlignment.RIGHT,  false, NAVY));
-        st.addCell(pdfCell(String.format("%,.2f", totalSales), BLUEMID, TextAlignment.RIGHT,  true,  NAVY));
+
+        // CYLINDER
+
+        st.addCell(
+        pdfCell(
+        "Cylinder Sales",
+        WHITE,
+        TextAlignment.LEFT,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.valueOf(cylinderQty),
+        WHITE,
+        TextAlignment.CENTER,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        cylinderTotal),
+        WHITE,
+        TextAlignment.RIGHT,
+        true,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        WHITE,
+        TextAlignment.RIGHT,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        WHITE,
+        TextAlignment.RIGHT,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        cylinderTotal),
+        WHITE,
+        TextAlignment.RIGHT,
+        true,
+        GRAYLINE
+        ));
+
+        // PRODUCT
+
+        st.addCell(
+        pdfCell(
+        "Product Sales",
+        GRAYLIT,
+        TextAlignment.LEFT,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.valueOf(productQty),
+        GRAYLIT,
+        TextAlignment.CENTER,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        productTotal),
+        GRAYLIT,
+        TextAlignment.RIGHT,
+        true,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        GRAYLIT,
+        TextAlignment.RIGHT,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        GRAYLIT,
+        TextAlignment.RIGHT,
+        false,
+        GRAYLINE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        productTotal),
+        GRAYLIT,
+        TextAlignment.RIGHT,
+        true,
+        GRAYLINE
+        ));
+
+        // CASH
+
+        st.addCell(
+        pdfCell(
+        "Cash Received",
+        BLUEMID,
+        TextAlignment.LEFT,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        BLUEMID,
+        TextAlignment.CENTER,
+        false,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        BLUEMID,
+        TextAlignment.RIGHT,
+        false,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        cashTotal),
+        BLUEMID,
+        TextAlignment.RIGHT,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        BLUEMID,
+        TextAlignment.RIGHT,
+        false,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        cashTotal),
+        BLUEMID,
+        TextAlignment.RIGHT,
+        true,
+        NAVY
+        ));
+
+        // ONLINE
+
+        st.addCell(
+        pdfCell(
+        "Online Received",
+        ORMID,
+        TextAlignment.LEFT,
+        true,
+        ORANGE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        ORMID,
+        TextAlignment.CENTER,
+        false,
+        ORANGE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        ORMID,
+        TextAlignment.RIGHT,
+        false,
+        ORANGE
+        ));
+
+        st.addCell(
+        pdfCell(
+        "",
+        ORMID,
+        TextAlignment.RIGHT,
+        false,
+        ORANGE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        onlineTotal),
+        ORMID,
+        TextAlignment.RIGHT,
+        true,
+        ORANGE
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        onlineTotal),
+        ORMID,
+        TextAlignment.RIGHT,
+        true,
+        ORANGE
+        ));
+
+        // GRAND TOTAL
+
+        st.addCell(
+        pdfCell(
+        "GRAND TOTAL",
+        BLUEMID,
+        TextAlignment.LEFT,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.valueOf(
+        cylinderQty + productQty
+        ),
+        BLUEMID,
+        TextAlignment.CENTER,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        totalSales),
+        BLUEMID,
+        TextAlignment.RIGHT,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        cashTotal),
+        BLUEMID,
+        TextAlignment.RIGHT,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        onlineTotal),
+        BLUEMID,
+        TextAlignment.RIGHT,
+        true,
+        NAVY
+        ));
+
+        st.addCell(
+        pdfCell(
+        String.format("%,.2f",
+        totalSales),
+        BLUEMID,
+        TextAlignment.RIGHT,
+        true,
+        NAVY
+        ));
+
         doc.add(st);
         doc.add(new Paragraph(" ").setFontSize(5));
 

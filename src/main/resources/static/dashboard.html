@@ -1071,12 +1071,74 @@ function prevMaintenance() { if (maintenancePage > 1) { maintenancePage--; rende
 
 // ── REPORTS ──
 function getTotal() {
-  const date = document.getElementById("dateInput").value;
-  if (!date) { showToast("Select a date", "#e53935"); return; }
-  fetch(`${BASE_URL}/total/${date}`).then(r => r.json()).then(d => {
-    document.getElementById("totalResult").textContent =
-      `Qty: ${d.quantity} | Amount: ₹ ${(d.amount || 0).toLocaleString('en-IN')}`;
-  });
+
+const date =
+document.getElementById(
+"dateInput"
+).value;
+
+if (!date) {
+
+showToast(
+"Select a date",
+"#e53935"
+);
+
+return;
+}
+
+fetch(`${BASE_URL}/total/${date}`)
+
+.then(r => r.json())
+
+.then(d => {
+
+document.getElementById(
+"totalResult"
+).innerHTML = `
+
+Cylinder Sales :
+₹ ${Number(
+d.cylinderAmount || 0
+).toLocaleString('en-IN')}
+
+<br><br>
+
+Product Sales :
+₹ ${Number(
+d.productAmount || 0
+).toLocaleString('en-IN')}
+
+<br><br>
+
+Cash Received :
+₹ ${Number(
+d.cash || 0
+).toLocaleString('en-IN')}
+
+<br><br>
+
+Online Received :
+₹ ${Number(
+d.online || 0
+).toLocaleString('en-IN')}
+
+<br><br>
+
+Total Quantity :
+${d.quantity || 0}
+
+<br><br>
+
+Grand Total :
+₹ ${Number(
+d.amount || 0
+).toLocaleString('en-IN')}
+
+`;
+
+});
+
 }
 
 function getMonthly() {
