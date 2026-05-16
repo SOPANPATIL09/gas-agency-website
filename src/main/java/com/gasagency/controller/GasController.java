@@ -37,11 +37,17 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.BorderRadius;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.VerticalAlignment;
-
+import com.gasagency.model.Product;
+import com.gasagency.model.NewConnection;
+import com.gasagency.repository.ProductRepository;
+import com.gasagency.repository.NewConnectionRepository;
 @RestController
 @CrossOrigin(origins = "*")
 public class GasController {
-
+	
+	
+	@Autowired ProductRepository productRepo;
+	@Autowired NewConnectionRepository newConnectionRepo;
     @Autowired CylinderRepository    cylinderRepo;
     @Autowired EmployeeRepository    employeeRepo;
     @Autowired SalesRepository       salesRepo;
@@ -60,7 +66,28 @@ public class GasController {
             return ResponseEntity.ok("success");
         return ResponseEntity.status(401).body("fail");
     }
+ // ==================== PRODUCT ====================
 
+    @PostMapping("/addProduct")
+    public Product addProduct(@RequestBody Product p) {
+        return productRepo.save(p);
+    }
+
+    @GetMapping("/getProducts")
+    public List<Product> getProducts() {
+        return productRepo.findAll();
+    }
+ // ==================== NEW CONNECTION ====================
+
+    @PostMapping("/addConnection")
+    public NewConnection addConnection(@RequestBody NewConnection n) {
+        return newConnectionRepo.save(n);
+    }
+
+    @GetMapping("/getConnection")
+    public List<NewConnection> getConnection() {
+        return newConnectionRepo.findAll();
+    }
     // ==================== CYLINDER ====================
     @PostMapping("/addCylinder")
     public Cylinder addCylinder(@RequestBody Cylinder c) {
@@ -107,6 +134,15 @@ public class GasController {
     // ==================== SALES ====================
     @PostMapping("/addSales")
     public Sales addSales(@RequestBody Sales s) {
+
+        if(s.getProductName() != null) {
+            Product p = productRepo.findByProductName(s.getProductName());
+
+            if(p != null) {
+                s.setProductPrice(p.getPrice());
+            }
+        }
+
         return salesRepo.save(s);
     }
 

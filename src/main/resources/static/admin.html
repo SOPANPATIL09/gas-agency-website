@@ -429,6 +429,12 @@ td input {
   </div>
 
   <nav>
+    <a href="#product" onclick="setActive(this)">
+    <span class="nav-icon">🛒</span> Products
+    </a>
+    <a href="#connection" onclick="setActive(this)">
+    <span class="nav-icon">🔗</span> New Connection
+    </a>
     <a href="#cylinder" class="active" onclick="setActive(this)">
       <span class="nav-icon">🛢️</span> Cylinder
     </a>
@@ -536,7 +542,33 @@ td input {
       </table>
     </div>
   </div>
+<div class="card" id="product">
 
+  <div class="card-title">
+    🛒 Product Section
+    <span class="badge">Products</span>
+  </div>
+
+  <div class="form-group">
+    <label>Product Name</label>
+    <select id="productName">
+      <option>Accessories</option>
+      <option>Regulators</option>
+      <option>Pipes</option>
+      <option>Other Gas Items</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Price</label>
+    <input type="number" id="productPrice">
+  </div>
+
+  <button class="btn btn-primary" onclick="addProduct()">
+    + Add Product
+  </button>
+
+</div>
   <!-- SALES -->
   <div class="card" id="sales">
     <div class="card-title">📊 Add Sales <span class="badge">Daily</span></div>
@@ -546,29 +578,60 @@ td input {
       <input type="date" id="sdate">
     </div>
 
-    <div class="section-sub">Quantity Sold</div>
+    <div class="form-group">
+  <label>Product</label>
+  <select id="salesProduct"></select>
+</div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label>Domestic Cylinders</label>
-        <input type="number" id="domesticQty" placeholder="0" min="0" oninput="calculate()">
-      </div>
-      <div class="form-group">
-        <label>Commercial Cylinders</label>
-        <input type="number" id="commercialQty" placeholder="0" min="0" oninput="calculate()">
-      </div>
-    </div>
+<div class="form-group">
+  <label>Cylinder</label>
+  <select id="salesCylinder">
+    <option value="domestic">Domestic</option>
+    <option value="commercial">Commercial</option>
+    <option value="5kg">5 KG</option>
+  </select>
+</div>
 
-    <div class="form-group" style="max-width:220px">
-      <label>5 kg Cylinders</label>
-      <input type="number" id="smallQty" placeholder="0" min="0" oninput="calculate()">
-    </div>
+<div class="form-group">
+  <label>Payment Mode</label>
+  <select id="paymentMode">
+    <option value="Cash">Cash</option>
+    <option value="Online">Online</option>
+  </select>
+</div>
 
-    <div class="total-box" id="totalPrice">₹ 0.00</div>
+<div class="form-group">
+  <label>Product Price</label>
+  <input type="number" id="salesProductPrice" readonly>
+</div>
 
-    <button class="btn btn-primary" onclick="addSales()">✓ Submit Sales</button>
+<div class="card" id="connection">
+
+  <div class="card-title">
+    🔗 New Connection
+    <span class="badge">Customer</span>
   </div>
 
+  <div class="form-group">
+    <label>Customer Name</label>
+    <input type="text" id="customerName">
+  </div>
+
+  <div class="form-group">
+    <label>Phone Number</label>
+    <input type="text" id="phoneNumber">
+  </div>
+
+  <div class="form-group">
+    <label>Connection Price</label>
+    <input type="number" id="connectionPrice">
+  </div>
+
+  <button class="btn btn-primary" onclick="addConnection()">
+    + Add Connection
+  </button>
+
+</div>
   <!-- MAINTENANCE -->
   <div class="card" id="maintenance">
     <div class="card-title">🔧 Maintenance Log <span class="badge">Expenses</span></div>
@@ -834,7 +897,63 @@ async function addSales() {
     btn.textContent = "✓ Submit Sales";
   }
 }
+async function addProduct() {
 
+    const data = {
+        productName: document.getElementById("productName").value,
+        price: document.getElementById("productPrice").value
+    };
+
+    await fetch(`${API}/addProduct`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(data)
+    });
+
+    loadProducts();
+
+    showToast("Product Added ✓", "success");
+}
+
+async function loadProducts() {
+
+    const res = await fetch(`${API}/getProducts`);
+
+    const data = await res.json();
+
+    let select = document.getElementById("salesProduct");
+
+    select.innerHTML = "";
+
+    data.forEach(p => {
+
+        let option = document.createElement("option");
+
+        option.value = p.productName;
+
+        option.text = p.productName;
+
+        option.setAttribute("data-price", p.price);
+
+        select.appendChild(option);
+    });
+
+    updateProductPrice();
+}
+
+function updateProductPrice() {
+
+    let select = document.getElementById("salesProduct");
+
+    let price =
+      select.options[select.selectedIndex]
+      .getAttribute("data-price");
+
+    document.getElementById("salesProductPrice").value = price;
+}
+
+document.getElementById("salesProduct")
+.addEventListener("change", updateProductPrice);
 // ── MAINTENANCE ──
 
 async function loadEmployeeDropdown() {
