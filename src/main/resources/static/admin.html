@@ -573,75 +573,87 @@ td input {
   <!-- SALES -->
 <div class="card" id="sales">
 
-  <div class="card-title">
-    📊 Add Sales
-    <span class="badge">Daily</span>
-  </div>
+<div class="card-title">
+📊 Sales Entry
+<span class="badge">Daily</span>
+</div>
 
-  <div class="form-group">
-    <label>Date</label>
-    <input type="date" id="sdate">
-  </div>
+<div class="form-group">
+<label>Date</label>
+<input type="date" id="sdate">
+</div>
 
-  <div class="form-row">
+<div class="section-sub">Cylinder Sale</div>
 
-    <div class="form-group">
-      <label>Product</label>
-      <select id="salesProduct">
-        <option value="Stove">Stove</option>
-        <option value="Lighter">Lighter</option>
-        <option value="Pipe">Pipe</option>
-        <option value="Regulator">Regulator</option>
-      </select>
-    </div>
+<div class="form-row">
 
-    <div class="form-group">
-      <label>Product Price</label>
-      <input type="number" id="salesProductPrice">
-    </div>
+<div class="form-group">
+<label>Cylinder Type</label>
+<select id="salesCylinder">
+<option value="domestic">Domestic</option>
+<option value="commercial">Commercial</option>
+<option value="5kg">5 KG</option>
+</select>
+</div>
 
-  </div>
+<div class="form-group">
+<label>Cylinder Quantity</label>
+<input type="number" id="cylinderQty" value="0">
+</div>
 
-  <div class="form-row">
+</div>
 
-    <div class="form-group">
-      <label>Cylinder Type</label>
-      <select id="salesCylinder">
-        <option value="domestic">Domestic</option>
-        <option value="commercial">Commercial</option>
-        <option value="5kg">5 KG</option>
-      </select>
-    </div>
+<div class="section-sub">Product Sale</div>
 
-    <div class="form-group">
-      <label>Cylinder Quantity</label>
-      <input type="number" id="cylinderQty" placeholder="Enter quantity">
-    </div>
+<div class="form-row">
 
-  </div>
+<div class="form-group">
+<label>Product</label>
+<select id="salesProduct"></select>
+</div>
 
-  <div class="form-row">
+<div class="form-group">
+<label>Product Quantity</label>
+<input type="number" id="productQty" value="0">
+</div>
 
-    <div class="form-group">
-      <label>Payment Mode</label>
-      <select id="paymentMode">
-        <option value="Cash">Cash</option>
-        <option value="Online">Online</option>
-      </select>
-    </div>
+</div>
 
-    <div class="form-group">
-      <label>Total Amount</label>
-      <input type="number" id="totalAmount">
-    </div>
+<div class="form-row">
 
-  </div>
+<div class="form-group">
+<label>Product Price</label>
+<input type="number" id="salesProductPrice" readonly>
+</div>
 
-  <button class="btn btn-primary" onclick="addSales()">
-    + Add Sales
-  </button>
+<div class="form-group">
+<label>Total Amount</label>
+<input type="number" id="totalAmount" readonly>
+</div>
 
-</div><!-- SALES CARD END -->
+</div>
+
+<div class="section-sub">Payment Received</div>
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Cash Received</label>
+<input type="number" id="cashReceived" value="0">
+</div>
+
+<div class="form-group">
+<label>Online Received</label>
+<input type="number" id="onlineReceived" value="0">
+</div>
+
+</div>
+
+<button class="btn btn-primary" onclick="addSales()">
++ Add Sales
+</button>
+
+</div>
 
 <div class="card" id="connection">
 
@@ -868,99 +880,112 @@ async function updatePrice() {
 
 // ── SALES ──
 
-let priceMap = {};
+
+let cylinderPrices = {};
 
 async function loadPrices() {
-  try {
+
     const res = await fetch(`${API}/getCylinder`);
+
     const data = await res.json();
-    const latest = {};
+
     data.forEach(c => {
-      if (!latest[c.type] || new Date(c.date) > new Date(latest[c.type].date)) {
-        latest[c.type] = c;
-      }
+        cylinderPrices[c.type] = c.price;
     });
-    priceMap = {};
-    for (let t in latest) priceMap[t] = latest[t].price;
-  } catch (err) {
-    console.error("Price load error", err);
-  }
 }
 
-function calculate() {
-  const d = parseInt(document.getElementById("domesticQty").value) || 0;
-  const c = parseInt(document.getElementById("commercialQty").value) || 0;
-  const s = parseInt(document.getElementById("smallQty").value) || 0;
-  const total =
-    (d * (priceMap["domestic"] || 0)) +
-    (c * (priceMap["commercial"] || 0)) +
-    (s * (priceMap["5kg"] || 0));
+function calculateTotal() {
 
-  const box = document.getElementById("totalPrice");
-  if (d || c || s) {
-    box.textContent = `Total: ₹ ${total.toFixed(2)}`;
-    box.classList.add("visible");
-  } else {
-    box.classList.remove("visible");
-  }
+    const cylinderType =
+        document.getElementById("salesCylinder").value;
+
+    const cylinderQty =
+        parseInt(document.getElementById("cylinderQty").value) || 0;
+
+    const productQty =
+        parseInt(document.getElementById("productQty").value) || 0;
+
+    const productPrice =
+        parseFloat(document.getElementById("salesProductPrice").value) || 0;
+
+    const cylinderPrice =
+        cylinderPrices[cylinderType] || 0;
+
+    const cylinderTotal =
+        cylinderQty * cylinderPrice;
+
+    const productTotal =
+        productQty * productPrice;
+
+    const total =
+        cylinderTotal + productTotal;
+
+    document.getElementById("totalAmount").value = total;
 }
+
+document.getElementById("cylinderQty")
+.addEventListener("input", calculateTotal);
+
+document.getElementById("productQty")
+.addEventListener("input", calculateTotal);
+
+document.getElementById("salesCylinder")
+.addEventListener("change", calculateTotal);
+
+document.getElementById("salesProduct")
+.addEventListener("change", () => {
+
+    updateProductPrice();
+
+    calculateTotal();
+});
 
 async function addSales() {
 
-	  const date = document.getElementById("sdate").value;
-	  const productName = document.getElementById("salesProduct").value;
-	  const productPrice = document.getElementById("salesProductPrice").value;
-	  const cylinderType = document.getElementById("salesCylinder").value;
-	  const qty = parseInt(document.getElementById("cylinderQty").value) || 0;
-	  const paymentMode = document.getElementById("paymentMode").value;
-	  const totalAmount = document.getElementById("totalAmount").value;
+    const data = {
 
-	  if (!date || qty <= 0) {
-	    showToast("Fill all fields", "error");
-	    return;
-	  }
+        date: document.getElementById("sdate").value,
 
-	  let domestic = 0;
-	  let commercial = 0;
-	  let small = 0;
+        cylinderType:
+            document.getElementById("salesCylinder").value,
 
-	  if (cylinderType === "domestic") domestic = qty;
-	  if (cylinderType === "commercial") commercial = qty;
-	  if (cylinderType === "5kg") small = qty;
+        cylinderQty:
+            parseInt(document.getElementById("cylinderQty").value) || 0,
 
-	  const data = {
-	    date,
-	    domestic,
-	    commercial,
-	    small,
-	    productName,
-	    productPrice,
-	    cylinderType,
-	    paymentMode
-	  };
+        productName:
+            document.getElementById("salesProduct").value,
 
-	  try {
+        productQty:
+            parseInt(document.getElementById("productQty").value) || 0,
 
-	    const res = await fetch(`${API}/addSales`, {
-	      method: "POST",
-	      headers: {
-	        "Content-Type": "application/json"
-	      },
-	      body: JSON.stringify(data)
-	    });
+        cashReceived:
+            parseFloat(document.getElementById("cashReceived").value) || 0,
 
-	    if (!res.ok) throw new Error();
+        onlineReceived:
+            parseFloat(document.getElementById("onlineReceived").value) || 0
+    };
 
-	    showToast("Sales Added ✓", "success");
+    const res = await fetch(`${API}/addSales`, {
 
-	    document.getElementById("sdate").value = "";
-	    document.getElementById("cylinderQty").value = "";
-	    document.getElementById("totalAmount").value = "";
+        method: "POST",
 
-	  } catch(err) {
-	    showToast("Failed to add sales", "error");
-	  }
-	}
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(data)
+    });
+
+    if(res.ok) {
+
+        showToast("Sales Added ✓", "success");
+
+    } else {
+
+        showToast("Failed", "error");
+    }
+}
+
 
 async function addProduct() {
 
