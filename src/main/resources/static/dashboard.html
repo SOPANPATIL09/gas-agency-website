@@ -492,17 +492,35 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="table-wrap">
       <table>
         <thead>
-          <tr>
-            <th id="actionHeader" style="display:none">Action</th>
-            <th>Date</th>
-            <th>Domestic</th>
-            <th>Commercial</th>
-            <th>5kg</th>
-          </tr>
-        </thead>
-        <tbody id="salesTable">
-          <tr><td colspan="5" class="no-data">Loading...</td></tr>
-        </tbody>
+<tr>
+
+<th id="actionHeader" style="display:none">Action</th>
+
+<th>Date</th>
+
+<th>Cylinder</th>
+<th>Cyl Qty</th>
+<th>Cyl Amount</th>
+
+<th>Product</th>
+<th>Prod Qty</th>
+<th>Prod Amount</th>
+
+<th>Cash</th>
+<th>Online</th>
+
+<th>Total</th>
+
+</tr>
+</thead>
+
+<tbody id="salesTable">
+<tr>
+<td colspan="11" class="no-data">
+Loading...
+</td>
+</tr>
+</tbody>
       </table>
     </div>
     <div class="pagination">
@@ -510,7 +528,72 @@ tbody tr:last-child td { border-bottom: none; }
       <button onclick="nextPage()">Next →</button>
     </div>
   </div>
+<div class="section">
 
+<div class="section-title">
+🛒 Product Sales
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Product</th>
+<th>Qty</th>
+<th>Total</th>
+</tr>
+</thead>
+
+<tbody id="productSalesTable">
+
+<tr>
+<td colspan="3" class="no-data">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+<div class="section">
+
+<div class="section-title">
+🔗 New Connections
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Price</th>
+</tr>
+</thead>
+
+<tbody id="connectionTable">
+
+<tr>
+<td colspan="3" class="no-data">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
   <!-- SALES CHART -->
   <div class="section">
     <div class="section-title">📈 Sales Chart</div>
@@ -622,10 +705,25 @@ function showToast(msg, color = "#43a047") {
 }
 
 // ── STAT CARDS ──
-fetch(`${BASE_URL}/sales/total`).then(r => r.json()).then(d => {
-  document.getElementById("totalSalesCard").textContent = "₹ " + (d.amount ?? 0).toLocaleString('en-IN');
-}).catch(() => document.getElementById("totalSalesCard").textContent = "—");
+fetch(`${BASE_URL}/getSales`)
+.then(r => r.json())
+.then(data => {
 
+let total = 0;
+
+data.forEach(s => {
+total += Number(s.totalAmount || 0);
+});
+
+document.getElementById("totalSalesCard")
+.textContent =
+"₹ " + total.toLocaleString('en-IN');
+
+})
+.catch(() => {
+document.getElementById("totalSalesCard")
+.textContent = "₹ 0";
+});
 fetch(`${BASE_URL}/getEmployee`).then(r => r.json()).then(d => {
   document.getElementById("totalEmployeeCard").textContent = d.length || 0;
 }).catch(() => {});
@@ -698,22 +796,142 @@ fetch(`${BASE_URL}/getSales`).then(r => r.json()).then(data => {
 });
 
 function renderTable() {
-  const tbody = document.getElementById("salesTable");
-  const start = (currentPage - 1) * rowsPerPage;
-  const page = salesData.slice(start, start + rowsPerPage);
-  if (!page.length) {
-    tbody.innerHTML = `<tr><td colspan="${isAdmin ? 5 : 4}" class="no-data">No data found</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = page.map(s => `
-    <tr>
-      ${isAdmin ? `<td><button class="btn-delete" onclick="deleteSale(${s.id})">🗑 Delete</button></td>` : ''}
-      <td>${s.date}</td>
-      <td>${Number(s.domestic)}</td>
-      <td>${Number(s.commercial)}</td>
-      <td>${Number(s.small)}</td>
-    </tr>`).join("");
-}
+
+	const tbody =
+	document.getElementById("salesTable");
+
+	const start =
+	(currentPage - 1) * rowsPerPage;
+
+	const page =
+	salesData.slice(start, start + rowsPerPage);
+
+	if (!page.length) {
+
+	tbody.innerHTML = `
+	<tr>
+	<td colspan="11" class="no-data">
+	No sales found
+	</td>
+	</tr>
+	`;
+
+	return;
+	}
+
+	tbody.innerHTML = page.map(s => `
+
+	<tr>
+
+	${isAdmin ? `
+	<td>
+	<button class="btn-delete"
+	onclick="deleteSale(${s.id})">
+	🗑 Delete
+	</button>
+	</td>` : ''}
+
+	<td>${s.date || "-"}</td>
+
+	<td>${s.cylinderType || "-"}</td>
+
+	<td>${s.cylinderQty || 0}</td>
+
+	<td>
+	₹ ${Number(
+	s.cylinderTotal || 0
+	).toLocaleString('en-IN')}
+	</td>
+
+	<td>${s.productName || "-"}</td>
+
+	<td>${s.productQty || 0}</td>
+
+	<td>
+	₹ ${Number(
+	s.productTotal || 0
+	).toLocaleString('en-IN')}
+	</td>
+
+	<td>
+	₹ ${Number(
+	s.cashReceived || 0
+	).toLocaleString('en-IN')}
+	</td>
+
+	<td>
+	₹ ${Number(
+	s.onlineReceived || 0
+	).toLocaleString('en-IN')}
+	</td>
+
+	<td style="font-weight:bold;color:#ffd54f">
+
+	₹ ${Number(
+	s.totalAmount || 0
+	).toLocaleString('en-IN')}
+
+	</td>
+
+	</tr>
+
+	`).join("");
+	}
+	function loadProductSales() {
+
+		const tbody =
+		document.getElementById(
+		"productSalesTable"
+		);
+
+		fetch(`${BASE_URL}/getSales`)
+		.then(r => r.json())
+		.then(data => {
+
+		let grouped = {};
+
+		data.forEach(s => {
+
+		if(!s.productName) return;
+
+		if(!grouped[s.productName]) {
+
+		grouped[s.productName] = {
+		qty: 0,
+		amount: 0
+		};
+
+		}
+
+		grouped[s.productName].qty +=
+		Number(s.productQty || 0);
+
+		grouped[s.productName].amount +=
+		Number(s.productTotal || 0);
+
+		});
+
+		tbody.innerHTML =
+		Object.keys(grouped).map(p => `
+
+		<tr>
+
+		<td>${p}</td>
+
+		<td>${grouped[p].qty}</td>
+
+		<td>
+		₹ ${grouped[p].amount.toLocaleString('en-IN')}
+		</td>
+
+		</tr>
+
+		`).join("");
+
+		});
+		}
+
+		loadProductSales();
 
 function nextPage() { if (currentPage * rowsPerPage < salesData.length) { currentPage++; renderTable(); } }
 function prevPage() { if (currentPage > 1) { currentPage--; renderTable(); } }
@@ -729,40 +947,93 @@ function deleteSale(id) {
 
 // ── CHART ──
 function loadChart(data) {
-  const labels = data.map(s => s.date);
-  const domestic = data.map(s => Number(s.domestic));
-  const commercial = data.map(s => Number(s.commercial));
-  const small = data.map(s => Number(s.small));
 
-  new Chart(document.getElementById("salesChart"), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Domestic', data: domestic, backgroundColor: 'rgba(30,136,229,0.8)', borderRadius: 4 },
-        { label: 'Commercial', data: commercial, backgroundColor: 'rgba(255,152,0,0.8)', borderRadius: 4 },
-        { label: '5kg', data: small, backgroundColor: 'rgba(76,175,80,0.8)', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { labels: { color: '#c9d8ff', font: { size: 13 } } }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#90aed4', maxRotation: 45 },
-          grid: { color: 'rgba(255,255,255,0.05)' }
-        },
-        y: {
-          ticks: { color: '#90aed4' },
-          grid: { color: 'rgba(255,255,255,0.08)' },
-          beginAtZero: true
-        }
-      }
-    }
-  });
+const labels =
+data.map(s => s.date);
+
+const cylinderTotals =
+data.map(s =>
+Number(s.cylinderTotal || 0)
+);
+
+const productTotals =
+data.map(s =>
+Number(s.productTotal || 0)
+);
+
+new Chart(
+document.getElementById("salesChart"),
+{
+type: 'bar',
+
+data: {
+
+labels,
+
+datasets: [
+
+{
+label: 'Cylinder Sales',
+data: cylinderTotals,
+backgroundColor:
+'rgba(30,136,229,0.8)',
+borderRadius: 4
+},
+
+{
+label: 'Product Sales',
+data: productTotals,
+backgroundColor:
+'rgba(255,152,0,0.8)',
+borderRadius: 4
+}
+
+]
+
+},
+
+options: {
+
+responsive: true,
+maintainAspectRatio: false,
+
+plugins: {
+legend: {
+labels: {
+color: '#c9d8ff'
+}
+}
+},
+
+scales: {
+
+x: {
+ticks: {
+color: '#90aed4'
+},
+grid: {
+color:
+'rgba(255,255,255,0.05)'
+}
+},
+
+y: {
+beginAtZero: true,
+ticks: {
+color: '#90aed4'
+},
+grid: {
+color:
+'rgba(255,255,255,0.08)'
+}
+}
+
+}
+
+}
+
+});
+
 }
 
 // ── MAINTENANCE ──
@@ -834,11 +1105,46 @@ function getMaintenanceMonth() {
 }
 
 function getSalesSummary() {
-  fetch(`${BASE_URL}/sales/total`).then(r => r.json()).then(d => {
-    document.getElementById("salesSummary").textContent =
-      `Qty: ${d.quantity} | Amount: ₹ ${(d.amount || 0).toLocaleString('en-IN')}`;
-  });
-}
+
+	fetch(`${BASE_URL}/getSales`)
+	.then(r => r.json())
+	.then(data => {
+
+	let total = 0;
+	let cash = 0;
+	let online = 0;
+
+	data.forEach(s => {
+
+	total += Number(s.totalAmount || 0);
+
+	cash += Number(s.cashReceived || 0);
+
+	online += Number(s.onlineReceived || 0);
+
+	});
+
+	document.getElementById(
+	"salesSummary"
+	).innerHTML = `
+
+	Total Sales :
+	₹ ${total.toLocaleString('en-IN')}
+
+	<br><br>
+
+	Cash Received :
+	₹ ${cash.toLocaleString('en-IN')}
+
+	<br><br>
+
+	Online Received :
+	₹ ${online.toLocaleString('en-IN')}
+
+	`;
+
+	});
+	}
 
 // ── DOWNLOADS ──
 function downloadFile(url) { window.open(url, "_blank"); }
@@ -877,7 +1183,39 @@ function downloadYearlyPDF() {
   const y = document.getElementById("rYear").value;
   if (!y) { showToast("Enter a year", "#e53935"); return; }
   window.open(`${BASE_URL}/report/pdf/year/${y}`);
-}
+}function loadConnections() {
+
+	fetch(`${BASE_URL}/getConnection`)
+	.then(r => r.json())
+	.then(data => {
+
+	const tbody =
+	document.getElementById(
+	"connectionTable"
+	);
+
+	tbody.innerHTML = data.map(c => `
+
+	<tr>
+
+	<td>${c.customerName}</td>
+
+	<td>${c.phoneNumber}</td>
+
+	<td>
+	₹ ${Number(
+	c.connectionPrice || 0
+	).toLocaleString('en-IN')}
+	</td>
+
+	</tr>
+
+	`).join("");
+
+	});
+	}
+
+	loadConnections();
 </script>
 </body>
 </html>
