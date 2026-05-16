@@ -3,7 +3,7 @@ package com.gasagency.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -1042,12 +1042,44 @@ public class GasController {
             {"Employee Payment", String.format("%,.2f", emp),   "Salary / Wages"},
             {"Bank Deposit",     String.format("%,.2f", bank),  "Deposited to bank"},
         };
-        alt = false;
+        boolean alt = false;
+
         for (String[] row : mrows) {
-            DeviceRgb bg = alt ? ORLIT : WHITE; alt = !alt;
-            mt.addCell(pdfCell(row[0], bg, TextAlignment.LEFT,  false, GRAYLINE));
-            mt.addCell(pdfCell(row[1], bg, TextAlignment.RIGHT, true,  GRAYLINE));
-            mt.addCell(pdfCell(row[2], bg, TextAlignment.LEFT,  false, GRAYLINE));
+
+            DeviceRgb bg =
+            alt ? ORLIT : WHITE;
+
+            alt = !alt;
+
+            mt.addCell(
+                pdfCell(
+                    row[0],
+                    bg,
+                    TextAlignment.LEFT,
+                    false,
+                    GRAYLINE
+                )
+            );
+
+            mt.addCell(
+                pdfCell(
+                    row[1],
+                    bg,
+                    TextAlignment.RIGHT,
+                    true,
+                    GRAYLINE
+                )
+            );
+
+            mt.addCell(
+                pdfCell(
+                    row[2],
+                    bg,
+                    TextAlignment.LEFT,
+                    false,
+                    GRAYLINE
+                )
+            );
         }
         mt.addCell(pdfCell("TOTAL EXPENSES",                      ORMID, TextAlignment.LEFT,  true,  ORANGE));
         mt.addCell(pdfCell(String.format("%,.2f", totalMaint),    ORMID, TextAlignment.RIGHT, true,  ORANGE));
