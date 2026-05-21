@@ -1036,11 +1036,34 @@ public class GasController {
                     .setBackgroundColor(ORANGE).setBorder(Border.NO_BORDER)
                     .setPaddingTop(10).setPaddingBottom(10).setPaddingLeft(12).setPaddingRight(12));
         }
+     // Collect expense type & deposit type from records
+        Map<String, Double> expenseTypeMap = new java.util.LinkedHashMap<>();
+        Map<String, Double> depositTypeMap = new java.util.LinkedHashMap<>();
+        for (Maintenance m : maintenanceRepo.findAll()) {
+            boolean match = (date   != null && m.getDate().equals(date))
+                         || (prefix != null && m.getDate().startsWith(prefix));
+            if (match) {
+                String et = m.getExpenseType() != null ? m.getExpenseType() : "Other";
+                expenseTypeMap.merge(et, m.getOtherExpense(), Double::sum);
+                String dt = m.getDepositType() != null ? m.getDepositType() : "Offline";
+                depositTypeMap.merge(dt, m.getBankDeposit(), Double::sum);
+            }
+        }
+
+        String expenseTypeLabel = expenseTypeMap.isEmpty() ? "—"
+            : expenseTypeMap.entrySet().stream()
+                .map(e -> e.getKey() + " (" + String.format("%,.2f", e.getValue()) + ")")
+                .collect(java.util.stream.Collectors.joining(", "));
+        String depositTypeLabel = depositTypeMap.isEmpty() ? "—"
+            : depositTypeMap.entrySet().stream()
+                .map(e -> e.getKey() + " (" + String.format("%,.2f", e.getValue()) + ")")
+                .collect(java.util.stream.Collectors.joining(", "));
+
         String[][] mrows = {
             {"Fuel",             String.format("%,.2f", fuel),  "Petrol / Diesel cost"},
-            {"Other Expense",    String.format("%,.2f", other), "Miscellaneous"},
+            {"Other Expense",    String.format("%,.2f", other), "Type: " + expenseTypeLabel},
             {"Employee Payment", String.format("%,.2f", emp),   "Salary / Wages"},
-            {"Bank Deposit",     String.format("%,.2f", bank),  "Deposited to bank"},
+            {"Bank Deposit",     String.format("%,.2f", bank),  "Mode: " + depositTypeLabel},
         };
         boolean alt = false;
 

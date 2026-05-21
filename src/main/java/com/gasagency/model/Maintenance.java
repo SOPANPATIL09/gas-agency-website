@@ -18,6 +18,8 @@ public class Maintenance {
     private String employeeName;
     private double employeePayment;
     private double bankDeposit;
+    private String expenseType;
+    private String depositType;
 
     // getters & setters
     public int getId() { return id; }
@@ -48,4 +50,10 @@ public class Maintenance {
 
 	public double getBankDeposit() { return bankDeposit; }
     public void setBankDeposit(double bankDeposit) { this.bankDeposit = bankDeposit; }
+    public String getExpenseType() { return expenseType; }
+    public void setExpenseType(String expenseType) { this.expenseType = expenseType; }
+
+    public String getDepositType() { return depositType; }
+    public void setDepositType(String depositType) { this.depositType = depositType; }
 }
+

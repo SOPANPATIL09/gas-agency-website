@@ -291,7 +291,33 @@ select {
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
+/* Toggle button group */
+.toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.toggle-btn {
+  padding: 7px 14px;
+  border: 2px solid #d0d5dd;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle-btn:hover {
+  border-color: #4f8ef7;
+  background: #eff6ff;
+}
+.toggle-btn.active {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
 /* ── TOAST ── */
 #toast {
   position: fixed;
@@ -699,6 +725,14 @@ td input {
       <div class="form-group">
         <label>Other Expense (₹)</label>
         <input id="other" type="number" placeholder="0">
+        <label style="margin-top:8px;margin-bottom:4px;font-size:13px;color:#555;">Expense Type</label>
+        <div class="toggle-group" id="expenseTypeGroup">
+          <button type="button" class="toggle-btn active" onclick="selectExpenseType(this,'Maintenance')">🔧 Maintenance</button>
+          <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Transport')">🚚 Transport</button>
+          <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Office')">🏢 Office</button>
+          <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Other')">📦 Other</button>
+        </div>
+        <input type="hidden" id="expenseType" value="Maintenance">
       </div>
     </div>
 
@@ -718,6 +752,12 @@ td input {
     <div class="form-group">
       <label>Bank Deposit (₹)</label>
       <input id="bank" type="number" placeholder="0">
+      <label style="margin-top:8px;margin-bottom:4px;font-size:13px;color:#555;">Deposit Mode</label>
+      <div class="toggle-group" id="depositTypeGroup">
+        <button type="button" class="toggle-btn active" onclick="selectDepositType(this,'Online')">🌐 Online Deposit</button>
+        <button type="button" class="toggle-btn" onclick="selectDepositType(this,'Offline')">🏦 Offline Deposit</button>
+      </div>
+      <input type="hidden" id="depositType" value="Online">
     </div>
 
     <button class="btn btn-primary" onclick="addMaintenance()">+ Add Record</button>
@@ -1061,27 +1101,44 @@ async function loadEmployeeDropdown() {
   } catch { console.error("Dropdown load failed"); }
 }
 
-async function addMaintenance() {
-  const date = document.getElementById("mdate").value;
-  if (!date) { showToast("Please select a date", "error"); return; }
+function selectExpenseType(btn, type) {
+	  document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+	  btn.classList.add("active");
+	  document.getElementById("expenseType").value = type;
+	}
 
-  try {
-    await fetch(`${API}/addMaintenance`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date,
-        fuel: document.getElementById("fuel").value || 0,
-        otherExpense: document.getElementById("other").value || 0,
-        employeeName: document.getElementById("empName").value,
-        employeePayment: document.getElementById("empPay").value || 0,
-        bankDeposit: document.getElementById("bank").value || 0
-      })
-    });
-    showToast("Maintenance record added ✓", "success");
-    ["mdate", "fuel", "other", "empPay", "bank"].forEach(id => document.getElementById(id).value = "");
-  } catch { showToast("Failed to add record", "error"); }
-}
+	function selectDepositType(btn, type) {
+	  document.querySelectorAll("#depositTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+	  btn.classList.add("active");
+	  document.getElementById("depositType").value = type;
+	}
+
+	async function addMaintenance() {
+	  const date = document.getElementById("mdate").value;
+	  if (!date) { showToast("Please select a date", "error"); return; }
+
+	  try {
+	    await fetch(`${API}/addMaintenance`, {
+	      method: "POST",
+	      headers: { "Content-Type": "application/json" },
+	      body: JSON.stringify({
+	        date,
+	        fuel: document.getElementById("fuel").value || 0,
+	        otherExpense: document.getElementById("other").value || 0,
+	        expenseType: document.getElementById("expenseType").value,
+	        employeeName: document.getElementById("empName").value,
+	        employeePayment: document.getElementById("empPay").value || 0,
+	        bankDeposit: document.getElementById("bank").value || 0,
+	        depositType: document.getElementById("depositType").value
+	      })
+	    });
+	    showToast("Maintenance record added ✓", "success");
+	    ["mdate", "fuel", "other", "empPay", "bank"].forEach(id => document.getElementById(id).value = "");
+	    // Reset toggles
+	    selectExpenseType(document.querySelector("#expenseTypeGroup .toggle-btn"), "Maintenance");
+	    selectDepositType(document.querySelector("#depositTypeGroup .toggle-btn"), "Online");
+	  } catch { showToast("Failed to add record", "error"); }
+	}
 
 // ── INIT ──
 document.addEventListener("DOMContentLoaded", () => {
