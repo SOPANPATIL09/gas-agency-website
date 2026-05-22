@@ -263,13 +263,34 @@ tbody tr:hover td { background: var(--surface2); }
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Quantity</label><input type="number" id="psQty" value="1" oninput="calcProductTotal()"></div>
-      <div class="form-group"><label>Price (₹) (auto)</label><input type="number" id="psPrice" readonly></div>
+      <div class="form-group"><label>Quantity</label><input type="number" id="psQty" value="1" min="1" oninput="calcProductTotal()"></div>
+      <div class="form-group"><label>Unit Price (₹)</label><input type="number" id="psPrice" readonly></div>
     </div>
+
+    <!-- TOTAL AMOUNT BOX -->
+    <div id="psTotalBox" style="display:none;background:var(--accent-dim);border:1px solid rgba(79,142,247,0.3);border-radius:8px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Total Amount</div>
+      <div style="font-size:22px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;">₹ <span id="psTotalAmt">0.00</span></div>
+    </div>
+
+    <div class="section-sub" style="margin-top:4px">Payment Received</div>
     <div class="form-row">
-      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="psCash" value="0"></div>
-      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="psOnline" value="0"></div>
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="psCash" value="0" oninput="calcProductBalance()"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="psOnline" value="0" oninput="calcProductBalance()"></div>
     </div>
+
+    <!-- BALANCE BOX -->
+    <div id="psBalanceBox" style="display:none;border-radius:8px;padding:11px 16px;margin-bottom:12px;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total Received</div>
+        <div style="font-size:16px;font-weight:700;color:var(--success);font-family:'DM Mono',monospace;">₹ <span id="psTotalReceived">0.00</span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Balance Due</div>
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;"><span id="psBalanceDue" style="color:var(--warning)">₹ 0.00</span></div>
+      </div>
+    </div>
+
     <button class="btn btn-primary" onclick="addProductSale()">+ Add Product Sale</button>
     <hr class="divider">
     <div class="section-sub">Sales Records</div>
@@ -292,13 +313,34 @@ tbody tr:hover td { background: var(--surface2); }
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Quantity</label><input type="number" id="csQty" value="1" oninput="calcCylTotal()"></div>
-      <div class="form-group"><label>Price (₹) (auto)</label><input type="number" id="csPrice" readonly></div>
+      <div class="form-group"><label>Quantity</label><input type="number" id="csQty" value="1" min="1" oninput="calcCylTotal()"></div>
+      <div class="form-group"><label>Unit Price (₹)</label><input type="number" id="csPrice" readonly></div>
     </div>
+
+    <!-- TOTAL AMOUNT BOX -->
+    <div id="csTotalBox" style="display:none;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.28);border-radius:8px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Total Amount</div>
+      <div style="font-size:22px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;">₹ <span id="csTotalAmt">0.00</span></div>
+    </div>
+
+    <div class="section-sub" style="margin-top:4px">Payment Received</div>
     <div class="form-row">
-      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="csCash" value="0"></div>
-      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="csOnline" value="0"></div>
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="csCash" value="0" oninput="calcCylBalance()"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="csOnline" value="0" oninput="calcCylBalance()"></div>
     </div>
+
+    <!-- BALANCE BOX -->
+    <div id="csBalanceBox" style="border-radius:8px;padding:11px 16px;margin-bottom:12px;display:flex;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total Received</div>
+        <div style="font-size:16px;font-weight:700;color:var(--success);font-family:'DM Mono',monospace;">₹ <span id="csTotalReceived">0.00</span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Balance Due</div>
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;"><span id="csBalanceDue" style="color:var(--warning)">₹ 0.00</span></div>
+      </div>
+    </div>
+
     <button class="btn btn-primary" onclick="addCylinderSale()">+ Add Cylinder Sale</button>
     <hr class="divider">
     <div class="section-sub">Sales Records</div>
@@ -328,6 +370,10 @@ tbody tr:hover td { background: var(--surface2); }
             <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Other')">📦 Other</button>
           </div>
           <input type="hidden" id="expenseType" value="Maintenance">
+          <!-- Custom input shown only when "Other" is selected -->
+          <div id="otherExpenseInputWrap" style="display:none;margin-top:8px;">
+            <input type="text" id="otherExpenseText" placeholder="Describe the expense (e.g. Equipment repair, Cleaning...)" style="font-size:12px;">
+          </div>
         </div>
       </div>
     </div>
@@ -491,9 +537,39 @@ function onCylinderTypeChange() {
   if (document.getElementById("csPrice")) document.getElementById("csPrice").value = price;
   calcCylTotal();
 }
+
 function calcCylTotal() {
-  const qty = parseInt(document.getElementById("csQty")?.value) || 0;
+  const qty   = parseFloat(document.getElementById("csQty")?.value)   || 0;
   const price = parseFloat(document.getElementById("csPrice")?.value) || 0;
+  const total = qty * price;
+
+  const box = document.getElementById("csTotalBox");
+  if (box) {
+    box.style.display = qty > 0 && price > 0 ? "block" : "none";
+    document.getElementById("csTotalAmt").textContent = total.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  calcCylBalance();
+}
+
+function calcCylBalance() {
+  const total   = (parseFloat(document.getElementById("csQty")?.value)   || 0)
+                * (parseFloat(document.getElementById("csPrice")?.value) || 0);
+  const cash    = parseFloat(document.getElementById("csCash")?.value)   || 0;
+  const online  = parseFloat(document.getElementById("csOnline")?.value) || 0;
+  const received = cash + online;
+  const balance  = total - received;
+
+  const box = document.getElementById("csBalanceBox");
+  if (box) {
+    box.style.display = total > 0 ? "flex" : "none";
+    document.getElementById("csTotalReceived").textContent =
+      received.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    const balEl = document.getElementById("csBalanceDue");
+    balEl.textContent = "₹ " + Math.abs(balance).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    balEl.style.color  = balance <= 0 ? "var(--success)" : "var(--warning)";
+    balEl.closest("div").querySelector("div:first-child").textContent =
+      balance <= 0 ? "Overpaid / Settled ✓" : "Balance Due";
+  }
 }
 
 // ── EMPLOYEE ──
@@ -610,8 +686,45 @@ async function deleteCylinderPurchase(id) {
 function onProductChange() {
   const sel = document.getElementById("psProduct");
   if (!sel || !sel.options[sel.selectedIndex]) return;
-  const price = sel.options[sel.selectedIndex].getAttribute("data-price") || 0;
+  const price = parseFloat(sel.options[sel.selectedIndex].getAttribute("data-price")) || 0;
   document.getElementById("psPrice").value = price;
+  calcProductTotal();
+}
+
+function calcProductTotal() {
+  const qty   = parseFloat(document.getElementById("psQty")?.value)   || 0;
+  const price = parseFloat(document.getElementById("psPrice")?.value) || 0;
+  const total = qty * price;
+
+  const box = document.getElementById("psTotalBox");
+  if (box) {
+    box.style.display = qty > 0 && price > 0 ? "block" : "none";
+    document.getElementById("psTotalAmt").textContent =
+      total.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  calcProductBalance();
+}
+
+function calcProductBalance() {
+  const qty     = parseFloat(document.getElementById("psQty")?.value)   || 0;
+  const price   = parseFloat(document.getElementById("psPrice")?.value) || 0;
+  const total   = qty * price;
+  const cash    = parseFloat(document.getElementById("psCash")?.value)   || 0;
+  const online  = parseFloat(document.getElementById("psOnline")?.value) || 0;
+  const received = cash + online;
+  const balance  = total - received;
+
+  const box = document.getElementById("psBalanceBox");
+  if (box) {
+    box.style.display = total > 0 ? "flex" : "none";
+    document.getElementById("psTotalReceived").textContent =
+      received.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    const balEl = document.getElementById("psBalanceDue");
+    balEl.textContent = "₹ " + Math.abs(balance).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    balEl.style.color  = balance <= 0 ? "var(--success)" : "var(--warning)";
+    balEl.closest("div").querySelector("div:first-child").textContent =
+      balance <= 0 ? "Overpaid / Settled ✓" : "Balance Due";
+  }
 }
 
 async function addProductSale() {
@@ -629,6 +742,9 @@ async function addProductSale() {
   document.getElementById("psQty").value = 1;
   document.getElementById("psCash").value = 0;
   document.getElementById("psOnline").value = 0;
+  // Reset display boxes
+  document.getElementById("psTotalBox").style.display = "none";
+  document.getElementById("psBalanceBox").style.display = "none";
   loadProductSales();
 }
 
@@ -665,6 +781,9 @@ async function addCylinderSale() {
   document.getElementById("csQty").value = 1;
   document.getElementById("csCash").value = 0;
   document.getElementById("csOnline").value = 0;
+  // Reset display boxes
+  document.getElementById("csTotalBox").style.display = "none";
+  document.getElementById("csBalanceBox").style.display = "none";
   loadCylinderSalesTable();
 }
 
@@ -690,7 +809,22 @@ async function deleteCylinderSale(id) {
 function selectExpenseType(btn, type) {
   document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  document.getElementById("expenseType").value = type;
+
+  const wrap = document.getElementById("otherExpenseInputWrap");
+  if (type === "Other") {
+    // Show free-text input; the actual saved value will come from that input
+    wrap.style.display = "block";
+    document.getElementById("otherExpenseText").focus();
+    document.getElementById("expenseType").value = "Other";          // placeholder until user types
+    document.getElementById("otherExpenseText").oninput = function() {
+      const custom = this.value.trim();
+      document.getElementById("expenseType").value = custom || "Other";
+    };
+  } else {
+    wrap.style.display = "none";
+    document.getElementById("otherExpenseText").value = "";
+    document.getElementById("expenseType").value = type;
+  }
 }
 
 async function addMaintenance() {
@@ -711,6 +845,11 @@ async function addMaintenance() {
   });
   showToast("Maintenance record added ✓", "success");
   ["mdate","fuel","other","empPay"].forEach(id => document.getElementById(id).value = "");
+  // Reset expense type back to default
+  document.getElementById("expenseType").value = "Maintenance";
+  document.getElementById("otherExpenseText").value = "";
+  document.getElementById("otherExpenseInputWrap").style.display = "none";
+  document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach((b,i) => b.classList.toggle("active", i===0));
   loadMaintenanceTable();
 }
 
