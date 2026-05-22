@@ -7,767 +7,380 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f1117;
-  --surface: #181c27;
-  --surface2: #1e2333;
-  --border: #2a3050;
-  --accent: #4f8ef7;
-  --accent-dim: rgba(79,142,247,0.12);
-  --success: #3ecf8e;
-  --danger: #f76f6f;
-  --warning: #f7b94f;
-  --text: #e8ecf4;
-  --muted: #7b8299;
-  --sidebar-w: 230px;
-  --radius: 10px;
+  --bg: #0f1117; --surface: #181c27; --surface2: #1e2333;
+  --border: #2a3050; --accent: #4f8ef7; --accent-dim: rgba(79,142,247,0.12);
+  --success: #3ecf8e; --danger: #f76f6f; --warning: #f7b94f;
+  --text: #e8ecf4; --muted: #7b8299; --sidebar-w: 240px; --radius: 10px;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
-
-/* ── SIDEBAR ── */
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 .sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: var(--sidebar-w);
-  height: 100vh;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  z-index: 100;
-  transition: transform 0.3s;
+  position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100; transition: transform 0.3s; overflow-y: auto;
 }
-
-.sidebar-header {
-  padding: 24px 20px 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.sidebar-logo .icon {
-  width: 36px; height: 36px;
-  background: var(--accent);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.sidebar-logo h2 {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.3px;
-}
-
-.sidebar-logo span {
-  font-size: 11px;
-  color: var(--muted);
-  font-weight: 400;
-}
-
-nav {
-  flex: 1;
-  padding: 16px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-nav a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.15s;
-}
-
-nav a .nav-icon { font-size: 16px; }
-
+.sidebar-header { padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-logo { display: flex; align-items: center; gap: 10px; }
+.sidebar-logo .icon { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.sidebar-logo h2 { font-size: 14px; font-weight: 700; color: var(--text); }
+.sidebar-logo span { font-size: 11px; color: var(--muted); }
+nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 1px; }
+.nav-section { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 10px 8px 4px; }
+nav a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+nav a .nav-icon { font-size: 15px; }
 nav a:hover { color: var(--text); background: var(--surface2); }
 nav a.active { color: var(--accent); background: var(--accent-dim); }
-
-.sidebar-footer {
-  padding: 12px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.sidebar-footer button, .sidebar-footer a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.15s;
-  border: none;
-  width: 100%;
-  font-family: inherit;
-}
-
-.btn-dashboard {
-  background: var(--accent);
-  color: #fff;
-}
-
+.sidebar-footer { padding: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.sidebar-footer button, .sidebar-footer a { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.15s; border: none; width: 100%; font-family: inherit; }
+.btn-dashboard { background: var(--accent); color: #fff; }
 .btn-dashboard:hover { background: #3a7ce8; }
-
-.btn-logout {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--border) !important;
-}
-
+.btn-logout { background: transparent; color: var(--muted); border: 1px solid var(--border) !important; }
 .btn-logout:hover { color: var(--danger); border-color: var(--danger) !important; }
-
-/* ── HAMBURGER (mobile) ── */
-.hamburger {
-  display: none;
-  position: fixed;
-  top: 14px; left: 14px;
-  z-index: 200;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
-  color: var(--text);
-  font-size: 20px;
-}
-
-/* ── MAIN ── */
-.main {
-  margin-left: var(--sidebar-w);
-  padding: 32px;
-  max-width: 900px;
-}
-
-.page-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
-.page-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 28px;
-}
-
-/* ── CARD ── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 20px;
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-title .badge {
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  background: var(--accent-dim);
-  color: var(--accent);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.divider {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 20px 0;
-}
-
-/* ── FORM ELEMENTS ── */
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-
-input, select {
-  width: 100%;
-  padding: 10px 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
+.hamburger { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; cursor: pointer; color: var(--text); font-size: 20px; }
+.main { margin-left: var(--sidebar-w); padding: 28px 32px; max-width: 960px; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.page-sub { font-size: 13px; color: var(--muted); margin-bottom: 26px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; display: none; }
+.card.active-section { display: block; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.card-title .badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; background: var(--accent-dim); color: var(--accent); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+input, select { width: 100%; padding: 9px 13px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; transition: border-color 0.15s; outline: none; -webkit-appearance: none; appearance: none; }
 input::placeholder { color: var(--muted); }
-input:focus, select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-dim);
-}
-
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237b8299' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-/* ── BUTTONS ── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: all 0.15s;
-}
-
+input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237b8299' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-primary:hover { background: #3a7ce8; transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
-
-.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
 .btn-danger { background: rgba(247,111,111,0.15); color: var(--danger); border: 1px solid rgba(247,111,111,0.3); }
 .btn-danger:hover { background: rgba(247,111,111,0.25); }
 .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-
-.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-/* Toggle button group */
-.toggle-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-.toggle-btn {
-  padding: 7px 14px;
-  border: 2px solid #d0d5dd;
-  border-radius: 8px;
-  background: #f9fafb;
-  color: #374151;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.toggle-btn:hover {
-  border-color: #4f8ef7;
-  background: #eff6ff;
-}
-.toggle-btn.active {
-  border-color: #2563eb;
-  background: #2563eb;
-  color: #fff;
-  font-weight: 600;
-}
-/* ── TOAST ── */
-#toast {
-  position: fixed;
-  bottom: 24px; right: 24px;
-  padding: 12px 18px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 500;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transform: translateY(80px);
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  max-width: 320px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-
+.btn-success { background: rgba(62,207,142,0.15); color: var(--success); border: 1px solid rgba(62,207,142,0.3); }
+.btn-success:hover { background: rgba(62,207,142,0.25); }
+.toggle-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.toggle-btn { padding: 6px 12px; border: 2px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.toggle-btn:hover { border-color: var(--accent); color: var(--text); }
+.toggle-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+#toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 999; display: flex; align-items: center; gap: 8px; transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
 #toast.show { transform: translateY(0); opacity: 1; }
 #toast.success { background: var(--success); color: #0a1f14; }
 #toast.error { background: var(--danger); color: #fff; }
 #toast.info { background: var(--accent); color: #fff; }
-
-/* ── TABLE ── */
-.table-wrap { overflow-x: auto; margin-top: 14px; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead tr { border-bottom: 1px solid var(--border); }
-th {
-  text-align: left;
-  padding: 8px 12px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  font-weight: 600;
-}
-
-td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-}
-
+th { text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: var(--surface2); }
-
-td input {
-  padding: 6px 10px;
-  font-size: 13px;
-  font-family: 'DM Mono', monospace;
-}
-
-/* ── TOTAL DISPLAY ── */
-.total-box {
-  background: var(--accent-dim);
-  border: 1px solid rgba(79,142,247,0.25);
-  border-radius: 8px;
-  padding: 14px 18px;
-  margin: 14px 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--accent);
-  font-family: 'DM Mono', monospace;
-  display: none;
-}
-
-.total-box.visible { display: block; }
-
-/* ── SECTION LABEL ── */
-.section-sub {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted);
-  margin: 20px 0 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ── OVERLAY ── */
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 99;
-}
-
+.section-sub { font-size: 12px; font-weight: 600; color: var(--muted); margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; }
 .overlay.show { display: block; }
-
-/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .hamburger { display: flex; }
-
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .main {
-    margin-left: 0;
-    padding: 20px 16px;
-    padding-top: 60px;
-  }
-
-  .form-row { grid-template-columns: 1fr; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 20px 16px; padding-top: 60px; }
+  .form-row, .form-row-3 { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
-
-<!-- HAMBURGER -->
 <button class="hamburger" onclick="toggleSidebar()">☰</button>
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo">
       <div class="icon">🔥</div>
-      <div>
-        <h2>Gas Agency</h2>
-        <span>Admin Panel</span>
-      </div>
+      <div><h2>Gas Agency</h2><span>Admin Panel</span></div>
     </div>
   </div>
-
   <nav>
-    <a href="#product" onclick="setActive(this)">
-    <span class="nav-icon">🛒</span> Products
-    </a>
-    <a href="#connection" onclick="setActive(this)">
-    <span class="nav-icon">🔗</span> New Connection
-    </a>
-    <a href="#cylinder" class="active" onclick="setActive(this)">
-      <span class="nav-icon">🛢️</span> Cylinder
-    </a>
-    <a href="#employee" onclick="setActive(this)">
-      <span class="nav-icon">👤</span> Employee
-    </a>
-    <a href="#sales" onclick="setActive(this)">
-      <span class="nav-icon">📊</span> Sales
-    </a>
-    <a href="#maintenance" onclick="setActive(this)">
-      <span class="nav-icon">🔧</span> Maintenance
-    </a>
-  </nav>
+    <div class="nav-section">Inventory</div>
+    <a href="#" onclick="showSection('product',this)"><span class="nav-icon">🛒</span> Products</a>
+    <a href="#" onclick="showSection('connection',this)"><span class="nav-icon">🔗</span> New Connection</a>
+    <a href="#" onclick="showSection('cylinder',this)"><span class="nav-icon">🛢️</span> Cylinder</a>
+    <a href="#" onclick="showSection('employee',this)"><span class="nav-icon">👤</span> Employee</a>
 
+    <div class="nav-section">Purchases</div>
+    <a href="#" onclick="showSection('productPurchase',this)"><span class="nav-icon">📦</span> Product Purchase</a>
+    <a href="#" onclick="showSection('cylinderPurchase',this)"><span class="nav-icon">🛢️</span> Cylinder Purchase</a>
+
+    <div class="nav-section">Sales</div>
+    <a href="#" onclick="showSection('sales',this)" class="active"><span class="nav-icon">📊</span> Product Sales</a>
+    <a href="#" onclick="showSection('cylinderSales',this)"><span class="nav-icon">🔵</span> Cylinder Sales</a>
+
+    <div class="nav-section">Operations</div>
+    <a href="#" onclick="showSection('maintenance',this)"><span class="nav-icon">🔧</span> Maintenance</a>
+    <a href="#" onclick="showSection('bankdeposit',this)"><span class="nav-icon">🏦</span> Bank Deposit</a>
+  </nav>
   <div class="sidebar-footer">
-    <button class="btn-dashboard" onclick="openDashboard()">📈 Dashboard</button>
+    <button class="btn-dashboard" onclick="window.location.href='dashboard.html'">📈 Dashboard</button>
     <a href="#" class="btn-logout" onclick="logout()">🚪 Logout</a>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-  <div class="page-title">Admin Panel</div>
-  <div class="page-sub">Manage cylinders, employees, sales & maintenance</div>
+  <div class="page-title" id="pageTitle">Admin Panel</div>
+  <div class="page-sub" id="pageSub">Manage all gas agency operations</div>
 
-  <!-- CYLINDER -->
-  <div class="card" id="cylinder">
-    <div class="card-title">🛢️ Add Cylinder <span class="badge">Inventory</span></div>
-
+  <!-- ===================== PRODUCT ===================== -->
+  <div class="card" id="product">
+    <div class="card-title">🛒 Products <span class="badge">Inventory</span></div>
     <div class="form-row">
       <div class="form-group">
-        <label>Date</label>
-        <input type="date" id="cdate">
-      </div>
-      <div class="form-group">
-        <label>Type</label>
-        <select id="ctype">
-          <option value="domestic">Domestic</option>
-          <option value="commercial">Commercial</option>
-          <option value="5kg">5 kg</option>
+        <label>Product Name</label>
+        <select id="productName">
+          <option value="Stove">Stove</option>
+          <option value="Lighter">Lighter</option>
+          <option value="Pipe">Pipe</option>
+          <option value="Regulator">Regulator</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Price (₹)</label>
+        <input type="number" id="productPrice" placeholder="Enter price">
+      </div>
     </div>
+    <button class="btn btn-primary" onclick="addProduct()">+ Add Product</button>
+  </div>
 
-    <div class="form-group">
-      <label>Price (₹)</label>
-      <input type="number" id="cprice" placeholder="Enter price">
+  <!-- ===================== CONNECTION ===================== -->
+  <div class="card" id="connection">
+    <div class="card-title">🔗 New Connection <span class="badge">Customer</span></div>
+    <div class="form-group"><label>Customer Name</label><input type="text" id="customerName"></div>
+    <div class="form-group"><label>Phone Number</label><input type="text" id="phoneNumber"></div>
+    <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="connectionPrice"></div>
+    <button class="btn btn-primary" onclick="addConnection()">+ Add Connection</button>
+  </div>
+
+  <!-- ===================== CYLINDER ===================== -->
+  <div class="card" id="cylinder">
+    <div class="card-title">🛢️ Cylinder Management <span class="badge">Inventory</span></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="cdate"></div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="ctype"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 kg</option></select>
+      </div>
     </div>
-
+    <div class="form-group"><label>Price (₹)</label><input type="number" id="cprice" placeholder="Enter price"></div>
     <button class="btn btn-primary" onclick="addCylinder()">+ Add Cylinder</button>
-
     <hr class="divider">
-
     <div class="section-sub">Update Price</div>
-
     <div class="form-row">
       <div class="form-group">
         <label>Cylinder Type</label>
-        <select id="utype">
-          <option value="">Select Type</option>
-          <option value="domestic">Domestic</option>
-          <option value="commercial">Commercial</option>
-          <option value="5kg">5 kg</option>
-        </select>
+        <select id="utype"><option value="">Select Type</option><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 kg</option></select>
       </div>
-      <div class="form-group">
-        <label>New Price (₹)</label>
-        <input id="uprice" type="number" placeholder="Enter new price">
-      </div>
+      <div class="form-group"><label>New Price (₹)</label><input id="uprice" type="number" placeholder="Enter new price"></div>
     </div>
-
     <button class="btn btn-ghost" onclick="updatePrice()">↻ Update Price</button>
   </div>
 
-  <!-- EMPLOYEE -->
+  <!-- ===================== EMPLOYEE ===================== -->
   <div class="card" id="employee">
     <div class="card-title">👤 Employee Management <span class="badge">HR</span></div>
-
     <div class="form-row">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input id="ename" placeholder="Employee name">
-      </div>
-      <div class="form-group">
-        <label>Monthly Salary (₹)</label>
-        <input id="esalary" type="number" placeholder="Enter salary">
-      </div>
+      <div class="form-group"><label>Full Name</label><input id="ename" placeholder="Employee name"></div>
+      <div class="form-group"><label>Monthly Salary (₹)</label><input id="esalary" type="number" placeholder="Enter salary"></div>
     </div>
-
     <button class="btn btn-primary" onclick="addEmployee()">+ Add Employee</button>
-
-    <div class="section-sub" style="margin-top:20px">Employee List</div>
+    <div class="section-sub" style="margin-top:16px">Employee List</div>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Salary (₹)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="empTable">
-          <tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Loading...</td></tr>
-        </tbody>
+        <thead><tr><th>Name</th><th>Salary (₹)</th><th>Actions</th></tr></thead>
+        <tbody id="empTable"><tr><td colspan="3" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
-<div class="card" id="product">
 
-  <div class="card-title">
-    🛒 Product Section
-    <span class="badge">Products</span>
-  </div>
-
-  <div class="form-group">
-    <label>Product Name</label>
-    <select id="productName">
-  <option value="Stove">Stove</option>
-  <option value="Lighter">Lighter</option>
-  <option value="Pipe">Pipe</option>
-  <option value="Regulator">Regulator</option>
-</select>
-  </div>
-
-  <div class="form-group">
-    <label>Price</label>
-    <input type="number" id="productPrice">
-  </div>
-
-  <button class="btn btn-primary" onclick="addProduct()">
-    + Add Product
-  </button>
-
-</div>
-  <!-- SALES -->
-  <!-- SALES -->
-<div class="card" id="sales">
-
-<div class="card-title">
-📊 Sales Entry
-<span class="badge">Daily</span>
-</div>
-
-<div class="form-group">
-<label>Date</label>
-<input type="date" id="sdate">
-</div>
-
-<div class="section-sub">Cylinder Sale</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>Cylinder Type</label>
-<select id="salesCylinder">
-<option value="domestic">Domestic</option>
-<option value="commercial">Commercial</option>
-<option value="5kg">5 KG</option>
-</select>
-</div>
-
-<div class="form-group">
-<label>Cylinder Quantity</label>
-<input type="number" id="cylinderQty" value="0">
-</div>
-
-</div>
-
-<div class="section-sub">Product Sale</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>Product</label>
-<select id="salesProduct"></select>
-</div>
-
-<div class="form-group">
-<label>Product Quantity</label>
-<input type="number" id="productQty" value="0">
-</div>
-
-</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>Product Price</label>
-<input type="number" id="salesProductPrice" readonly>
-</div>
-
-<div class="form-group">
-<label>Total Amount</label>
-<input type="number" id="totalAmount" readonly>
-</div>
-
-</div>
-
-<div class="section-sub">Payment Received</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>Cash Received</label>
-<input type="number" id="cashReceived" value="0">
-</div>
-
-<div class="form-group">
-<label>Online Received</label>
-<input type="number" id="onlineReceived" value="0">
-</div>
-
-</div>
-
-<button class="btn btn-primary" onclick="addSales()">
-+ Add Sales
-</button>
-
-</div>
-
-<div class="card" id="connection">
-
-  <div class="card-title">
-    🔗 New Connection
-    <span class="badge">Customer</span>
-  </div>
-
-  <div class="form-group">
-    <label>Customer Name</label>
-    <input type="text" id="customerName">
-  </div>
-
-  <div class="form-group">
-    <label>Phone Number</label>
-    <input type="text" id="phoneNumber">
-  </div>
-
-  <div class="form-group">
-    <label>Connection Price</label>
-    <input type="number" id="connectionPrice">
-  </div>
-
-  <button class="btn btn-primary" onclick="addConnection()">
-    + Add Connection
-  </button>
-
-</div>
-  <!-- MAINTENANCE -->
-  <div class="card" id="maintenance">
-    <div class="card-title">🔧 Maintenance Log <span class="badge">Expenses</span></div>
-
-    <div class="form-group">
-      <label>Date</label>
-      <input type="date" id="mdate">
-    </div>
-
+  <!-- ===================== PRODUCT PURCHASE ===================== -->
+  <div class="card" id="productPurchase">
+    <div class="card-title">📦 Product Purchase <span class="badge">Purchases</span></div>
     <div class="form-row">
       <div class="form-group">
-        <label>Fuel Expense (₹)</label>
-        <input id="fuel" type="number" placeholder="0">
+        <label>Product Type</label>
+        <select id="ppType"><option value="Stove">Stove</option><option value="Lighter">Lighter</option><option value="Pipe">Pipe</option><option value="Regulator">Regulator</option></select>
       </div>
+      <div class="form-group"><label>Purchase Date</label><input type="date" id="ppDate"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity</label><input type="number" id="ppQty" placeholder="0" value="1"></div>
+      <div class="form-group"><label>Price Per Unit (₹)</label><input type="number" id="ppPrice" placeholder="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addProductPurchase()">+ Add Purchase</button>
+    <hr class="divider">
+    <div class="section-sub">Purchase Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Price/Unit</th><th>Total</th><th>Actions</th></tr></thead>
+        <tbody id="ppTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== CYLINDER PURCHASE ===================== -->
+  <div class="card" id="cylinderPurchase">
+    <div class="card-title">🛢️ Cylinder Purchase <span class="badge">Purchases</span></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="cpType"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+      </div>
+      <div class="form-group"><label>Purchase Date</label><input type="date" id="cpDate"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity</label><input type="number" id="cpQty" placeholder="0" value="1"></div>
+      <div class="form-group"><label>Price Per Unit (₹)</label><input type="number" id="cpPrice" placeholder="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addCylinderPurchase()">+ Add Purchase</button>
+    <hr class="divider">
+    <div class="section-sub">Purchase Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Price/Unit</th><th>Total</th><th>Actions</th></tr></thead>
+        <tbody id="cpTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== PRODUCT SALES ===================== -->
+  <div class="card" id="sales">
+    <div class="card-title">📊 Product Sales <span class="badge">Sales</span></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="psDate"></div>
+      <div class="form-group">
+        <label>Product</label>
+        <select id="psProduct" onchange="onProductChange()"></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity</label><input type="number" id="psQty" value="1" oninput="calcProductTotal()"></div>
+      <div class="form-group"><label>Price (₹) (auto)</label><input type="number" id="psPrice" readonly></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="psCash" value="0"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="psOnline" value="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addProductSale()">+ Add Product Sale</button>
+    <hr class="divider">
+    <div class="section-sub">Sales Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Actions</th></tr></thead>
+        <tbody id="psSalesTable"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== CYLINDER SALES ===================== -->
+  <div class="card" id="cylinderSales">
+    <div class="card-title">🔵 Cylinder Sales <span class="badge">Sales</span></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="csDate"></div>
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="csType" onchange="onCylinderTypeChange()"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity</label><input type="number" id="csQty" value="1" oninput="calcCylTotal()"></div>
+      <div class="form-group"><label>Price (₹) (auto)</label><input type="number" id="csPrice" readonly></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="csCash" value="0"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="csOnline" value="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addCylinderSale()">+ Add Cylinder Sale</button>
+    <hr class="divider">
+    <div class="section-sub">Sales Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Actions</th></tr></thead>
+        <tbody id="csSalesTable"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== MAINTENANCE ===================== -->
+  <div class="card" id="maintenance">
+    <div class="card-title">🔧 Maintenance Log <span class="badge">Expenses</span></div>
+    <div class="form-group"><label>Date</label><input type="date" id="mdate"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Fuel Expense (₹)</label><input id="fuel" type="number" placeholder="0"></div>
       <div class="form-group">
         <label>Other Expense (₹)</label>
         <input id="other" type="number" placeholder="0">
-        <label style="margin-top:8px;margin-bottom:4px;font-size:13px;color:#555;">Expense Type</label>
-        <div class="toggle-group" id="expenseTypeGroup">
-          <button type="button" class="toggle-btn active" onclick="selectExpenseType(this,'Maintenance')">🔧 Maintenance</button>
-          <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Transport')">🚚 Transport</button>
-          <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Office')">🏢 Office</button>
-          <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Other')">📦 Other</button>
+        <div style="margin-top:6px">
+          <label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Expense Type</label>
+          <div class="toggle-group" id="expenseTypeGroup">
+            <button type="button" class="toggle-btn active" onclick="selectExpenseType(this,'Maintenance')">🔧 Maintenance</button>
+            <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Transport')">🚚 Transport</button>
+            <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Office')">🏢 Office</button>
+            <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Other')">📦 Other</button>
+          </div>
+          <input type="hidden" id="expenseType" value="Maintenance">
         </div>
-        <input type="hidden" id="expenseType" value="Maintenance">
       </div>
     </div>
-
     <div class="form-row">
       <div class="form-group">
         <label>Employee</label>
-        <select id="empName">
-          <option value="">Select Employee</option>
-        </select>
+        <select id="empName"><option value="">Select Employee</option></select>
       </div>
-      <div class="form-group">
-        <label>Employee Payment (₹)</label>
-        <input id="empPay" type="number" placeholder="0">
-      </div>
+      <div class="form-group"><label>Employee Payment (₹)</label><input id="empPay" type="number" placeholder="0"></div>
     </div>
-
-  
     <button class="btn btn-primary" onclick="addMaintenance()">+ Add Record</button>
+    <hr class="divider">
+    <div class="section-sub">Maintenance Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Fuel</th><th>Other</th><th>Type</th><th>Employee</th><th>Payment</th></tr></thead>
+        <tbody id="maintTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== BANK DEPOSIT ===================== -->
+  <div class="card" id="bankdeposit">
+    <div class="card-title">🏦 Bank Deposit <span class="badge">Finance</span></div>
+    <div class="form-group"><label>Date</label><input type="date" id="bdDate"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Online Deposit (₹)</label><input type="number" id="bdOnline" placeholder="0" value="0"></div>
+      <div class="form-group"><label>Cash Deposit (₹)</label><input type="number" id="bdCash" placeholder="0" value="0"></div>
+    </div>
+    <div class="form-group"><label>Remarks (optional)</label><input type="text" id="bdRemarks" placeholder="e.g. SBI Bank, Branch deposit..."></div>
+    <button class="btn btn-primary" onclick="addBankDeposit()">+ Add Deposit</button>
+    <hr class="divider">
+    <div class="section-sub">Deposit Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="bdTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
   </div>
 
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
 const API = "https://gas-agency-website-1.onrender.com";
 
-// LOGIN CHECK
 if (!sessionStorage.getItem("login")) {
   showToast("Login required ❌", "error");
   setTimeout(() => window.location.href = "login.html", 1500);
 }
 
-// TOAST
 function showToast(msg, type = "info") {
   const t = document.getElementById("toast");
   t.textContent = msg;
@@ -776,369 +389,385 @@ function showToast(msg, type = "info") {
   t._timer = setTimeout(() => t.className = "", 3000);
 }
 
-// SIDEBAR (mobile)
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("open");
   document.getElementById("overlay").classList.toggle("show");
 }
 
-function setActive(el) {
+const SECTION_TITLES = {
+  product: ["Products", "Manage product inventory"],
+  connection: ["New Connection", "Register new customer connections"],
+  cylinder: ["Cylinder", "Manage cylinders and pricing"],
+  employee: ["Employee", "Manage employee records"],
+  productPurchase: ["Product Purchase", "Record product purchases"],
+  cylinderPurchase: ["Cylinder Purchase", "Record cylinder purchases"],
+  sales: ["Product Sales", "Record and view product sales"],
+  cylinderSales: ["Cylinder Sales", "Record and view cylinder sales"],
+  maintenance: ["Maintenance", "Log maintenance expenses"],
+  bankdeposit: ["Bank Deposit", "Manage bank deposits"],
+};
+
+function showSection(id, link) {
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("active-section"));
+  document.getElementById(id)?.classList.add("active-section");
   document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
-  el.classList.add("active");
+  if (link) link.classList.add("active");
+  const info = SECTION_TITLES[id] || ["Admin Panel", ""];
+  document.getElementById("pageTitle").textContent = info[0];
+  document.getElementById("pageSub").textContent = info[1];
   if (window.innerWidth <= 768) toggleSidebar();
+
+  // Load data when section opens
+  if (id === "employee") loadEmployees();
+  if (id === "productPurchase") loadProductPurchases();
+  if (id === "cylinderPurchase") loadCylinderPurchases();
+  if (id === "sales") loadProductSales();
+  if (id === "cylinderSales") loadCylinderSalesTable();
+  if (id === "maintenance") { loadEmployeeDropdown(); loadMaintenanceTable(); }
+  if (id === "bankdeposit") loadBankDeposits();
 }
 
-// LOGOUT
-function logout() {
-  sessionStorage.clear();
-  localStorage.clear();
-  window.location.href = "index.html";
+function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
+
+// ── PRODUCT ──
+async function addProduct() {
+  const data = { productName: document.getElementById("productName").value, price: document.getElementById("productPrice").value };
+  if (!data.price) { showToast("Enter a price", "error"); return; }
+  await fetch(`${API}/addProduct`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  loadProducts();
+  showToast("Product Added ✓", "success");
+  document.getElementById("productPrice").value = "";
+}
+
+async function loadProducts() {
+  const res = await fetch(`${API}/getProducts`);
+  const data = await res.json();
+  const sel = document.getElementById("psProduct");
+  if (sel) {
+    sel.innerHTML = data.map(p => `<option value="${p.productName}" data-price="${p.price}">${p.productName}</option>`).join("");
+    onProductChange();
+  }
+}
+
+// ── CONNECTION ──
+async function addConnection() {
+  const data = { customerName: document.getElementById("customerName").value, phoneNumber: document.getElementById("phoneNumber").value, connectionPrice: document.getElementById("connectionPrice").value };
+  if (!data.customerName) { showToast("Enter customer name", "error"); return; }
+  await fetch(`${API}/addConnection`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Connection added ✓", "success");
+  ["customerName","phoneNumber","connectionPrice"].forEach(id => document.getElementById(id).value = "");
+}
+
+// ── CYLINDER ──
+async function addCylinder() {
+  const date = document.getElementById("cdate").value, type = document.getElementById("ctype").value, price = document.getElementById("cprice").value;
+  if (!date || !price) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/addCylinder`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ date, type, price }) });
+  showToast("Cylinder added ✓", "success");
+  document.getElementById("cprice").value = "";
+  loadCylinderPrices();
+}
+
+async function updatePrice() {
+  const type = document.getElementById("utype").value, price = document.getElementById("uprice").value;
+  if (!type || !price) { showToast("Select type and enter price", "error"); return; }
+  await fetch(`${API}/updatePrice`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ type, price }) });
+  showToast("Price updated ✓", "success");
+  loadCylinderPrices();
+  document.getElementById("uprice").value = "";
+}
+
+let cylinderPrices = {};
+async function loadCylinderPrices() {
+  const res = await fetch(`${API}/getCylinder`);
+  const data = await res.json();
+  data.forEach(c => cylinderPrices[c.type] = c.price);
+  onCylinderTypeChange();
+}
+
+function onCylinderTypeChange() {
+  const type = document.getElementById("csType")?.value;
+  const price = cylinderPrices[type] || 0;
+  if (document.getElementById("csPrice")) document.getElementById("csPrice").value = price;
+  calcCylTotal();
+}
+function calcCylTotal() {
+  const qty = parseInt(document.getElementById("csQty")?.value) || 0;
+  const price = parseFloat(document.getElementById("csPrice")?.value) || 0;
 }
 
 // ── EMPLOYEE ──
-
 async function addEmployee() {
-  const name = document.getElementById("ename").value.trim();
-  const salary = document.getElementById("esalary").value;
-  if (!name || !salary) { showToast("Please fill all fields", "error"); return; }
-
-  const btn = event.target;
-  btn.disabled = true;
-  btn.textContent = "Adding...";
-
-  try {
-    await fetch(`${API}/addEmployee`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, salary })
-    });
-    showToast("Employee added ✓", "success");
-    document.getElementById("ename").value = "";
-    document.getElementById("esalary").value = "";
-    loadEmployees();
-  } catch (err) {
-    showToast("Failed to add employee", "error");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "+ Add Employee";
-  }
+  const name = document.getElementById("ename").value.trim(), salary = document.getElementById("esalary").value;
+  if (!name || !salary) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/addEmployee`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ name, salary }) });
+  showToast("Employee added ✓", "success");
+  document.getElementById("ename").value = ""; document.getElementById("esalary").value = "";
+  loadEmployees();
 }
 
 async function loadEmployees() {
-  try {
-    const res = await fetch(`${API}/getEmployee`);
-    const data = await res.json();
-    const table = document.getElementById("empTable");
-
-    if (!data.length) {
-      table.innerHTML = `<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">No employees found</td></tr>`;
-      return;
-    }
-
-    table.innerHTML = data.map(e => `
-      <tr>
-        <td style="font-weight:600">${e.name}</td>
-        <td><input type="number" data-name="${e.name}" value="${e.salary}" style="width:140px"></td>
-        <td style="display:flex;gap:6px">
-          <button class="btn btn-sm btn-ghost" onclick="updateSalary('${e.name}')">Update</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteEmp('${e.name}')">Delete</button>
-        </td>
-      </tr>`).join("");
-  } catch (err) {
-    showToast("Could not load employees", "error");
-  }
-}
-
-async function deleteEmp(name) {
-  if (!confirm(`Delete "${name}"?`)) return;
-  try {
-    await fetch(`${API}/deleteEmployee/${encodeURIComponent(name)}`, { method: "DELETE" });
-    showToast(`${name} deleted`, "info");
-    loadEmployees();
-  } catch { showToast("Delete failed", "error"); }
+  const res = await fetch(`${API}/getEmployee`);
+  const data = await res.json();
+  const table = document.getElementById("empTable");
+  if (!data.length) { table.innerHTML = `<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:18px">No employees found</td></tr>`; return; }
+  table.innerHTML = data.map(e => `<tr>
+    <td style="font-weight:600">${e.name}</td>
+    <td><input type="number" data-name="${e.name}" value="${e.salary}" style="width:130px"></td>
+    <td style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-ghost" onclick="updateSalary('${e.name}')">Update</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteEmp('${e.name}')">Delete</button>
+    </td></tr>`).join("");
 }
 
 async function updateSalary(name) {
   const input = document.querySelector(`input[data-name="${name}"]`);
-  try {
-    await fetch(`${API}/updateEmployee`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, salary: input.value })
-    });
-    showToast("Salary updated ✓", "success");
-  } catch { showToast("Update failed", "error"); }
+  await fetch(`${API}/updateEmployee`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ name, salary: input.value }) });
+  showToast("Salary updated ✓", "success");
 }
 
-// ── CYLINDER ──
-
-async function addCylinder() {
-  const date = document.getElementById("cdate").value;
-  const type = document.getElementById("ctype").value;
-  const price = document.getElementById("cprice").value;
-
-  if (!date || !price) { showToast("Please fill all fields", "error"); return; }
-
-  try {
-    await fetch(`${API}/addCylinder`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, type, price })
-    });
-    showToast("Cylinder added ✓", "success");
-    document.getElementById("cprice").value = "";
-  } catch { showToast("Failed to add cylinder", "error"); }
+async function deleteEmp(name) {
+  if (!confirm(`Delete "${name}"?`)) return;
+  await fetch(`${API}/deleteEmployee/${encodeURIComponent(name)}`, { method:"DELETE" });
+  showToast(`${name} deleted`, "info");
+  loadEmployees();
 }
-
-async function updatePrice() {
-  const type = document.getElementById("utype").value;
-  const price = document.getElementById("uprice").value;
-
-  if (!type || !price) { showToast("Select type and enter price", "error"); return; }
-
-  try {
-    await fetch(`${API}/updatePrice`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, price })
-    });
-    showToast("Price updated ✓", "success");
-    loadPrices();
-    document.getElementById("uprice").value = "";
-  } catch { showToast("Update failed", "error"); }
-}
-
-// ── SALES ──
-
-
-let cylinderPrices = {};
-
-async function loadPrices() {
-
-    const res = await fetch(`${API}/getCylinder`);
-
-    const data = await res.json();
-
-    data.forEach(c => {
-        cylinderPrices[c.type] = c.price;
-    });
-}
-
-function calculateTotal() {
-
-    const cylinderType =
-        document.getElementById("salesCylinder").value;
-
-    const cylinderQty =
-        parseInt(document.getElementById("cylinderQty").value) || 0;
-
-    const productQty =
-        parseInt(document.getElementById("productQty").value) || 0;
-
-    const productPrice =
-        parseFloat(document.getElementById("salesProductPrice").value) || 0;
-
-    const cylinderPrice =
-        cylinderPrices[cylinderType] || 0;
-
-    const cylinderTotal =
-        cylinderQty * cylinderPrice;
-
-    const productTotal =
-        productQty * productPrice;
-
-    const total =
-        cylinderTotal + productTotal;
-
-    document.getElementById("totalAmount").value = total;
-}
-
-document.getElementById("cylinderQty")
-.addEventListener("input", calculateTotal);
-
-document.getElementById("productQty")
-.addEventListener("input", calculateTotal);
-
-document.getElementById("salesCylinder")
-.addEventListener("change", calculateTotal);
-
-document.getElementById("salesProduct")
-.addEventListener("change", () => {
-
-    updateProductPrice();
-
-    calculateTotal();
-});
-
-async function addSales() {
-
-    const data = {
-
-        date: document.getElementById("sdate").value,
-
-        cylinderType:
-            document.getElementById("salesCylinder").value,
-
-        cylinderQty:
-            parseInt(document.getElementById("cylinderQty").value) || 0,
-
-        productName:
-            document.getElementById("salesProduct").value,
-
-        productQty:
-            parseInt(document.getElementById("productQty").value) || 0,
-
-        cashReceived:
-            parseFloat(document.getElementById("cashReceived").value) || 0,
-
-        onlineReceived:
-            parseFloat(document.getElementById("onlineReceived").value) || 0
-    };
-
-    const res = await fetch(`${API}/addSales`, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(data)
-    });
-
-    if(res.ok) {
-
-        showToast("Sales Added ✓", "success");
-
-    } else {
-
-        showToast("Failed", "error");
-    }
-}
-
-
-async function addProduct() {
-
-    const data = {
-        productName: document.getElementById("productName").value,
-        price: document.getElementById("productPrice").value
-    };
-
-    await fetch(`${API}/addProduct`, {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify(data)
-    });
-
-    loadProducts();
-
-    showToast("Product Added ✓", "success");
-}
-
-async function loadProducts() {
-
-    const res = await fetch(`${API}/getProducts`);
-
-    const data = await res.json();
-
-    let select = document.getElementById("salesProduct");
-
-    select.innerHTML = "";
-
-    data.forEach(p => {
-
-        let option = document.createElement("option");
-
-        option.value = p.productName;
-
-        option.text = p.productName;
-
-        option.setAttribute("data-price", p.price);
-
-        select.appendChild(option);
-    });
-
-    updateProductPrice();
-}
-
-function updateProductPrice() {
-
-    let select = document.getElementById("salesProduct");
-
-    let price =
-      select.options[select.selectedIndex]
-      .getAttribute("data-price");
-
-    document.getElementById("salesProductPrice").value = price;
-}
-
-document.getElementById("salesProduct")
-.addEventListener("change", updateProductPrice);
-// ── MAINTENANCE ──
 
 async function loadEmployeeDropdown() {
-  try {
-    const res = await fetch(`${API}/getEmployee`);
-    const data = await res.json();
-    const sel = document.getElementById("empName");
-    sel.innerHTML = `<option value="">Select Employee</option>`;
-    data.forEach(e => {
-      const opt = document.createElement("option");
-      opt.value = e.name;
-      opt.textContent = e.name;
-      sel.appendChild(opt);
-    });
-  } catch { console.error("Dropdown load failed"); }
+  const res = await fetch(`${API}/getEmployee`);
+  const data = await res.json();
+  const sel = document.getElementById("empName");
+  sel.innerHTML = `<option value="">Select Employee</option>` + data.map(e => `<option value="${e.name}">${e.name}</option>`).join("");
 }
 
+// ── PRODUCT PURCHASE ──
+async function addProductPurchase() {
+  const data = {
+    productType: document.getElementById("ppType").value,
+    purchaseDate: document.getElementById("ppDate").value,
+    quantity: parseInt(document.getElementById("ppQty").value) || 0,
+    pricePerUnit: parseFloat(document.getElementById("ppPrice").value) || 0
+  };
+  if (!data.purchaseDate || !data.quantity || !data.pricePerUnit) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/purchase/product/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Product Purchase added ✓", "success");
+  ["ppDate","ppQty","ppPrice"].forEach(id => document.getElementById(id).value = "");
+  loadProductPurchases();
+}
+
+async function loadProductPurchases() {
+  const res = await fetch(`${API}/purchase/product/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("ppTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(p => `<tr>
+    <td>${p.purchaseDate || "-"}</td><td>${p.productType}</td><td>${p.quantity}</td>
+    <td>₹ ${p.pricePerUnit}</td><td>₹ ${p.totalAmount}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteProductPurchase(${p.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteProductPurchase(id) {
+  if (!confirm("Delete this purchase?")) return;
+  await fetch(`${API}/purchase/product/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadProductPurchases();
+}
+
+// ── CYLINDER PURCHASE ──
+async function addCylinderPurchase() {
+  const data = {
+    cylinderType: document.getElementById("cpType").value,
+    purchaseDate: document.getElementById("cpDate").value,
+    quantity: parseInt(document.getElementById("cpQty").value) || 0,
+    pricePerUnit: parseFloat(document.getElementById("cpPrice").value) || 0
+  };
+  if (!data.purchaseDate || !data.quantity || !data.pricePerUnit) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/purchase/cylinder/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Cylinder Purchase added ✓", "success");
+  ["cpDate","cpQty","cpPrice"].forEach(id => document.getElementById(id).value = "");
+  loadCylinderPurchases();
+}
+
+async function loadCylinderPurchases() {
+  const res = await fetch(`${API}/purchase/cylinder/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("cpTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(p => `<tr>
+    <td>${p.purchaseDate || "-"}</td><td style="text-transform:capitalize">${p.cylinderType}</td><td>${p.quantity}</td>
+    <td>₹ ${p.pricePerUnit}</td><td>₹ ${p.totalAmount}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteCylinderPurchase(${p.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteCylinderPurchase(id) {
+  if (!confirm("Delete this purchase?")) return;
+  await fetch(`${API}/purchase/cylinder/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadCylinderPurchases();
+}
+
+// ── PRODUCT SALES ──
+function onProductChange() {
+  const sel = document.getElementById("psProduct");
+  if (!sel || !sel.options[sel.selectedIndex]) return;
+  const price = sel.options[sel.selectedIndex].getAttribute("data-price") || 0;
+  document.getElementById("psPrice").value = price;
+}
+
+async function addProductSale() {
+  const sel = document.getElementById("psProduct");
+  const data = {
+    date: document.getElementById("psDate").value,
+    productName: sel.value,
+    productQty: parseInt(document.getElementById("psQty").value) || 0,
+    cashReceived: parseFloat(document.getElementById("psCash").value) || 0,
+    onlineReceived: parseFloat(document.getElementById("psOnline").value) || 0
+  };
+  if (!data.date || !data.productQty) { showToast("Fill date and quantity", "error"); return; }
+  await fetch(`${API}/sales/product/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Product Sale added ✓", "success");
+  document.getElementById("psQty").value = 1;
+  document.getElementById("psCash").value = 0;
+  document.getElementById("psOnline").value = 0;
+  loadProductSales();
+}
+
+async function loadProductSales() {
+  const res = await fetch(`${API}/sales/product/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("psSalesTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(s => `<tr>
+    <td>${s.date || "-"}</td><td>${s.productName || "-"}</td><td>${s.productQty}</td>
+    <td>₹ ${s.productTotal}</td><td>₹ ${s.cashReceived}</td><td>₹ ${s.onlineReceived}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteProductSale(${s.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteProductSale(id) {
+  if (!confirm("Delete this sale?")) return;
+  await fetch(`${API}/sales/product/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadProductSales();
+}
+
+// ── CYLINDER SALES ──
+async function addCylinderSale() {
+  const data = {
+    date: document.getElementById("csDate").value,
+    cylinderType: document.getElementById("csType").value,
+    cylinderQty: parseInt(document.getElementById("csQty").value) || 0,
+    cashReceived: parseFloat(document.getElementById("csCash").value) || 0,
+    onlineReceived: parseFloat(document.getElementById("csOnline").value) || 0
+  };
+  if (!data.date || !data.cylinderQty) { showToast("Fill date and quantity", "error"); return; }
+  await fetch(`${API}/sales/cylinder/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Cylinder Sale added ✓", "success");
+  document.getElementById("csQty").value = 1;
+  document.getElementById("csCash").value = 0;
+  document.getElementById("csOnline").value = 0;
+  loadCylinderSalesTable();
+}
+
+async function loadCylinderSalesTable() {
+  const res = await fetch(`${API}/sales/cylinder/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("csSalesTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(s => `<tr>
+    <td>${s.date || "-"}</td><td style="text-transform:capitalize">${s.cylinderType || "-"}</td><td>${s.cylinderQty}</td>
+    <td>₹ ${s.cylinderTotal}</td><td>₹ ${s.cashReceived}</td><td>₹ ${s.onlineReceived}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteCylinderSale(${s.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteCylinderSale(id) {
+  if (!confirm("Delete this sale?")) return;
+  await fetch(`${API}/sales/cylinder/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadCylinderSalesTable();
+}
+
+// ── MAINTENANCE ──
 function selectExpenseType(btn, type) {
-	  document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
-	  btn.classList.add("active");
-	  document.getElementById("expenseType").value = type;
-	}
+  document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("expenseType").value = type;
+}
 
-	function selectDepositType(btn, type) {
-	  document.querySelectorAll("#depositTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
-	  btn.classList.add("active");
-	  document.getElementById("depositType").value = type;
-	}
+async function addMaintenance() {
+  const date = document.getElementById("mdate").value;
+  if (!date) { showToast("Select a date", "error"); return; }
+  await fetch(`${API}/addMaintenance`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      date,
+      fuel: document.getElementById("fuel").value || 0,
+      otherExpense: document.getElementById("other").value || 0,
+      expenseType: document.getElementById("expenseType").value,
+      employeeName: document.getElementById("empName").value,
+      employeePayment: document.getElementById("empPay").value || 0,
+      bankDeposit: 0,
+      depositType: ""
+    })
+  });
+  showToast("Maintenance record added ✓", "success");
+  ["mdate","fuel","other","empPay"].forEach(id => document.getElementById(id).value = "");
+  loadMaintenanceTable();
+}
 
-	async function addMaintenance() {
-	  const date = document.getElementById("mdate").value;
-	  if (!date) { showToast("Please select a date", "error"); return; }
+async function loadMaintenanceTable() {
+  const res = await fetch(`${API}/getMaintenance`);
+  const data = await res.json();
+  const tbody = document.getElementById("maintTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(m => `<tr>
+    <td>${m.date}</td><td>₹ ${m.fuel}</td><td>₹ ${m.otherExpense}</td>
+    <td>${m.expenseType || "—"}</td><td>${m.employeeName || "—"}</td><td>₹ ${m.employeePayment}</td></tr>`).join("");
+}
 
-	  try {
-	    await fetch(`${API}/addMaintenance`, {
-	      method: "POST",
-	      headers: { "Content-Type": "application/json" },
-	      body: JSON.stringify({
-	        date,
-	        fuel: document.getElementById("fuel").value || 0,
-	        otherExpense: document.getElementById("other").value || 0,
-	        expenseType: document.getElementById("expenseType").value,
-	        employeeName: document.getElementById("empName").value,
-	        employeePayment: document.getElementById("empPay").value || 0,
-	        bankDeposit: document.getElementById("bank").value || 0,
-	        depositType: document.getElementById("depositType").value
-	      })
-	    });
-	    showToast("Maintenance record added ✓", "success");
-	    ["mdate", "fuel", "other", "empPay", "bank"].forEach(id => document.getElementById(id).value = "");
-	    // Reset toggles
-	    selectExpenseType(document.querySelector("#expenseTypeGroup .toggle-btn"), "Maintenance");
-	    selectDepositType(document.querySelector("#depositTypeGroup .toggle-btn"), "Online");
-	  } catch { showToast("Failed to add record", "error"); }
-	}
+// ── BANK DEPOSIT ──
+async function addBankDeposit() {
+  const date = document.getElementById("bdDate").value;
+  if (!date) { showToast("Select a date", "error"); return; }
+  const data = {
+    date,
+    onlineDeposit: parseFloat(document.getElementById("bdOnline").value) || 0,
+    cashDeposit: parseFloat(document.getElementById("bdCash").value) || 0,
+    remarks: document.getElementById("bdRemarks").value
+  };
+  await fetch(`${API}/bankdeposit/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Bank Deposit added ✓", "success");
+  ["bdDate","bdOnline","bdCash","bdRemarks"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("bdOnline").value = 0;
+  document.getElementById("bdCash").value = 0;
+  loadBankDeposits();
+}
+
+async function loadBankDeposits() {
+  const res = await fetch(`${API}/bankdeposit/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("bdTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(d => `<tr>
+    <td>${d.date}</td><td>₹ ${d.onlineDeposit}</td><td>₹ ${d.cashDeposit}</td>
+    <td style="font-weight:600;color:var(--success)">₹ ${d.totalDeposit}</td>
+    <td>${d.remarks || "—"}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteBankDeposit(${d.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteBankDeposit(id) {
+  if (!confirm("Delete this deposit?")) return;
+  await fetch(`${API}/bankdeposit/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadBankDeposits();
+}
 
 // ── INIT ──
 document.addEventListener("DOMContentLoaded", () => {
-  loadEmployees();
-  loadEmployeeDropdown();
-  loadPrices();
+  showSection("sales", document.querySelector("nav a[onclick*=\"'sales'\"]"));
   loadProducts();
+  loadCylinderPrices();
+  loadEmployees();
 });
-
-function openDashboard() { window.location.href = "dashboard.html"; }
 </script>
 </body>
 </html>

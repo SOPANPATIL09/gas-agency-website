@@ -7,390 +7,88 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: url('images/bg.png') center/cover fixed;
-  min-height: 100vh;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(5, 15, 40, 0.72);
-  z-index: 0;
-}
-
-/* everything above overlay */
+body { font-family: 'Segoe UI', sans-serif; background: url('images/bg.png') center/cover fixed; min-height: 100vh; }
+body::before { content: ""; position: fixed; inset: 0; background: rgba(5,15,40,0.74); z-index: 0; }
 .header, .content { position: relative; z-index: 1; }
-
-/* ── HEADER ── */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 40px;
-  background: linear-gradient(90deg, #0a2e6e, #1565c0);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.logo-section img {
-  height: 58px;
-  border-radius: 8px;
-}
-
-.title-box h1 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.3px;
-}
-
-.title-box p {
-  font-size: 13px;
-  color: #ffd54f;
-  margin-top: 2px;
-}
-
-.nav-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.nav-buttons button {
-  padding: 8px 20px;
-  border-radius: 20px;
-  border: 2px solid rgba(255,255,255,0.4);
-  background: transparent;
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.nav-buttons button:hover {
-  background: #fff;
-  color: #0a2e6e;
-  border-color: #fff;
-}
-
-/* ── CONTENT ── */
-.content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 28px 24px 60px;
-}
-
-/* ── STAT CARDS ── */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: linear-gradient(135deg, #1565c0, #0d47a1);
-  border-radius: 14px;
-  padding: 22px 24px;
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  transition: transform 0.2s;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
+.header { display: flex; justify-content: space-between; align-items: center; padding: 14px 40px; background: linear-gradient(90deg,#0a2e6e,#1565c0); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+.logo-section { display: flex; align-items: center; gap: 14px; }
+.logo-section img { height: 52px; border-radius: 8px; }
+.title-box h1 { font-size: 22px; font-weight: 700; color: #fff; }
+.title-box p { font-size: 12px; color: #ffd54f; margin-top: 2px; }
+.nav-buttons { display: flex; gap: 10px; }
+.nav-buttons button { padding: 7px 18px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.4); background: transparent; color: #fff; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.nav-buttons button:hover { background: #fff; color: #0a2e6e; border-color: #fff; }
+.content { max-width: 1300px; margin: 0 auto; padding: 24px 20px 60px; }
+/* STATS GRID */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.stat-card { border-radius: 12px; padding: 18px 20px; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
 .stat-card:hover { transform: translateY(-3px); }
-
-.stat-card .label {
-  font-size: 13px;
-  color: #90caf9;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-}
-
-.stat-card .value {
-  font-size: 30px;
-  font-weight: 700;
-  margin-top: 8px;
-  color: #fff;
-}
-
-/* ── SECTION BOX ── */
-.section {
-  background: rgba(10, 25, 60, 0.6);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px;
-  padding: 24px;
-  margin-bottom: 20px;
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ── DOWNLOAD REPORTS ── */
-.report-rows { display: flex; flex-direction: column; gap: 12px; }
-
-.report-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.report-row .row-label {
-  font-size: 13px;
-  color: #90caf9;
-  font-weight: 600;
-  width: 80px;
-  flex-shrink: 0;
-}
-
-.report-row input {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  font-size: 13px;
-  outline: none;
-}
-
-.report-row input:focus {
-  border-color: #42a5f5;
-  background: rgba(66,165,245,0.1);
-}
-
-.report-row input[type="number"] { width: 100px; }
-
-.btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-csv {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  color: #fff;
-}
-
-.btn-pdf {
-  background: linear-gradient(135deg, #e53935, #b71c1c);
-  color: #fff;
-}
-
-.btn:hover { transform: scale(1.04); opacity: 0.92; }
-
-/* ── TABLE ── */
+.stat-card.blue { background: linear-gradient(135deg,#1565c0,#0d47a1); }
+.stat-card.green { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
+.stat-card.orange { background: linear-gradient(135deg,#e65100,#bf360c); }
+.stat-card.teal { background: linear-gradient(135deg,#00695c,#004d40); }
+.stat-card.purple { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
+.stat-card.grey { background: linear-gradient(135deg,#37474f,#263238); }
+.stat-card .label { font-size: 11px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.stat-card .value { font-size: 26px; font-weight: 700; margin-top: 6px; }
+.stat-card .sub { font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.6); }
+/* SECTION */
+.section { background: rgba(10,25,60,0.62); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
+.section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.section-title span { font-size: 13px; }
+/* TABLE */
 .table-wrap { overflow-x: auto; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-thead tr {
-  background: rgba(21, 101, 192, 0.7);
-}
-
-th {
-  padding: 12px 14px;
-  text-align: center;
-  color: #fff;
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-td {
-  padding: 11px 14px;
-  text-align: center;
-  color: #e3eaff;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: rgba(21,101,192,0.7); }
+th { padding: 10px 12px; text-align: center; color: #fff; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+td { padding: 10px 12px; text-align: center; color: #e3eaff; border-bottom: 1px solid rgba(255,255,255,0.07); }
 tbody tr:hover td { background: rgba(255,255,255,0.05); }
-
 tbody tr:last-child td { border-bottom: none; }
-
-.no-data { color: #7899cc; text-align: center; padding: 20px; font-size: 14px; }
-
-/* ── PAGINATION ── */
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.pagination button {
-  padding: 7px 20px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.pagination button:hover {
-  background: #1565c0;
-  border-color: #1565c0;
-}
-
-/* ── DATE CHECK ROW ── */
-.check-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-
-.check-row input {
-  padding: 9px 14px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  font-size: 14px;
-  outline: none;
-}
-
-.check-row input:focus { border-color: #42a5f5; }
-
-.btn-check {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  color: #fff;
-  padding: 9px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-check:hover { transform: scale(1.04); }
-
-.result-text {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffd54f;
-  margin-top: 10px;
-}
-
-/* ── DELETE BUTTON ── */
-.btn-delete {
-  padding: 5px 12px;
-  background: rgba(229, 57, 53, 0.2);
-  color: #ef5350;
-  border: 1px solid rgba(229,57,53,0.4);
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
+.no-data { color: #7899cc; text-align: center; padding: 20px; font-size: 13px; }
+/* PAGINATION */
+.pagination { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
+.pagination button { padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.pagination button:hover { background: #1565c0; border-color: #1565c0; }
+/* REPORT CONTROLS */
+.report-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 14px; }
+.report-box { background: rgba(21,101,192,0.2); border: 1px solid rgba(66,165,245,0.25); border-radius: 10px; padding: 16px; transition: transform 0.2s; }
+.report-box:hover { transform: translateY(-2px); }
+.report-box h3 { font-size: 13px; font-weight: 700; color: #ffd54f; margin-bottom: 10px; }
+.report-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.report-row input { padding: 7px 10px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; outline: none; flex: 1; min-width: 100px; }
+.report-row input:focus { border-color: #42a5f5; }
+.btn { padding: 7px 14px; border-radius: 7px; border: none; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.btn-pdf { background: linear-gradient(135deg,#e53935,#b71c1c); color: #fff; }
+.btn-csv { background: linear-gradient(135deg,#ff9800,#f57c00); color: #fff; }
+.btn:hover { transform: scale(1.04); opacity: 0.9; }
+/* DELETE */
+.btn-delete { padding: 4px 10px; background: rgba(229,57,53,0.2); color: #ef5350; border: 1px solid rgba(229,57,53,0.4); border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .btn-delete:hover { background: rgba(229,57,53,0.4); }
-
-/* ── REPORT GRID ── */
-.report-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.report-box {
-  background: rgba(21, 101, 192, 0.2);
-  border: 1px solid rgba(66,165,245,0.25);
-  border-radius: 12px;
-  padding: 18px;
-  transition: transform 0.2s;
-}
-
-.report-box:hover { transform: translateY(-3px); }
-
-.report-box h3 {
-  font-size: 14px;
-  font-weight: 700;
-  color: #ffd54f;
-  margin-bottom: 12px;
-}
-
-.report-box .check-row { margin-bottom: 0; }
-
-.report-box .result-text { font-size: 14px; margin-top: 8px; }
-
-/* ── CHART ── */
-.chart-wrap {
-  position: relative;
-  height: 280px;
-}
-
-/* ── TOAST ── */
-#toast {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  z-index: 999;
-  background: #43a047;
-  color: #fff;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-  transform: translateY(80px);
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-}
-
+/* CHART */
+.chart-wrap { position: relative; height: 260px; }
+/* BADGE */
+.badge-type { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 5px; padding: 2px 7px; font-size: 11px; font-weight: 600; }
+/* TOAST */
+#toast { position: fixed; bottom: 28px; right: 28px; padding: 11px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; z-index: 999; background: #43a047; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 #toast.show { transform: translateY(0); opacity: 1; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .header { padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
+/* TWO-COL TABLES LAYOUT */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+  .content { padding: 14px; }
+}
+@media (max-width: 600px) {
   .stats-grid { grid-template-columns: 1fr; }
-  .content { padding: 16px; }
 }
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <div class="header">
   <div class="logo-section">
     <img src="images/logo.png" alt="Logo">
-    <div class="title-box">
-      <h1>Sudip HP Gas Agency</h1>
-      <p>Safe &bull; Reliable &bull; Always</p>
-    </div>
+    <div class="title-box"><h1>Sudip HP Gas Agency</h1><p>Safe &bull; Reliable &bull; Always</p></div>
   </div>
   <div class="nav-buttons" id="navButtons">
     <button onclick="goHome()">🏠 Home</button>
@@ -401,883 +99,433 @@ tbody tr:last-child td { border-bottom: none; }
 
 <div class="content">
 
-  <!-- STAT CARDS -->
+  <!-- STAT CARDS ROW 1 -->
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="label">💰 Total Sales</div>
-      <div class="value" id="totalSalesCard">₹ —</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">🔧 Total Maintenance</div>
-      <div class="value" id="totalMaintenanceCard">₹ —</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">👤 Total Employees</div>
-      <div class="value" id="totalEmployeeCard">—</div>
-    </div>
+    <div class="stat-card blue"><div class="label">🔵 Cylinder Sales</div><div class="value" id="sc_cylSales">₹ —</div><div class="sub" id="sc_cylSalesCount">— records</div></div>
+    <div class="stat-card orange"><div class="label">🛒 Product Sales</div><div class="value" id="sc_prodSales">₹ —</div><div class="sub" id="sc_prodSalesCount">— records</div></div>
+    <div class="stat-card teal"><div class="label">💰 Total Sales</div><div class="value" id="sc_totalSales">₹ —</div><div class="sub">Combined all sales</div></div>
+  </div>
+  <!-- STAT CARDS ROW 2 -->
+  <div class="stats-grid">
+    <div class="stat-card purple"><div class="label">📦 Product Purchases</div><div class="value" id="sc_prodPurchase">₹ —</div><div class="sub" id="sc_prodPurchaseCount">— records</div></div>
+    <div class="stat-card blue" style="background:linear-gradient(135deg,#0277bd,#01579b)"><div class="label">🛢️ Cylinder Purchases</div><div class="value" id="sc_cylPurchase">₹ —</div><div class="sub" id="sc_cylPurchaseCount">— records</div></div>
+    <div class="stat-card green"><div class="label">🏦 Bank Deposits</div><div class="value" id="sc_bankDeposit">₹ —</div><div class="sub" id="sc_bankDepositCount">— records</div></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card orange" style="background:linear-gradient(135deg,#c62828,#b71c1c)"><div class="label">🔧 Maintenance</div><div class="value" id="sc_maintenance">₹ —</div><div class="sub" id="sc_maintenanceCount">— records</div></div>
+    <div class="stat-card grey"><div class="label">👤 Total Employees</div><div class="value" id="sc_employees">—</div><div class="sub">Active staff</div></div>
+    <div class="stat-card teal" style="background:linear-gradient(135deg,#283593,#1a237e)"><div class="label">📊 Net Position</div><div class="value" id="sc_net">₹ —</div><div class="sub">Sales minus expenses</div></div>
   </div>
 
-  <!-- DOWNLOAD REPORTS -->
+  <!-- REPORTS DOWNLOAD -->
   <div class="section">
     <div class="section-title">📥 Download Reports</div>
-    <div class="report-rows">
-      <div class="report-row">
-        <span class="row-label">Daily</span>
-        <input type="date" id="rDate">
-        <button class="btn btn-csv" onclick="downloadDaily()">CSV</button>
-        <button class="btn btn-pdf" onclick="downloadPDF()">PDF</button>
-      </div>
-      <div class="report-row">
-        <span class="row-label">Monthly</span>
-        <input type="month" id="rMonth">
-        <button class="btn btn-csv" onclick="downloadMonthly()">CSV</button>
-        <button class="btn btn-pdf" onclick="downloadMonthlyPDF()">PDF</button>
-      </div>
-      <div class="report-row">
-        <span class="row-label">Yearly</span>
-        <input type="number" id="rYear" placeholder="e.g. 2026" min="2020" max="2099">
-        <button class="btn btn-csv" onclick="downloadYearly()">CSV</button>
-        <button class="btn btn-pdf" onclick="downloadYearlyPDF()">PDF</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CYLINDER PRICES -->
-  <div class="section">
-    <div class="section-title">🛢️ Cylinder Prices</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Date</th><th>Type</th><th>Price (₹)</th></tr>
-        </thead>
-        <tbody id="cylinderTable">
-          <tr><td colspan="3" class="no-data">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button onclick="prevCylinder()">← Prev</button>
-      <button onclick="nextCylinder()">Next →</button>
-    </div>
-  </div>
-
-  <!-- EMPLOYEES -->
-  <div class="section">
-    <div class="section-title">👤 Employees</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Name</th><th>Salary (₹)</th></tr>
-        </thead>
-        <tbody id="employeeTable">
-          <tr><td colspan="2" class="no-data">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- DATE-WISE SALES CHECK -->
-  <div class="section">
-    <div class="section-title">📅 Date-wise Sales Check</div>
-    <div class="check-row">
-      <input type="date" id="dateInput">
-      <button class="btn-check" onclick="getTotal()">Check</button>
-    </div>
-    <div class="result-text" id="totalResult"></div>
-  </div>
-
-  <!-- SALES TABLE -->
-  <div class="section">
-    <div class="section-title">📊 Sales Records</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-<tr>
-
-<th id="actionHeader" style="display:none">Action</th>
-
-<th>Date</th>
-
-<th>Cylinder</th>
-<th>Cyl Qty</th>
-<th>Cyl Amount</th>
-
-<th>Product</th>
-<th>Prod Qty</th>
-<th>Prod Amount</th>
-
-<th>Cash</th>
-<th>Online</th>
-
-<th>Total</th>
-
-</tr>
-</thead>
-
-<tbody id="salesTable">
-<tr>
-<td colspan="11" class="no-data">
-Loading...
-</td>
-</tr>
-</tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button onclick="prevPage()">← Prev</button>
-      <button onclick="nextPage()">Next →</button>
-    </div>
-  </div>
-<div class="section">
-
-<div class="section-title">
-🛒 Product Sales
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-<tr>
-<th>Product</th>
-<th>Qty</th>
-<th>Total</th>
-</tr>
-</thead>
-
-<tbody id="productSalesTable">
-
-<tr>
-<td colspan="3" class="no-data">
-Loading...
-</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-<div class="section">
-
-<div class="section-title">
-🔗 New Connections
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-<tr>
-<th>Name</th>
-<th>Phone</th>
-<th>Price</th>
-</tr>
-</thead>
-
-<tbody id="connectionTable">
-
-<tr>
-<td colspan="3" class="no-data">
-Loading...
-</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-  <!-- SALES CHART -->
-  <div class="section">
-    <div class="section-title">📈 Sales Chart</div>
-    <div class="chart-wrap">
-      <canvas id="salesChart"></canvas>
-    </div>
-  </div>
-
-  <!-- MAINTENANCE TABLE -->
-  <div class="section">
-    <div class="section-title">🔧 Maintenance Report</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th><th>Fuel (₹)</th><th>Other (₹)</th>
-            <th>Employee</th><th>Payment (₹)</th><th>Bank (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="maintenanceTable">
-          <tr><td colspan="6" class="no-data">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="pagination">
-      <button onclick="prevMaintenance()">← Prev</button>
-      <button onclick="nextMaintenance()">Next →</button>
-    </div>
-  </div>
-
-  <!-- REPORTS & SUMMARY -->
-  <div class="section">
-    <div class="section-title">📋 Reports & Summary</div>
     <div class="report-grid">
-
       <div class="report-box">
-        <h3>Monthly Sales Report</h3>
-        <div class="check-row">
-          <input type="month" id="monthInput">
-          <button class="btn-check" onclick="getMonthly()">Check</button>
+        <h3>📊 Product Sales PDF</h3>
+        <div class="report-row">
+          <input type="month" id="rProdSalesMonth" placeholder="YYYY-MM">
+          <button class="btn btn-pdf" onclick="downloadPDF('product')">PDF</button>
         </div>
-        <div class="result-text" id="monthlyResult"></div>
       </div>
-
       <div class="report-box">
-        <h3>Maintenance Total (Date-wise)</h3>
-        <div class="check-row">
-          <input type="date" id="mDate">
-          <button class="btn-check" onclick="getMaintenanceTotal()">Check</button>
+        <h3>🔵 Cylinder Sales PDF</h3>
+        <div class="report-row">
+          <input type="month" id="rCylSalesMonth" placeholder="YYYY-MM">
+          <button class="btn btn-pdf" onclick="downloadPDF('cylinder')">PDF</button>
         </div>
-        <div class="result-text" id="mTotal"></div>
       </div>
-
       <div class="report-box">
-        <h3>Maintenance Total (Monthly)</h3>
-        <div class="check-row">
-          <input type="month" id="mMonth">
-          <button class="btn-check" onclick="getMaintenanceMonth()">Check</button>
+        <h3>🏦 Bank Deposit PDF</h3>
+        <div class="report-row">
+          <input type="month" id="rBankMonth" placeholder="YYYY-MM">
+          <button class="btn btn-pdf" onclick="downloadPDF('bank')">PDF</button>
         </div>
-        <div class="result-text" id="mMonthTotal"></div>
       </div>
-
       <div class="report-box">
-        <h3>Total Sales Summary</h3>
-        <div class="check-row">
-          <button class="btn-check" onclick="getSalesSummary()">View Summary</button>
+        <h3>🔧 Combined Report (Old)</h3>
+        <div class="report-row">
+          <input type="date" id="rDate">
+          <button class="btn btn-pdf" onclick="downloadOldPDF()">Daily PDF</button>
         </div>
-        <div class="result-text" id="salesSummary"></div>
+        <div class="report-row">
+          <input type="month" id="rMonth">
+          <button class="btn btn-pdf" onclick="downloadOldMonthlyPDF()">Monthly PDF</button>
+        </div>
       </div>
+    </div>
+  </div>
 
+  <!-- TWO-COL: CYLINDER SALES + PRODUCT SALES -->
+  <div class="two-col">
+    <div class="section">
+      <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th></th></tr></thead>
+          <tbody id="cylSalesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button onclick="paginate('cyl',-1)">← Prev</button>
+        <button onclick="paginate('cyl',1)">Next →</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">📊 Product Sales <span id="prodSalesTotal" style="color:#ffcc80;font-size:13px"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th></th></tr></thead>
+          <tbody id="prodSalesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button onclick="paginate('prod',-1)">← Prev</button>
+        <button onclick="paginate('prod',1)">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TWO-COL: PURCHASES -->
+  <div class="two-col">
+    <div class="section">
+      <div class="section-title">📦 Product Purchases <span id="prodPurchTotal" style="color:#ce93d8;font-size:13px"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Price/Unit</th><th>Total (₹)</th></tr></thead>
+          <tbody id="prodPurchTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button onclick="paginate('pp',-1)">← Prev</button>
+        <button onclick="paginate('pp',1)">Next →</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">🛢️ Cylinder Purchases <span id="cylPurchTotal" style="color:#90caf9;font-size:13px"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Price/Unit</th><th>Total (₹)</th></tr></thead>
+          <tbody id="cylPurchTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button onclick="paginate('cp',-1)">← Prev</button>
+        <button onclick="paginate('cp',1)">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAINTENANCE -->
+  <div class="section">
+    <div class="section-title">🔧 Maintenance Records <span id="maintTotal" style="color:#ef9a9a;font-size:13px"></span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Fuel (₹)</th><th>Other (₹)</th><th>Expense Type</th><th>Employee</th><th>Payment (₹)</th></tr></thead>
+        <tbody id="maintTable"><tr><td colspan="6" class="no-data">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button onclick="paginate('maint',-1)">← Prev</button>
+      <button onclick="paginate('maint',1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- BANK DEPOSITS -->
+  <div class="section">
+    <div class="section-title">🏦 Bank Deposits <span id="bankTotal" style="color:#a5d6a7;font-size:13px"></span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
+        <tbody id="bankTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button onclick="paginate('bank',-1)">← Prev</button>
+      <button onclick="paginate('bank',1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- CHART -->
+  <div class="section">
+    <div class="section-title">📈 Sales Overview Chart</div>
+    <div class="chart-wrap"><canvas id="salesChart"></canvas></div>
+  </div>
+
+  <!-- CYLINDER PRICES + EMPLOYEES -->
+  <div class="two-col">
+    <div class="section">
+      <div class="section-title">🛢️ Cylinder Prices</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Price (₹)</th></tr></thead>
+          <tbody id="cylinderTable"><tr><td colspan="3" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">👤 Employees</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Salary (₹)</th></tr></thead>
+          <tbody id="employeeTable"><tr><td colspan="2" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
 const BASE_URL = "https://gas-agency-website-1.onrender.com";
 const isAdmin = !!sessionStorage.getItem("login");
+const ROWS = 8;
 
-// ── NAV ──
 if (!isAdmin) {
-  document.getElementById("navButtons").innerHTML = `
-    <button onclick="goHome()">🏠 Home</button>
-    <button onclick="goAdmin()">🔑 Login</button>
-  `;
+  document.getElementById("navButtons").innerHTML = `<button onclick="goHome()">🏠 Home</button><button onclick="goAdmin()">🔑 Login</button>`;
 }
 
 function goHome() { window.location.href = "index.html"; }
-function logout() {
-  sessionStorage.clear();
-  localStorage.clear();
-  window.location.href = "index.html";
-}
-function goAdmin() {
-  window.location.href = isAdmin ? "admin.html" : "login.html";
-}
+function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
+function goAdmin() { window.location.href = isAdmin ? "admin.html" : "login.html"; }
 
-// ── TOAST ──
 function showToast(msg, color = "#43a047") {
   const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.style.background = color;
-  t.classList.add("show");
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove("show"), 2500);
+  t.textContent = msg; t.style.background = color; t.classList.add("show");
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 2500);
 }
 
-// ── STAT CARDS ──
-fetch(`${BASE_URL}/getSales`)
-.then(r => r.json())
-.then(data => {
+function fmt(v) { return Number(v || 0).toLocaleString('en-IN'); }
 
-let total = 0;
+// ── PAGINATED TABLE STATE ──
+const pages = { cyl:1, prod:1, pp:1, cp:1, maint:1, bank:1 };
+const allData = {};
 
-data.forEach(s => {
-total += Number(s.totalAmount || 0);
-});
-
-document.getElementById("totalSalesCard")
-.textContent =
-"₹ " + total.toLocaleString('en-IN');
-
-})
-.catch(() => {
-document.getElementById("totalSalesCard")
-.textContent = "₹ 0";
-});
-fetch(`${BASE_URL}/getEmployee`).then(r => r.json()).then(d => {
-  document.getElementById("totalEmployeeCard").textContent = d.length || 0;
-}).catch(() => {});
-
-fetch(`${BASE_URL}/getMaintenance`).then(r => r.json()).then(data => {
-  let total = data.reduce((sum, m) =>
-    sum + Number(m.fuel) + Number(m.otherExpense) + Number(m.employeePayment) + Number(m.bankDeposit), 0);
-  document.getElementById("totalMaintenanceCard").textContent = "₹ " + total.toLocaleString('en-IN');
-}).catch(() => {});
-
-// ── CYLINDER ──
-let cylinderData = [], cylinderPage = 1;
-const cylinderRows = 5;
-
-fetch(`${BASE_URL}/getCylinder`).then(r => r.json()).then(data => {
-  cylinderData = data;
-  renderCylinder();
-}).catch(() => {
-  document.getElementById("cylinderTable").innerHTML = `<tr><td colspan="3" class="no-data">Failed to load</td></tr>`;
-});
-
-function renderCylinder() {
-  const tbody = document.getElementById("cylinderTable");
-  const start = (cylinderPage - 1) * cylinderRows;
-  const page = cylinderData.slice(start, start + cylinderRows);
-  if (!page.length) {
-    tbody.innerHTML = `<tr><td colspan="3" class="no-data">No data found</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = page.map(c => `
-    <tr>
-      <td>${c.date}</td>
-      <td style="text-transform:capitalize">${c.type}</td>
-      <td>₹ ${Number(c.price).toLocaleString('en-IN')}</td>
-    </tr>`).join("");
+function paginate(key, dir) {
+  pages[key] = Math.max(1, pages[key] + dir);
+  renderPage(key);
 }
 
-function nextCylinder() {
-  if (cylinderPage * cylinderRows < cylinderData.length) { cylinderPage++; renderCylinder(); }
-}
-function prevCylinder() {
-  if (cylinderPage > 1) { cylinderPage--; renderCylinder(); }
-}
-
-// ── EMPLOYEES ──
-fetch(`${BASE_URL}/getEmployee`).then(r => r.json()).then(data => {
-  const tbody = document.getElementById("employeeTable");
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="2" class="no-data">No employees found</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = data.map(e => `
-    <tr>
-      <td style="font-weight:600">${e.name}</td>
-      <td>₹ ${Number(e.salary).toLocaleString('en-IN')}</td>
-    </tr>`).join("");
-});
-
-// ── SALES ──
-let salesData = [], currentPage = 1;
-const rowsPerPage = 5;
-
-fetch(`${BASE_URL}/getSales`).then(r => r.json()).then(data => {
-  salesData = data;
-  if (isAdmin) document.getElementById("actionHeader").style.display = "";
-  renderTable();
-  loadChart(data);
-}).catch(() => {
-  document.getElementById("salesTable").innerHTML = `<tr><td colspan="5" class="no-data">Failed to load</td></tr>`;
-});
-
-function renderTable() {
-
-	const tbody =
-	document.getElementById("salesTable");
-
-	const start =
-	(currentPage - 1) * rowsPerPage;
-
-	const page =
-	salesData.slice(start, start + rowsPerPage);
-
-	if (!page.length) {
-
-	tbody.innerHTML = `
-	<tr>
-	<td colspan="11" class="no-data">
-	No sales found
-	</td>
-	</tr>
-	`;
-
-	return;
-	}
-
-	tbody.innerHTML = page.map(s => `
-
-	<tr>
-
-	${isAdmin ? `
-	<td>
-	<button class="btn-delete"
-	onclick="deleteSale(${s.id})">
-	🗑 Delete
-	</button>
-	</td>` : ''}
-
-	<td>${s.date || "-"}</td>
-
-	<td>${s.cylinderType || "-"}</td>
-
-	<td>${s.cylinderQty || 0}</td>
-
-	<td>
-	₹ ${Number(
-	s.cylinderTotal || 0
-	).toLocaleString('en-IN')}
-	</td>
-
-	<td>${s.productName || "-"}</td>
-
-	<td>${s.productQty || 0}</td>
-
-	<td>
-	₹ ${Number(
-	s.productTotal || 0
-	).toLocaleString('en-IN')}
-	</td>
-
-	<td>
-	₹ ${Number(
-	s.cashReceived || 0
-	).toLocaleString('en-IN')}
-	</td>
-
-	<td>
-	₹ ${Number(
-	s.onlineReceived || 0
-	).toLocaleString('en-IN')}
-	</td>
-
-	<td style="font-weight:bold;color:#ffd54f">
-
-	₹ ${Number(
-	s.totalAmount || 0
-	).toLocaleString('en-IN')}
-
-	</td>
-
-	</tr>
-
-	`).join("");
-	}
-	function loadProductSales() {
-
-		const tbody =
-		document.getElementById(
-		"productSalesTable"
-		);
-
-		fetch(`${BASE_URL}/getSales`)
-		.then(r => r.json())
-		.then(data => {
-
-		let grouped = {};
-
-		data.forEach(s => {
-
-		if(!s.productName) return;
-
-		if(!grouped[s.productName]) {
-
-		grouped[s.productName] = {
-		qty: 0,
-		amount: 0
-		};
-
-		}
-
-		grouped[s.productName].qty +=
-		Number(s.productQty || 0);
-
-		grouped[s.productName].amount +=
-		Number(s.productTotal || 0);
-
-		});
-
-		tbody.innerHTML =
-		Object.keys(grouped).map(p => `
-
-		<tr>
-
-		<td>${p}</td>
-
-		<td>${grouped[p].qty}</td>
-
-		<td>
-		₹ ${grouped[p].amount.toLocaleString('en-IN')}
-		</td>
-
-		</tr>
-
-		`).join("");
-
-		});
-		}
-
-		loadProductSales();
-
-function nextPage() { if (currentPage * rowsPerPage < salesData.length) { currentPage++; renderTable(); } }
-function prevPage() { if (currentPage > 1) { currentPage--; renderTable(); } }
-
-function deleteSale(id) {
-  if (!confirm("Delete this sales record?")) return;
-  fetch(`${BASE_URL}/deleteSales/${id}`, { method: "DELETE" }).then(() => {
-    salesData = salesData.filter(s => s.id !== id);
-    renderTable();
-    showToast("Record deleted ✓");
-  }).catch(() => showToast("Delete failed", "#e53935"));
+function renderPage(key) {
+  const data = allData[key] || [];
+  const start = (pages[key]-1)*ROWS;
+  const slice = data.slice(start, start+ROWS);
+  const renders = { cyl: renderCylSales, prod: renderProdSales, pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint, bank: renderBank };
+  renders[key](slice, data.length);
 }
 
-// ── CHART ──
-function loadChart(data) {
-
-const labels =
-data.map(s => s.date);
-
-const cylinderTotals =
-data.map(s =>
-Number(s.cylinderTotal || 0)
-);
-
-const productTotals =
-data.map(s =>
-Number(s.productTotal || 0)
-);
-
-new Chart(
-document.getElementById("salesChart"),
-{
-type: 'bar',
-
-data: {
-
-labels,
-
-datasets: [
-
-{
-label: 'Cylinder Sales',
-data: cylinderTotals,
-backgroundColor:
-'rgba(30,136,229,0.8)',
-borderRadius: 4
-},
-
-{
-label: 'Product Sales',
-data: productTotals,
-backgroundColor:
-'rgba(255,152,0,0.8)',
-borderRadius: 4
+function renderCylSales(slice) {
+  const tbody = document.getElementById("cylSalesTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="7" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(s => `<tr>
+    <td>${s.date||"-"}</td><td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
+    <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
+    <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
+    <td>${isAdmin?`<button class="btn-delete" onclick="deleteCylSale(${s.id})">🗑</button>`:""}</td></tr>`).join("");
 }
 
-]
-
-},
-
-options: {
-
-responsive: true,
-maintainAspectRatio: false,
-
-plugins: {
-legend: {
-labels: {
-color: '#c9d8ff'
-}
-}
-},
-
-scales: {
-
-x: {
-ticks: {
-color: '#90aed4'
-},
-grid: {
-color:
-'rgba(255,255,255,0.05)'
-}
-},
-
-y: {
-beginAtZero: true,
-ticks: {
-color: '#90aed4'
-},
-grid: {
-color:
-'rgba(255,255,255,0.08)'
-}
+function renderProdSales(slice) {
+  const tbody = document.getElementById("prodSalesTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="7" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(s => `<tr>
+    <td>${s.date||"-"}</td><td>${s.productName||"-"}</td>
+    <td>${s.productQty||0}</td><td>₹ ${fmt(s.productTotal)}</td>
+    <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
+    <td>${isAdmin?`<button class="btn-delete" onclick="deleteProdSale(${s.id})">🗑</button>`:""}</td></tr>`).join("");
 }
 
+function renderProdPurch(slice) {
+  const tbody = document.getElementById("prodPurchTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(p => `<tr>
+    <td>${p.purchaseDate||"-"}</td><td>${p.productType||"-"}</td>
+    <td>${p.quantity||0}</td><td>₹ ${fmt(p.pricePerUnit)}</td>
+    <td style="font-weight:600;color:#ffd54f">₹ ${fmt(p.totalAmount)}</td></tr>`).join("");
 }
 
+function renderCylPurch(slice) {
+  const tbody = document.getElementById("cylPurchTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(p => `<tr>
+    <td>${p.purchaseDate||"-"}</td><td style="text-transform:capitalize">${p.cylinderType||"-"}</td>
+    <td>${p.quantity||0}</td><td>₹ ${fmt(p.pricePerUnit)}</td>
+    <td style="font-weight:600;color:#ffd54f">₹ ${fmt(p.totalAmount)}</td></tr>`).join("");
 }
 
-});
-
+function renderMaint(slice) {
+  const tbody = document.getElementById("maintTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="6" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(m => `<tr>
+    <td>${m.date||"-"}</td><td>₹ ${fmt(m.fuel)}</td><td>₹ ${fmt(m.otherExpense)}</td>
+    <td><span class="badge-type">${m.expenseType||"—"}</span></td>
+    <td>${m.employeeName||"—"}</td><td>₹ ${fmt(m.employeePayment)}</td></tr>`).join("");
 }
 
-// ── MAINTENANCE ──
-let maintenanceData = [], maintenancePage = 1;
-const maintenanceRows = 5;
-
-fetch(`${BASE_URL}/getMaintenance`).then(r => r.json()).then(data => {
-  maintenanceData = data;
-  renderMaintenance();
-}).catch(() => {
-  document.getElementById("maintenanceTable").innerHTML = `<tr><td colspan="6" class="no-data">Failed to load</td></tr>`;
-});
-
-function renderMaintenance() {
-  const tbody = document.getElementById("maintenanceTable");
-  const start = (maintenancePage - 1) * maintenanceRows;
-  const page = maintenanceData.slice(start, start + maintenanceRows);
-  if (!page.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="no-data">No data found</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = page.map(m => `
-    <tr>
-      <td>${m.date}</td>
-      <td>₹ ${Number(m.fuel)}</td>
-      <td>₹ ${Number(m.otherExpense)}</td>
-      <td style="font-weight:600">${m.employeeName}</td>
-      <td>₹ ${Number(m.employeePayment)}</td>
-      <td>₹ ${Number(m.bankDeposit)}</td>
-    </tr>`).join("");
+function renderBank(slice) {
+  const tbody = document.getElementById("bankTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(d => `<tr>
+    <td>${d.date||"-"}</td><td>₹ ${fmt(d.onlineDeposit)}</td><td>₹ ${fmt(d.cashDeposit)}</td>
+    <td style="font-weight:700;color:#a5d6a7">₹ ${fmt(d.totalDeposit)}</td>
+    <td>${d.remarks||"—"}</td></tr>`).join("");
 }
 
-function nextMaintenance() { if (maintenancePage * maintenanceRows < maintenanceData.length) { maintenancePage++; renderMaintenance(); } }
-function prevMaintenance() { if (maintenancePage > 1) { maintenancePage--; renderMaintenance(); } }
-
-// ── REPORTS ──
-function getTotal() {
-
-const date =
-document.getElementById(
-"dateInput"
-).value;
-
-if (!date) {
-
-showToast(
-"Select a date",
-"#e53935"
-);
-
-return;
+async function deleteCylSale(id) {
+  if (!confirm("Delete?")) return;
+  await fetch(`${BASE_URL}/sales/cylinder/delete/${id}`, {method:"DELETE"});
+  allData.cyl = allData.cyl.filter(s => s.id !== id);
+  renderPage("cyl");
+  showToast("Deleted");
 }
 
-fetch(`${BASE_URL}/total/${date}`)
-
-.then(r => r.json())
-
-.then(d => {
-
-document.getElementById(
-"totalResult"
-).innerHTML = `
-
-Cylinder Sales :
-₹ ${Number(
-d.cylinderAmount || 0
-).toLocaleString('en-IN')}
-
-<br><br>
-
-Product Sales :
-₹ ${Number(
-d.productAmount || 0
-).toLocaleString('en-IN')}
-
-<br><br>
-
-Cash Received :
-₹ ${Number(
-d.cash || 0
-).toLocaleString('en-IN')}
-
-<br><br>
-
-Online Received :
-₹ ${Number(
-d.online || 0
-).toLocaleString('en-IN')}
-
-<br><br>
-
-Total Quantity :
-${d.quantity || 0}
-
-<br><br>
-
-Grand Total :
-₹ ${Number(
-d.amount || 0
-).toLocaleString('en-IN')}
-
-`;
-
-});
-
+async function deleteProdSale(id) {
+  if (!confirm("Delete?")) return;
+  await fetch(`${BASE_URL}/sales/product/delete/${id}`, {method:"DELETE"});
+  allData.prod = allData.prod.filter(s => s.id !== id);
+  renderPage("prod");
+  showToast("Deleted");
 }
 
-function getMonthly() {
-  const month = document.getElementById("monthInput").value;
-  if (!month) return;
-  fetch(`${BASE_URL}/monthlyAmount/${month}`).then(r => r.json()).then(d => {
-    document.getElementById("monthlyResult").textContent =
-      `Qty: ${d.quantity} | Amount: ₹ ${(d.amount || 0).toLocaleString('en-IN')}`;
+// ── LOAD DASHBOARD SUMMARY ──
+async function loadSummary() {
+  try {
+    const res = await fetch(`${BASE_URL}/dashboard/summary`);
+    const d = await res.json();
+    document.getElementById("sc_cylSales").textContent = "₹ " + fmt(d.cylinderSalesTotal);
+    document.getElementById("sc_cylSalesCount").textContent = d.cylinderSalesCount + " records";
+    document.getElementById("sc_prodSales").textContent = "₹ " + fmt(d.productSalesTotal);
+    document.getElementById("sc_prodSalesCount").textContent = d.productSalesCount + " records";
+    document.getElementById("sc_totalSales").textContent = "₹ " + fmt(d.totalSales);
+    document.getElementById("sc_prodPurchase").textContent = "₹ " + fmt(d.productPurchaseTotal);
+    document.getElementById("sc_prodPurchaseCount").textContent = d.productPurchaseCount + " records";
+    document.getElementById("sc_cylPurchase").textContent = "₹ " + fmt(d.cylinderPurchaseTotal);
+    document.getElementById("sc_cylPurchaseCount").textContent = d.cylinderPurchaseCount + " records";
+    document.getElementById("sc_bankDeposit").textContent = "₹ " + fmt(d.bankDepositTotal);
+    document.getElementById("sc_bankDepositCount").textContent = d.bankDepositCount + " records";
+    document.getElementById("sc_maintenance").textContent = "₹ " + fmt(d.maintenanceTotal);
+    document.getElementById("sc_maintenanceCount").textContent = d.maintenanceCount + " records";
+    document.getElementById("sc_employees").textContent = d.employeeCount;
+    const net = (d.totalSales || 0) - (d.maintenanceTotal || 0);
+    document.getElementById("sc_net").textContent = "₹ " + fmt(net);
+  } catch(e) { console.error("Summary load failed", e); }
+}
+
+// ── LOAD ALL TABLES ──
+async function loadAllTables() {
+  // Cylinder Sales
+  fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
+    allData.cyl = data.reverse();
+    const total = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
+    document.getElementById("cylSalesTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("cyl");
+    buildChart(data);
+  }).catch(()=>{});
+
+  // Product Sales
+  fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()).then(data => {
+    allData.prod = data.reverse();
+    const total = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
+    document.getElementById("prodSalesTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("prod");
+  }).catch(()=>{});
+
+  // Product Purchase
+  fetch(`${BASE_URL}/purchase/product/all`).then(r=>r.json()).then(data => {
+    allData.pp = data.reverse();
+    const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
+    document.getElementById("prodPurchTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("pp");
+  }).catch(()=>{});
+
+  // Cylinder Purchase
+  fetch(`${BASE_URL}/purchase/cylinder/all`).then(r=>r.json()).then(data => {
+    allData.cp = data.reverse();
+    const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
+    document.getElementById("cylPurchTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("cp");
+  }).catch(()=>{});
+
+  // Maintenance
+  fetch(`${BASE_URL}/getMaintenance`).then(r=>r.json()).then(data => {
+    allData.maint = data.reverse();
+    const total = data.reduce((s,m) => s + Number(m.fuel||0) + Number(m.otherExpense||0) + Number(m.employeePayment||0), 0);
+    document.getElementById("maintTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("maint");
+  }).catch(()=>{});
+
+  // Bank Deposits
+  fetch(`${BASE_URL}/bankdeposit/all`).then(r=>r.json()).then(data => {
+    allData.bank = data.reverse();
+    const total = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
+    document.getElementById("bankTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("bank");
+  }).catch(()=>{});
+
+  // Cylinders
+  fetch(`${BASE_URL}/getCylinder`).then(r=>r.json()).then(data => {
+    document.getElementById("cylinderTable").innerHTML = data.slice(-10).reverse().map(c => `
+      <tr><td>${c.date}</td><td style="text-transform:capitalize">${c.type}</td><td>₹ ${fmt(c.price)}</td></tr>`).join("");
+  }).catch(()=>{});
+
+  // Employees
+  fetch(`${BASE_URL}/getEmployee`).then(r=>r.json()).then(data => {
+    document.getElementById("employeeTable").innerHTML = !data.length
+      ? `<tr><td colspan="2" class="no-data">No employees</td></tr>`
+      : data.map(e => `<tr><td style="font-weight:600">${e.name}</td><td>₹ ${fmt(e.salary)}</td></tr>`).join("");
+  }).catch(()=>{});
+}
+
+function buildChart(cylData) {
+  const labels = cylData.slice(0,12).map(s => s.date);
+  const cylTotals = cylData.slice(0,12).map(s => Number(s.cylinderTotal||0));
+  new Chart(document.getElementById("salesChart"), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Cylinder Sales', data: cylTotals, backgroundColor: 'rgba(30,136,229,0.8)', borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#c9d8ff' } } },
+      scales: {
+        x: { ticks: { color: '#90aed4' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { beginAtZero: true, ticks: { color: '#90aed4' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+      }
+    }
   });
 }
 
-function getMaintenanceTotal() {
-  const date = document.getElementById("mDate").value;
-  if (!date) return;
-  fetch(`${BASE_URL}/maintenance/total/${date}`).then(r => r.text()).then(d => {
-    document.getElementById("mTotal").textContent = `Total: ₹ ${d}`;
-  });
+// ── PDF DOWNLOADS ──
+function downloadPDF(type) {
+  if (type === 'product') {
+    const m = document.getElementById("rProdSalesMonth").value;
+    if (!m) { showToast("Select a month", "#e53935"); return; }
+    window.open(`${BASE_URL}/sales/product/pdf/${m}`);
+  } else if (type === 'cylinder') {
+    const m = document.getElementById("rCylSalesMonth").value;
+    if (!m) { showToast("Select a month", "#e53935"); return; }
+    window.open(`${BASE_URL}/sales/cylinder/pdf/${m}`);
+  } else if (type === 'bank') {
+    const m = document.getElementById("rBankMonth").value;
+    if (!m) { showToast("Select a month", "#e53935"); return; }
+    window.open(`${BASE_URL}/bankdeposit/pdf/${m}`);
+  }
 }
 
-function getMaintenanceMonth() {
-  const month = document.getElementById("mMonth").value;
-  if (!month) return;
-  fetch(`${BASE_URL}/maintenance/month/${month}`).then(r => r.text()).then(d => {
-    document.getElementById("mMonthTotal").textContent = `Monthly: ₹ ${d}`;
-  });
-}
-
-function getSalesSummary() {
-
-	fetch(`${BASE_URL}/getSales`)
-	.then(r => r.json())
-	.then(data => {
-
-	let total = 0;
-	let cash = 0;
-	let online = 0;
-
-	data.forEach(s => {
-
-	total += Number(s.totalAmount || 0);
-
-	cash += Number(s.cashReceived || 0);
-
-	online += Number(s.onlineReceived || 0);
-
-	});
-
-	document.getElementById(
-	"salesSummary"
-	).innerHTML = `
-
-	Total Sales :
-	₹ ${total.toLocaleString('en-IN')}
-
-	<br><br>
-
-	Cash Received :
-	₹ ${cash.toLocaleString('en-IN')}
-
-	<br><br>
-
-	Online Received :
-	₹ ${online.toLocaleString('en-IN')}
-
-	`;
-
-	});
-	}
-
-// ── DOWNLOADS ──
-function downloadFile(url) { window.open(url, "_blank"); }
-
-function downloadDaily() {
-  const d = document.getElementById("rDate").value;
-  if (!d) { showToast("Select a date", "#e53935"); return; }
-  downloadFile(`${BASE_URL}/report/daily/${d}`);
-}
-
-function downloadMonthly() {
-  const m = document.getElementById("rMonth").value;
-  if (!m) { showToast("Select a month", "#e53935"); return; }
-  downloadFile(`${BASE_URL}/report/month/${m}`);
-}
-
-function downloadYearly() {
-  const y = document.getElementById("rYear").value;
-  if (!y) { showToast("Enter a year", "#e53935"); return; }
-  downloadFile(`${BASE_URL}/report/year/${y}`);
-}
-
-function downloadPDF() {
+function downloadOldPDF() {
   const d = document.getElementById("rDate").value;
   if (!d) { showToast("Select a date", "#e53935"); return; }
   window.open(`${BASE_URL}/report/pdf/${d}`);
 }
 
-function downloadMonthlyPDF() {
+function downloadOldMonthlyPDF() {
   const m = document.getElementById("rMonth").value;
   if (!m) { showToast("Select a month", "#e53935"); return; }
   window.open(`${BASE_URL}/report/pdf/month/${m}`);
 }
 
-function downloadYearlyPDF() {
-  const y = document.getElementById("rYear").value;
-  if (!y) { showToast("Enter a year", "#e53935"); return; }
-  window.open(`${BASE_URL}/report/pdf/year/${y}`);
-}function loadConnections() {
-
-	fetch(`${BASE_URL}/getConnection`)
-	.then(r => r.json())
-	.then(data => {
-
-	const tbody =
-	document.getElementById(
-	"connectionTable"
-	);
-
-	tbody.innerHTML = data.map(c => `
-
-	<tr>
-
-	<td>${c.customerName}</td>
-
-	<td>${c.phoneNumber}</td>
-
-	<td>
-	₹ ${Number(
-	c.connectionPrice || 0
-	).toLocaleString('en-IN')}
-	</td>
-
-	</tr>
-
-	`).join("");
-
-	});
-	}
-
-	loadConnections();
+// ── INIT ──
+loadSummary();
+loadAllTables();
 </script>
 </body>
 </html>

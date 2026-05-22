@@ -1,9 +1,6 @@
 package com.gasagency.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Maintenance {
@@ -17,12 +14,14 @@ public class Maintenance {
     private double otherExpense;
     private String employeeName;
     private double employeePayment;
-    private double bankDeposit;
     private String expenseType;
+
+    // kept for backward compatibility with existing DB rows
+    private double bankDeposit;
     private String depositType;
 
-    // getters & setters
     public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
@@ -33,27 +32,18 @@ public class Maintenance {
     public double getOtherExpense() { return otherExpense; }
     public void setOtherExpense(double otherExpense) { this.otherExpense = otherExpense; }
 
+    public String getEmployeeName() { return employeeName; }
+    public void setEmployeeName(String employeeName) { this.employeeName = employeeName; }
+
     public double getEmployeePayment() { return employeePayment; }
     public void setEmployeePayment(double employeePayment) { this.employeePayment = employeePayment; }
 
-    public String getEmployeeName() {
-		return employeeName;
-	}
-
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public double getBankDeposit() { return bankDeposit; }
-    public void setBankDeposit(double bankDeposit) { this.bankDeposit = bankDeposit; }
     public String getExpenseType() { return expenseType; }
     public void setExpenseType(String expenseType) { this.expenseType = expenseType; }
+
+    public double getBankDeposit() { return bankDeposit; }
+    public void setBankDeposit(double bankDeposit) { this.bankDeposit = bankDeposit; }
 
     public String getDepositType() { return depositType; }
     public void setDepositType(String depositType) { this.depositType = depositType; }
 }
-
