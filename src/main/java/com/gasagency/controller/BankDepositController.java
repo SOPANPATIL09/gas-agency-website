@@ -1,7 +1,9 @@
 package com.gasagency.controller;
 
 import com.gasagency.model.BankDeposit;
+import com.gasagency.model.BankWithdrawal;
 import com.gasagency.repository.BankDepositRepository;
+import com.gasagency.repository.BankWithdrawalRepository;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -35,6 +37,7 @@ import java.util.List;
 public class BankDepositController {
 
     @Autowired BankDepositRepository bankDepositRepo;
+    @Autowired BankWithdrawalRepository bankWithdrawalRepo;
 
     @PostMapping("/add")
     public ResponseEntity<BankDeposit> addDeposit(@RequestBody BankDeposit d) {
@@ -88,18 +91,22 @@ public class BankDepositController {
         Document doc = new Document(new PdfDocument(new PdfWriter(out)), PageSize.A4);
         doc.setMargins(34f, 42.5f, 34f, 42.5f);
 
-        DeviceRgb NAVY2 = new DeviceRgb(0x0a, 0x2e, 0x6e);
-        DeviceRgb NAVY = new DeviceRgb(0x0d, 0x47, 0xa1);
-        DeviceRgb WHITE = new DeviceRgb(255, 255, 255);
-        DeviceRgb SKYBLUE = new DeviceRgb(0x90, 0xca, 0xf9);
-        DeviceRgb GOLD = new DeviceRgb(0xff, 0xd5, 0x4f);
-        DeviceRgb GRAYLIT = new DeviceRgb(0xf5, 0xf7, 0xfa);
+        DeviceRgb NAVY2    = new DeviceRgb(0x0a, 0x2e, 0x6e);
+        DeviceRgb NAVY     = new DeviceRgb(0x0d, 0x47, 0xa1);
+        DeviceRgb WHITE    = new DeviceRgb(255, 255, 255);
+        DeviceRgb SKYBLUE  = new DeviceRgb(0x90, 0xca, 0xf9);
+        DeviceRgb GOLD     = new DeviceRgb(0xff, 0xd5, 0x4f);
+        DeviceRgb GRAYLIT  = new DeviceRgb(0xf5, 0xf7, 0xfa);
         DeviceRgb GRAYLINE = new DeviceRgb(0xe0, 0xe7, 0xef);
-        DeviceRgb GREEN = new DeviceRgb(0x1b, 0x5e, 0x20);
+        DeviceRgb GREEN    = new DeviceRgb(0x1b, 0x5e, 0x20);
         DeviceRgb GREENMID = new DeviceRgb(0xa5, 0xd6, 0xa7);
+        DeviceRgb RED      = new DeviceRgb(0xb7, 0x1c, 0x1c);
+        DeviceRgb REDMID   = new DeviceRgb(0xef, 0x9a, 0x9a);
+        DeviceRgb PURPMID  = new DeviceRgb(0xc5, 0xca, 0xff);
+        DeviceRgb PURP     = new DeviceRgb(0x1a, 0x23, 0x7e);
         float PW = PageSize.A4.getWidth() - 85f;
 
-        // Header
+        // ── HEADER ──
         String logoPath = "src/main/resources/static/images/logo.png";
         Image logo = new Image(ImageDataFactory.create(logoPath)).setWidth(42).setHeight(42);
         Paragraph agencyName = new Paragraph("SUDIP HP GAS AGENCY")
@@ -114,7 +121,7 @@ public class BankDepositController {
                 .setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0));
         leftInner.addCell(new Cell().add(nameBlock).setBorder(Border.NO_BORDER)
                 .setVerticalAlignment(VerticalAlignment.MIDDLE).setPadding(0));
-        Paragraph rtPara = new Paragraph("BANK DEPOSIT REPORT")
+        Paragraph rtPara = new Paragraph("BANK DEPOSIT & WITHDRAWAL REPORT")
                 .setFontColor(WHITE).setBold().setFontSize(11)
                 .setTextAlignment(TextAlignment.RIGHT).setMarginBottom(4).setMarginTop(0);
         Paragraph rdPara = new Paragraph("Period: " + period)
@@ -135,46 +142,95 @@ public class BankDepositController {
         doc.add(hdrBox);
         doc.add(new Paragraph(" ").setFontSize(6));
 
-        // Table
-        doc.add(new Paragraph("Bank Deposit Records")
+        // ── DEPOSIT TABLE ──
+        doc.add(new Paragraph("➕  Bank Deposit Records")
                 .setBold().setFontSize(13).setFontColor(NAVY).setMarginBottom(4));
         doc.add(new LineSeparator(new SolidLine(2f)).setStrokeColor(NAVY).setMarginBottom(6));
 
-        List<BankDeposit> records = bankDepositRepo.findAll().stream()
+        List<BankDeposit> depRecords = bankDepositRepo.findAll().stream()
                 .filter(d -> d.getDate() != null && d.getDate().startsWith(period))
                 .collect(java.util.stream.Collectors.toList());
 
-        Table table = new Table(new float[]{90f, 120f, 100f, 120f, 80f}).setWidth(PW);
-        String[] headers = {"Date", "Online Deposit (₹)", "Cash Deposit (₹)", "Total (₹)", "Remarks"};
-        for (String h : headers) {
-            table.addHeaderCell(new Cell()
+        Table depTable = new Table(new float[]{90f, 120f, 100f, 120f, 80f}).setWidth(PW);
+        for (String h : new String[]{"Date", "Online Deposit (₹)", "Cash Deposit (₹)", "Total (₹)", "Remarks"}) {
+            depTable.addHeaderCell(new Cell()
                     .add(new Paragraph(h).setFontColor(WHITE).setBold().setFontSize(9))
                     .setBackgroundColor(NAVY).setBorder(Border.NO_BORDER).setPadding(8));
         }
-
-        double totalOnline = 0, totalCash = 0, grandTotal = 0;
+        double depOnline = 0, depCash = 0, depTotal = 0;
         boolean alt = false;
-        for (BankDeposit d : records) {
-            DeviceRgb bg = alt ? GRAYLIT : WHITE;
-            alt = !alt;
-            table.addCell(pdfCell(d.getDate(), bg, TextAlignment.CENTER, GRAYLINE));
-            table.addCell(pdfCell(fmt(d.getOnlineDeposit()), bg, TextAlignment.RIGHT, GRAYLINE));
-            table.addCell(pdfCell(fmt(d.getCashDeposit()), bg, TextAlignment.RIGHT, GRAYLINE));
-            table.addCell(pdfCell(fmt(d.getTotalDeposit()), bg, TextAlignment.RIGHT, GRAYLINE));
-            table.addCell(pdfCell(d.getRemarks() != null ? d.getRemarks() : "—", bg, TextAlignment.LEFT, GRAYLINE));
-            totalOnline += d.getOnlineDeposit();
-            totalCash += d.getCashDeposit();
-            grandTotal += d.getTotalDeposit();
+        for (BankDeposit d : depRecords) {
+            DeviceRgb bg = alt ? GRAYLIT : WHITE; alt = !alt;
+            depTable.addCell(pdfCell(d.getDate(), bg, TextAlignment.CENTER, GRAYLINE));
+            depTable.addCell(pdfCell(fmt(d.getOnlineDeposit()), bg, TextAlignment.RIGHT, GRAYLINE));
+            depTable.addCell(pdfCell(fmt(d.getCashDeposit()), bg, TextAlignment.RIGHT, GRAYLINE));
+            depTable.addCell(pdfCell(fmt(d.getTotalDeposit()), bg, TextAlignment.RIGHT, GRAYLINE));
+            depTable.addCell(pdfCell(d.getRemarks() != null ? d.getRemarks() : "—", bg, TextAlignment.LEFT, GRAYLINE));
+            depOnline += d.getOnlineDeposit();
+            depCash   += d.getCashDeposit();
+            depTotal  += d.getTotalDeposit();
         }
-        table.addCell(pdfCellBold("TOTAL", GREENMID, TextAlignment.CENTER, GREEN));
-        table.addCell(pdfCellBold(fmt(totalOnline), GREENMID, TextAlignment.RIGHT, GREEN));
-        table.addCell(pdfCellBold(fmt(totalCash), GREENMID, TextAlignment.RIGHT, GREEN));
-        table.addCell(pdfCellBold(fmt(grandTotal), GREENMID, TextAlignment.RIGHT, GREEN));
-        table.addCell(pdfCellBold("", GREENMID, TextAlignment.LEFT, GREEN));
+        depTable.addCell(pdfCellBold("TOTAL", GREENMID, TextAlignment.CENTER, GREEN));
+        depTable.addCell(pdfCellBold(fmt(depOnline), GREENMID, TextAlignment.RIGHT, GREEN));
+        depTable.addCell(pdfCellBold(fmt(depCash),   GREENMID, TextAlignment.RIGHT, GREEN));
+        depTable.addCell(pdfCellBold(fmt(depTotal),  GREENMID, TextAlignment.RIGHT, GREEN));
+        depTable.addCell(pdfCellBold("", GREENMID, TextAlignment.LEFT, GREEN));
+        doc.add(depTable);
 
-        doc.add(table);
+        doc.add(new Paragraph(" ").setFontSize(8));
 
-        // Footer
+        // ── WITHDRAWAL TABLE ──
+        doc.add(new Paragraph("➖  Bank Withdrawal Records")
+                .setBold().setFontSize(13).setFontColor(RED).setMarginBottom(4));
+        doc.add(new LineSeparator(new SolidLine(2f)).setStrokeColor(RED).setMarginBottom(6));
+
+        List<BankWithdrawal> wdRecords = bankWithdrawalRepo.findAll().stream()
+                .filter(w -> w.getDate() != null && w.getDate().startsWith(period))
+                .collect(java.util.stream.Collectors.toList());
+
+        Table wdTable = new Table(new float[]{90f, 120f, 100f, 120f, 80f}).setWidth(PW);
+        DeviceRgb REDHDR = new DeviceRgb(0xc6, 0x28, 0x28);
+        for (String h : new String[]{"Date", "Online Withdrawal (₹)", "Cash Withdrawal (₹)", "Total (₹)", "Remarks"}) {
+            wdTable.addHeaderCell(new Cell()
+                    .add(new Paragraph(h).setFontColor(WHITE).setBold().setFontSize(9))
+                    .setBackgroundColor(REDHDR).setBorder(Border.NO_BORDER).setPadding(8));
+        }
+        double wdOnline = 0, wdCash = 0, wdTotal = 0;
+        alt = false;
+        for (BankWithdrawal w : wdRecords) {
+            DeviceRgb bg = alt ? GRAYLIT : WHITE; alt = !alt;
+            wdTable.addCell(pdfCell(w.getDate(), bg, TextAlignment.CENTER, GRAYLINE));
+            wdTable.addCell(pdfCell(fmt(w.getOnlineWithdrawal()), bg, TextAlignment.RIGHT, GRAYLINE));
+            wdTable.addCell(pdfCell(fmt(w.getCashWithdrawal()), bg, TextAlignment.RIGHT, GRAYLINE));
+            wdTable.addCell(pdfCell(fmt(w.getTotalWithdrawal()), bg, TextAlignment.RIGHT, GRAYLINE));
+            wdTable.addCell(pdfCell(w.getRemarks() != null ? w.getRemarks() : "—", bg, TextAlignment.LEFT, GRAYLINE));
+            wdOnline += w.getOnlineWithdrawal();
+            wdCash   += w.getCashWithdrawal();
+            wdTotal  += w.getTotalWithdrawal();
+        }
+        wdTable.addCell(pdfCellBold("TOTAL", REDMID, TextAlignment.CENTER, RED));
+        wdTable.addCell(pdfCellBold(fmt(wdOnline), REDMID, TextAlignment.RIGHT, RED));
+        wdTable.addCell(pdfCellBold(fmt(wdCash),   REDMID, TextAlignment.RIGHT, RED));
+        wdTable.addCell(pdfCellBold(fmt(wdTotal),  REDMID, TextAlignment.RIGHT, RED));
+        wdTable.addCell(pdfCellBold("", REDMID, TextAlignment.LEFT, RED));
+        doc.add(wdTable);
+
+        doc.add(new Paragraph(" ").setFontSize(8));
+
+        // ── NET BALANCE SUMMARY BOX ──
+        double netBalance = depTotal - wdTotal;
+        DeviceRgb balColor = netBalance >= 0 ? GREEN : RED;
+        DeviceRgb balBg    = netBalance >= 0 ? GREENMID : REDMID;
+
+        Table summaryBox = new Table(new float[]{PW / 3f, PW / 3f, PW / 3f}).setWidth(PW);
+        summaryBox.addCell(summaryCell("Total Deposited", fmt(depTotal), GREENMID, GREEN));
+        summaryBox.addCell(summaryCell("Total Withdrawn", fmt(wdTotal),  REDMID,   RED));
+        summaryBox.addCell(summaryCell("Net Balance",     (netBalance < 0 ? "- " : "") + fmt(Math.abs(netBalance)), balBg, balColor));
+        doc.add(summaryBox);
+
+        doc.add(new Paragraph(" ").setFontSize(5));
+
+        // ── FOOTER ──
         Image flogo = new Image(ImageDataFactory.create(logoPath)).setWidth(24).setHeight(24);
         Table footerLeft = new Table(new float[]{32f, 260f});
         footerLeft.addCell(new Cell().add(flogo).setBorder(Border.NO_BORDER)
@@ -195,16 +251,16 @@ public class BankDepositController {
                 .setBackgroundColor(NAVY2).setBorderRadius(new BorderRadius(8));
         footerBox.addCell(new Cell().add(footerOuter).setBorder(Border.NO_BORDER)
                 .setPaddingTop(12).setPaddingBottom(12).setPaddingLeft(14).setPaddingRight(14));
-        doc.add(new Paragraph(" ").setFontSize(5));
         doc.add(footerBox);
 
         doc.close();
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=BankDeposit_" + period + ".pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=BankReport_" + period + ".pdf")
                 .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
                 .body(out.toByteArray());
     }
 
+    // ── PDF cell helpers ──
     private Cell pdfCell(String text, DeviceRgb bg, TextAlignment align, DeviceRgb lineColor) {
         return new Cell().add(new Paragraph(text == null ? "" : text).setFontSize(9).setTextAlignment(align))
                 .setBackgroundColor(bg).setBorder(Border.NO_BORDER)
@@ -217,6 +273,14 @@ public class BankDepositController {
                 .setBackgroundColor(bg).setBorder(Border.NO_BORDER)
                 .setBorderBottom(new SolidBorder(lineColor, 0.5f))
                 .setPaddingTop(8).setPaddingBottom(8).setPaddingLeft(8).setPaddingRight(8);
+    }
+
+    private Cell summaryCell(String label, String value, DeviceRgb bg, DeviceRgb textColor) {
+        return new Cell()
+                .add(new Paragraph(label).setFontSize(9).setFontColor(textColor).setTextAlignment(TextAlignment.CENTER).setMarginBottom(2))
+                .add(new Paragraph("₹ " + value).setFontSize(13).setBold().setFontColor(textColor).setTextAlignment(TextAlignment.CENTER))
+                .setBackgroundColor(bg).setBorder(new SolidBorder(textColor, 1f))
+                .setPaddingTop(10).setPaddingBottom(10);
     }
 
     private String fmt(double v) { return String.format("%,.2f", v); }

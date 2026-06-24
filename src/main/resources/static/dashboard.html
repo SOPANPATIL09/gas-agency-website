@@ -73,6 +73,19 @@ tbody tr:last-child td { border-bottom: none; }
 #toast.show { transform: translateY(0); opacity: 1; }
 /* TWO-COL TABLES LAYOUT */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* BANK BALANCE SUMMARY CARDS */
+.bank-summary { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.bank-summary-card { flex: 1; min-width: 120px; border-radius: 10px; padding: 14px 16px; text-align: center; }
+.bank-summary-card.dep  { background: rgba(46,125,50,0.25);  border: 1.5px solid #4caf50; }
+.bank-summary-card.wd   { background: rgba(183,28,28,0.25);  border: 1.5px solid #ef5350; }
+.bank-summary-card.bal  { background: rgba(21,101,192,0.30); border: 1.5px solid #42a5f5; }
+.bank-summary-card .bs-label { font-size: 11px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+.bank-summary-card .bs-value { font-size: 20px; font-weight: 700; }
+.bank-summary-card.dep  .bs-value { color: #a5d6a7; }
+.bank-summary-card.wd   .bs-value { color: #ef9a9a; }
+.bank-summary-card.bal  .bs-value { color: #90caf9; }
+/* Withdrawal table header red tint */
+.wd-thead tr { background: rgba(183,28,28,0.55) !important; }
 @media (max-width: 900px) {
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .two-col { grid-template-columns: 1fr; }
@@ -136,7 +149,7 @@ tbody tr:last-child td { border-bottom: none; }
         </div>
       </div>
       <div class="report-box">
-        <h3>🏦 Bank Deposit PDF</h3>
+        <h3>🏦 Bank Deposit &amp; Withdrawal PDF</h3>
         <div class="report-row">
           <input type="month" id="rBankMonth" placeholder="YYYY-MM">
           <button class="btn btn-pdf" onclick="downloadPDF('bank')">PDF</button>
@@ -231,9 +244,32 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- BANK DEPOSITS -->
+  <!-- BANK DEPOSITS + WITHDRAWALS -->
   <div class="section">
-    <div class="section-title">🏦 Bank Deposits <span id="bankTotal" style="color:#a5d6a7;font-size:13px"></span></div>
+    <div class="section-title">🏦 Bank Deposits &amp; Withdrawals
+      <span id="bankNetLabel" style="font-size:13px;color:#90caf9"></span>
+    </div>
+
+    <!-- 3-CARD BALANCE SUMMARY -->
+    <div class="bank-summary">
+      <div class="bank-summary-card dep">
+        <div class="bs-label">➕ Total Deposited</div>
+        <div class="bs-value" id="bsSumDep">₹ —</div>
+      </div>
+      <div class="bank-summary-card wd">
+        <div class="bs-label">➖ Total Withdrawn</div>
+        <div class="bs-value" id="bsSumWd">₹ —</div>
+      </div>
+      <div class="bank-summary-card bal">
+        <div class="bs-label">🏦 Net Balance</div>
+        <div class="bs-value" id="bsSumBal">₹ —</div>
+      </div>
+    </div>
+
+    <!-- DEPOSIT TABLE -->
+    <div style="font-size:13px;font-weight:700;color:#a5d6a7;margin-bottom:8px">
+      ➕ Deposit Records <span id="bankTotal" style="font-weight:400;color:#a5d6a7;font-size:12px"></span>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
@@ -243,6 +279,21 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="pagination">
       <button onclick="paginate('bank',-1)">← Prev</button>
       <button onclick="paginate('bank',1)">Next →</button>
+    </div>
+
+    <!-- WITHDRAWAL TABLE -->
+    <div style="font-size:13px;font-weight:700;color:#ef9a9a;margin-top:20px;margin-bottom:8px">
+      ➖ Withdrawal Records <span id="wdTotal" style="font-weight:400;color:#ef9a9a;font-size:12px"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead class="wd-thead"><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
+        <tbody id="wdTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button onclick="paginate('wd',-1)">← Prev</button>
+      <button onclick="paginate('wd',1)">Next →</button>
     </div>
   </div>
 
@@ -287,8 +338,8 @@ if (!isAdmin) {
   document.getElementById("navButtons").innerHTML = `<button onclick="goHome()">🏠 Home</button><button onclick="goAdmin()">🔑 Login</button>`;
 }
 
-function goHome() { window.location.href = "index.html"; }
-function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
+function goHome()  { window.location.href = "index.html"; }
+function logout()  { sessionStorage.clear(); window.location.href = "index.html"; }
 function goAdmin() { window.location.href = isAdmin ? "admin.html" : "login.html"; }
 
 function showToast(msg, color = "#43a047") {
@@ -300,7 +351,7 @@ function showToast(msg, color = "#43a047") {
 function fmt(v) { return Number(v || 0).toLocaleString('en-IN'); }
 
 // ── PAGINATED TABLE STATE ──
-const pages = { cyl:1, prod:1, pp:1, cp:1, maint:1, bank:1 };
+const pages  = { cyl:1, prod:1, pp:1, cp:1, maint:1, bank:1, wd:1 };
 const allData = {};
 
 function paginate(key, dir) {
@@ -312,7 +363,7 @@ function renderPage(key) {
   const data = allData[key] || [];
   const start = (pages[key]-1)*ROWS;
   const slice = data.slice(start, start+ROWS);
-  const renders = { cyl: renderCylSales, prod: renderProdSales, pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint, bank: renderBank };
+  const renders = { cyl: renderCylSales, prod: renderProdSales, pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint, bank: renderBank, wd: renderWithdrawal };
   renders[key](slice, data.length);
 }
 
@@ -365,11 +416,30 @@ function renderMaint(slice) {
 
 function renderBank(slice) {
   const tbody = document.getElementById("bankTable");
-  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">No records</td></tr>`; return; }
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">No deposit records</td></tr>`; return; }
   tbody.innerHTML = slice.map(d => `<tr>
     <td>${d.date||"-"}</td><td>₹ ${fmt(d.onlineDeposit)}</td><td>₹ ${fmt(d.cashDeposit)}</td>
     <td style="font-weight:700;color:#a5d6a7">₹ ${fmt(d.totalDeposit)}</td>
     <td>${d.remarks||"—"}</td></tr>`).join("");
+}
+
+function renderWithdrawal(slice) {
+  const tbody = document.getElementById("wdTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="5" class="no-data">No withdrawal records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(w => `<tr>
+    <td>${w.date||"-"}</td><td>₹ ${fmt(w.onlineWithdrawal)}</td><td>₹ ${fmt(w.cashWithdrawal)}</td>
+    <td style="font-weight:700;color:#ef9a9a">₹ ${fmt(w.totalWithdrawal)}</td>
+    <td>${w.remarks||"—"}</td></tr>`).join("");
+}
+
+function updateBankSummaryCards(depTotal, wdTotal) {
+  const net = depTotal - wdTotal;
+  document.getElementById("bsSumDep").textContent = "₹ " + fmt(depTotal);
+  document.getElementById("bsSumWd").textContent  = "₹ " + fmt(wdTotal);
+  const balEl = document.getElementById("bsSumBal");
+  balEl.textContent = "₹ " + fmt(Math.abs(net));
+  balEl.style.color = net >= 0 ? "#90caf9" : "#ef9a9a";
+  document.getElementById("bankNetLabel").textContent = "Net Balance: ₹ " + fmt(net);
 }
 
 async function deleteCylSale(id) {
@@ -393,18 +463,18 @@ async function loadSummary() {
   try {
     const res = await fetch(`${BASE_URL}/dashboard/summary`);
     const d = await res.json();
-    document.getElementById("sc_cylSales").textContent = "₹ " + fmt(d.cylinderSalesTotal);
+    document.getElementById("sc_cylSales").textContent      = "₹ " + fmt(d.cylinderSalesTotal);
     document.getElementById("sc_cylSalesCount").textContent = d.cylinderSalesCount + " records";
-    document.getElementById("sc_prodSales").textContent = "₹ " + fmt(d.productSalesTotal);
-    document.getElementById("sc_prodSalesCount").textContent = d.productSalesCount + " records";
-    document.getElementById("sc_totalSales").textContent = "₹ " + fmt(d.totalSales);
-    document.getElementById("sc_prodPurchase").textContent = "₹ " + fmt(d.productPurchaseTotal);
+    document.getElementById("sc_prodSales").textContent     = "₹ " + fmt(d.productSalesTotal);
+    document.getElementById("sc_prodSalesCount").textContent= d.productSalesCount + " records";
+    document.getElementById("sc_totalSales").textContent    = "₹ " + fmt(d.totalSales);
+    document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(d.productPurchaseTotal);
     document.getElementById("sc_prodPurchaseCount").textContent = d.productPurchaseCount + " records";
-    document.getElementById("sc_cylPurchase").textContent = "₹ " + fmt(d.cylinderPurchaseTotal);
+    document.getElementById("sc_cylPurchase").textContent      = "₹ " + fmt(d.cylinderPurchaseTotal);
     document.getElementById("sc_cylPurchaseCount").textContent = d.cylinderPurchaseCount + " records";
-    document.getElementById("sc_bankDeposit").textContent = "₹ " + fmt(d.bankDepositTotal);
+    document.getElementById("sc_bankDeposit").textContent      = "₹ " + fmt(d.bankDepositTotal);
     document.getElementById("sc_bankDepositCount").textContent = d.bankDepositCount + " records";
-    document.getElementById("sc_maintenance").textContent = "₹ " + fmt(d.maintenanceTotal);
+    document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(d.maintenanceTotal);
     document.getElementById("sc_maintenanceCount").textContent = d.maintenanceCount + " records";
     document.getElementById("sc_employees").textContent = d.employeeCount;
     const net = (d.totalSales || 0) - (d.maintenanceTotal || 0);
@@ -413,6 +483,8 @@ async function loadSummary() {
 }
 
 // ── LOAD ALL TABLES ──
+let _depTotal = 0, _wdTotal = 0;
+
 async function loadAllTables() {
   // Cylinder Sales
   fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
@@ -458,15 +530,25 @@ async function loadAllTables() {
   // Bank Deposits
   fetch(`${BASE_URL}/bankdeposit/all`).then(r=>r.json()).then(data => {
     allData.bank = data.reverse();
-    const total = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
-    document.getElementById("bankTotal").textContent = "Total: ₹ " + fmt(total);
+    _depTotal = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
+    document.getElementById("bankTotal").textContent = "Total: ₹ " + fmt(_depTotal);
     renderPage("bank");
+    updateBankSummaryCards(_depTotal, _wdTotal);
+  }).catch(()=>{});
+
+  // Bank Withdrawals
+  fetch(`${BASE_URL}/bankwithdrawal/all`).then(r=>r.json()).then(data => {
+    allData.wd = data.reverse();
+    _wdTotal = data.reduce((s,w) => s + Number(w.totalWithdrawal||0), 0);
+    document.getElementById("wdTotal").textContent = "Total: ₹ " + fmt(_wdTotal);
+    renderPage("wd");
+    updateBankSummaryCards(_depTotal, _wdTotal);
   }).catch(()=>{});
 
   // Cylinders
   fetch(`${BASE_URL}/getCylinder`).then(r=>r.json()).then(data => {
-    document.getElementById("cylinderTable").innerHTML = data.slice(-10).reverse().map(c => `
-      <tr><td>${c.date}</td><td style="text-transform:capitalize">${c.type}</td><td>₹ ${fmt(c.price)}</td></tr>`).join("");
+    document.getElementById("cylinderTable").innerHTML = data.slice(-10).reverse().map(c =>
+      `<tr><td>${c.date}</td><td style="text-transform:capitalize">${c.type}</td><td>₹ ${fmt(c.price)}</td></tr>`).join("");
   }).catch(()=>{});
 
   // Employees
@@ -478,7 +560,7 @@ async function loadAllTables() {
 }
 
 function buildChart(cylData) {
-  const labels = cylData.slice(0,12).map(s => s.date);
+  const labels    = cylData.slice(0,12).map(s => s.date);
   const cylTotals = cylData.slice(0,12).map(s => Number(s.cylinderTotal||0));
   new Chart(document.getElementById("salesChart"), {
     type: 'bar',

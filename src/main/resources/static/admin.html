@@ -139,18 +139,9 @@ tbody tr:hover td { background: var(--surface2); }
         <label>Product Name</label>
         <select id="productName">
           <option value="Stove">Stove</option>
-          <option value="SS Stove 2 Burner">SS Stove 2 Burner"</option>
-          <option value="SS Stove 3 Burner">SS Stove 3 Burner"</option>
-          <option value="GS Stove 2 Burner">GS Stove 2 Burner"</option>
-          <option value="GS Stove 2 Burner">GS Stove 3 Burner"</option> 
-              <option value="SS ujwala stove">SS ujwala stove"</option>
           <option value="Lighter">Lighter</option>
-          <option value="Hose 1.5">Hose 1.5</option>
-          <option value="Hose 1.2">Hose 1.2</option>
-          <option value="Trolly">Trolly</option>
-          
+          <option value="Pipe">Pipe</option>
           <option value="Regulator">Regulator</option>
-          
         </select>
       </div>
       <div class="form-group">
@@ -217,9 +208,7 @@ tbody tr:hover td { background: var(--surface2); }
     <div class="form-row">
       <div class="form-group">
         <label>Product Type</label>
-        <select id="ppType"><option value="Stove">Stove</option><option value="Lighter">Lighter</option><option value="Pipe">Pipe</option><option value="Regulator">Regulator</option>  <option value="Hose 1.5">Hose 1.5</option>
-          <option value="Hose 1.2">Hose 1.2</option>
-          <option value="Trolly">Trolly</option></select>
+        <select id="ppType"><option value="Stove">Stove</option><option value="Lighter">Lighter</option><option value="Pipe">Pipe</option><option value="Regulator">Regulator</option></select>
       </div>
       <div class="form-group"><label>Purchase Date</label><input type="date" id="ppDate"></div>
     </div>
@@ -409,6 +398,9 @@ tbody tr:hover td { background: var(--surface2); }
   <!-- ===================== BANK DEPOSIT ===================== -->
   <div class="card" id="bankdeposit">
     <div class="card-title">🏦 Bank Deposit <span class="badge">Finance</span></div>
+
+    <!-- DEPOSIT FORM -->
+    <div class="section-sub" style="margin-top:0;margin-bottom:12px">➕ Add Deposit</div>
     <div class="form-group"><label>Date</label><input type="date" id="bdDate"></div>
     <div class="form-row">
       <div class="form-group"><label>Online Deposit (₹)</label><input type="number" id="bdOnline" placeholder="0" value="0"></div>
@@ -416,12 +408,52 @@ tbody tr:hover td { background: var(--surface2); }
     </div>
     <div class="form-group"><label>Remarks (optional)</label><input type="text" id="bdRemarks" placeholder="e.g. SBI Bank, Branch deposit..."></div>
     <button class="btn btn-primary" onclick="addBankDeposit()">+ Add Deposit</button>
+
     <hr class="divider">
+
+    <!-- WITHDRAWAL FORM -->
+    <div class="section-sub" style="margin-bottom:12px">➖ Add Withdrawal</div>
+    <div class="form-group"><label>Date</label><input type="date" id="wdDate"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Online Withdrawal (₹)</label><input type="number" id="wdOnline" placeholder="0" value="0"></div>
+      <div class="form-group"><label>Cash Withdrawal (₹)</label><input type="number" id="wdCash" placeholder="0" value="0"></div>
+    </div>
+    <div class="form-group"><label>Remarks (optional)</label><input type="text" id="wdRemarks" placeholder="e.g. Rent payment, Supplier payment..."></div>
+    <button class="btn btn-danger" onclick="addBankWithdrawal()">− Add Withdrawal</button>
+
+    <hr class="divider">
+
+    <!-- BALANCE SUMMARY -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px">
+      <div style="flex:1;min-width:130px;background:var(--success,#22c55e)22;border:1.5px solid var(--success,#22c55e);border-radius:10px;padding:14px 18px;text-align:center">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Total Deposited</div>
+        <div id="bdSummaryDeposit" style="font-size:20px;font-weight:700;color:var(--success,#22c55e)">₹ 0</div>
+      </div>
+      <div style="flex:1;min-width:130px;background:#ef444422;border:1.5px solid #ef4444;border-radius:10px;padding:14px 18px;text-align:center">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Total Withdrawn</div>
+        <div id="bdSummaryWithdrawal" style="font-size:20px;font-weight:700;color:#ef4444">₹ 0</div>
+      </div>
+      <div style="flex:1;min-width:130px;background:var(--primary,#6366f1)22;border:1.5px solid var(--primary,#6366f1);border-radius:10px;padding:14px 18px;text-align:center">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Net Balance</div>
+        <div id="bdSummaryBalance" style="font-size:20px;font-weight:700;color:var(--primary,#6366f1)">₹ 0</div>
+      </div>
+    </div>
+
+    <!-- DEPOSIT RECORDS -->
     <div class="section-sub">Deposit Records</div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
         <tbody id="bdTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- WITHDRAWAL RECORDS -->
+    <div class="section-sub" style="margin-top:20px">Withdrawal Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="wdTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -481,7 +513,7 @@ function showSection(id, link) {
   if (id === "sales") loadProductSales();
   if (id === "cylinderSales") loadCylinderSalesTable();
   if (id === "maintenance") { loadEmployeeDropdown(); loadMaintenanceTable(); }
-  if (id === "bankdeposit") loadBankDeposits();
+  if (id === "bankdeposit") { loadBankDeposits(); loadBankWithdrawals(); }
 }
 
 function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
@@ -886,10 +918,11 @@ async function addBankDeposit() {
   };
   await fetch(`${API}/bankdeposit/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
   showToast("Bank Deposit added ✓", "success");
-  ["bdDate","bdOnline","bdCash","bdRemarks"].forEach(id => document.getElementById(id).value = "");
+  ["bdDate","bdRemarks"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("bdOnline").value = 0;
   document.getElementById("bdCash").value = 0;
   loadBankDeposits();
+  loadBankWithdrawals();
 }
 
 async function loadBankDeposits() {
@@ -899,9 +932,10 @@ async function loadBankDeposits() {
   if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
   tbody.innerHTML = data.reverse().map(d => `<tr>
     <td>${d.date}</td><td>₹ ${d.onlineDeposit}</td><td>₹ ${d.cashDeposit}</td>
-    <td style="font-weight:600;color:var(--success)">₹ ${d.totalDeposit}</td>
+    <td style="font-weight:600;color:var(--success,#22c55e)">₹ ${d.totalDeposit}</td>
     <td>${d.remarks || "—"}</td>
     <td><button class="btn btn-sm btn-danger" onclick="deleteBankDeposit(${d.id})">🗑</button></td></tr>`).join("");
+  updateBankSummary();
 }
 
 async function deleteBankDeposit(id) {
@@ -909,6 +943,116 @@ async function deleteBankDeposit(id) {
   await fetch(`${API}/bankdeposit/delete/${id}`, { method:"DELETE" });
   showToast("Deleted", "info");
   loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+// ── BANK WITHDRAWAL ──
+async function addBankWithdrawal() {
+  const date = document.getElementById("wdDate").value;
+  if (!date) { showToast("Select a date", "error"); return; }
+  const onlineWd = parseFloat(document.getElementById("wdOnline").value) || 0;
+  const cashWd   = parseFloat(document.getElementById("wdCash").value)   || 0;
+  if (onlineWd + cashWd <= 0) { showToast("Enter a withdrawal amount", "error"); return; }
+  const data = {
+    date,
+    onlineWithdrawal: onlineWd,
+    cashWithdrawal:   cashWd,
+    totalWithdrawal:  onlineWd + cashWd,
+    remarks: document.getElementById("wdRemarks").value
+  };
+  // Try dedicated withdrawal endpoint; fall back to storing in bankdeposit with negative amounts
+  try {
+    const res = await fetch(`${API}/bankwithdrawal/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+    if (!res.ok) throw new Error("no endpoint");
+  } catch {
+    // Fallback: store as negative deposit so existing backend works
+    const fallback = {
+      date,
+      onlineDeposit: -onlineWd,
+      cashDeposit:   -cashWd,
+      remarks: `[WITHDRAWAL] ${data.remarks}`
+    };
+    await fetch(`${API}/bankdeposit/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(fallback) });
+  }
+  showToast("Withdrawal recorded ✓", "success");
+  ["wdDate","wdRemarks"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("wdOnline").value = 0;
+  document.getElementById("wdCash").value = 0;
+  loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+async function loadBankWithdrawals() {
+  try {
+    const res = await fetch(`${API}/bankwithdrawal/all`);
+    if (!res.ok) throw new Error("no endpoint");
+    const data = await res.json();
+    const tbody = document.getElementById("wdTable");
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No withdrawal records</td></tr>`; updateBankSummary(); return; }
+    tbody.innerHTML = data.reverse().map(d => `<tr>
+      <td>${d.date}</td><td>₹ ${d.onlineWithdrawal}</td><td>₹ ${d.cashWithdrawal}</td>
+      <td style="font-weight:600;color:#ef4444">₹ ${d.totalWithdrawal}</td>
+      <td>${d.remarks || "—"}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteBankWithdrawal(${d.id})">🗑</button></td></tr>`).join("");
+  } catch {
+    // Fallback: read withdrawal entries stored as negative deposits
+    const res2 = await fetch(`${API}/bankdeposit/all`);
+    const all = await res2.json();
+    const wds = all.filter(d => d.remarks && d.remarks.startsWith("[WITHDRAWAL]"));
+    const tbody = document.getElementById("wdTable");
+    if (!wds.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No withdrawal records</td></tr>`; updateBankSummary(); return; }
+    tbody.innerHTML = wds.reverse().map(d => {
+      const onlineW = Math.abs(d.onlineDeposit); const cashW = Math.abs(d.cashDeposit);
+      return `<tr>
+        <td>${d.date}</td><td>₹ ${onlineW}</td><td>₹ ${cashW}</td>
+        <td style="font-weight:600;color:#ef4444">₹ ${onlineW+cashW}</td>
+        <td>${(d.remarks||"").replace("[WITHDRAWAL]","").trim() || "—"}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteBankDeposit(${d.id})">🗑</button></td></tr>`;
+    }).join("");
+  }
+  updateBankSummary();
+}
+
+async function deleteBankWithdrawal(id) {
+  if (!confirm("Delete this withdrawal?")) return;
+  try {
+    await fetch(`${API}/bankwithdrawal/delete/${id}`, { method:"DELETE" });
+  } catch {
+    await fetch(`${API}/bankdeposit/delete/${id}`, { method:"DELETE" });
+  }
+  showToast("Deleted", "info");
+  loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+async function updateBankSummary() {
+  try {
+    // Sum deposits (exclude [WITHDRAWAL] fallback entries)
+    const depRes = await fetch(`${API}/bankdeposit/all`);
+    const depData = await depRes.json();
+    const realDeps = depData.filter(d => !(d.remarks && d.remarks.startsWith("[WITHDRAWAL]")));
+    const totalDep = realDeps.reduce((s, d) => s + (d.totalDeposit || 0), 0);
+
+    // Sum withdrawals
+    let totalWd = 0;
+    try {
+      const wdRes = await fetch(`${API}/bankwithdrawal/all`);
+      if (wdRes.ok) {
+        const wdData = await wdRes.json();
+        totalWd = wdData.reduce((s, d) => s + (d.totalWithdrawal || 0), 0);
+      } else throw new Error();
+    } catch {
+      const wdEntries = depData.filter(d => d.remarks && d.remarks.startsWith("[WITHDRAWAL]"));
+      totalWd = wdEntries.reduce((s, d) => s + Math.abs(d.onlineDeposit || 0) + Math.abs(d.cashDeposit || 0), 0);
+    }
+
+    const balance = totalDep - totalWd;
+    document.getElementById("bdSummaryDeposit").textContent   = `₹ ${totalDep.toLocaleString("en-IN")}`;
+    document.getElementById("bdSummaryWithdrawal").textContent = `₹ ${totalWd.toLocaleString("en-IN")}`;
+    const balEl = document.getElementById("bdSummaryBalance");
+    balEl.textContent = `₹ ${balance.toLocaleString("en-IN")}`;
+    balEl.style.color = balance >= 0 ? "var(--primary,#6366f1)" : "#ef4444";
+  } catch(e) { console.warn("Summary error", e); }
 }
 
 // ── INIT ──
