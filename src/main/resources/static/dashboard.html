@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,22 +20,23 @@ body::before { content: ""; position: fixed; inset: 0; background: rgba(5,15,40,
 .nav-buttons button { padding: 7px 18px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.4); background: transparent; color: #fff; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
 .nav-buttons button:hover { background: #fff; color: #0a2e6e; border-color: #fff; }
 .content { max-width: 1300px; margin: 0 auto; padding: 24px 20px 60px; }
-/* STATS GRID */
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
 .stat-card { border-radius: 12px; padding: 18px 20px; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
 .stat-card:hover { transform: translateY(-3px); }
-.stat-card.blue { background: linear-gradient(135deg,#1565c0,#0d47a1); }
-.stat-card.green { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
+.stat-card.blue   { background: linear-gradient(135deg,#1565c0,#0d47a1); }
+.stat-card.green  { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
 .stat-card.orange { background: linear-gradient(135deg,#e65100,#bf360c); }
-.stat-card.teal { background: linear-gradient(135deg,#00695c,#004d40); }
+.stat-card.teal   { background: linear-gradient(135deg,#00695c,#004d40); }
 .stat-card.purple { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
-.stat-card.grey { background: linear-gradient(135deg,#37474f,#263238); }
+.stat-card.grey   { background: linear-gradient(135deg,#37474f,#263238); }
+.stat-card.csc    { background: linear-gradient(135deg,#00695c,#00897b); }
 .stat-card .label { font-size: 11px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-.stat-card .value { font-size: 26px; font-weight: 700; margin-top: 6px; }
-.stat-card .sub { font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.6); }
+.stat-card .value { font-size: 24px; font-weight: 700; margin-top: 6px; }
+.stat-card .sub   { font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.6); }
 /* SECTION */
 .section { background: rgba(10,25,60,0.62); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
-.section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .section-title span { font-size: 13px; }
 /* TABLE */
 .table-wrap { overflow-x: auto; }
@@ -49,20 +51,20 @@ tbody tr:last-child td { border-bottom: none; }
 .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
 .pagination button { padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .pagination button:hover { background: #1565c0; border-color: #1565c0; }
-/* REPORT CONTROLS */
-.report-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 14px; }
+/* REPORT */
+.report-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 14px; }
 .report-box { background: rgba(21,101,192,0.2); border: 1px solid rgba(66,165,245,0.25); border-radius: 10px; padding: 16px; transition: transform 0.2s; }
 .report-box:hover { transform: translateY(-2px); }
 .report-box h3 { font-size: 13px; font-weight: 700; color: #ffd54f; margin-bottom: 10px; }
-.report-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.report-row input { padding: 7px 10px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; outline: none; flex: 1; min-width: 100px; }
+.report-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.report-row input[type="date"], .report-row input[type="month"] { padding: 7px 10px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; outline: none; flex: 1; min-width: 100px; }
 .report-row input:focus { border-color: #42a5f5; }
 .btn { padding: 7px 14px; border-radius: 7px; border: none; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.btn-pdf { background: linear-gradient(135deg,#e53935,#b71c1c); color: #fff; }
-.btn-csv { background: linear-gradient(135deg,#ff9800,#f57c00); color: #fff; }
+.btn-pdf  { background: linear-gradient(135deg,#e53935,#b71c1c); color: #fff; }
+.btn-view { background: linear-gradient(135deg,#1565c0,#0d47a1); color: #fff; }
 .btn:hover { transform: scale(1.04); opacity: 0.9; }
 /* DELETE */
-.btn-delete { padding: 4px 10px; background: rgba(229,57,53,0.2); color: #ef5350; border: 1px solid rgba(229,57,53,0.4); border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-delete { padding: 4px 10px; background: rgba(229,57,53,0.2); color: #ef5350; border: 1px solid rgba(229,57,53,0.4); border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; }
 .btn-delete:hover { background: rgba(229,57,53,0.4); }
 /* CHART */
 .chart-wrap { position: relative; height: 260px; }
@@ -71,29 +73,47 @@ tbody tr:last-child td { border-bottom: none; }
 /* TOAST */
 #toast { position: fixed; bottom: 28px; right: 28px; padding: 11px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; z-index: 999; background: #43a047; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 #toast.show { transform: translateY(0); opacity: 1; }
-/* TWO-COL TABLES LAYOUT */
+/* TWO-COL */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-/* BANK BALANCE SUMMARY CARDS */
+/* THREE-COL */
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+/* BANK */
 .bank-summary { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
 .bank-summary-card { flex: 1; min-width: 120px; border-radius: 10px; padding: 14px 16px; text-align: center; }
-.bank-summary-card.dep  { background: rgba(46,125,50,0.25);  border: 1.5px solid #4caf50; }
-.bank-summary-card.wd   { background: rgba(183,28,28,0.25);  border: 1.5px solid #ef5350; }
-.bank-summary-card.bal  { background: rgba(21,101,192,0.30); border: 1.5px solid #42a5f5; }
+.bank-summary-card.dep { background: rgba(46,125,50,0.25);  border: 1.5px solid #4caf50; }
+.bank-summary-card.wd  { background: rgba(183,28,28,0.25);  border: 1.5px solid #ef5350; }
+.bank-summary-card.bal { background: rgba(21,101,192,0.30); border: 1.5px solid #42a5f5; }
 .bank-summary-card .bs-label { font-size: 11px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
 .bank-summary-card .bs-value { font-size: 20px; font-weight: 700; }
-.bank-summary-card.dep  .bs-value { color: #a5d6a7; }
-.bank-summary-card.wd   .bs-value { color: #ef9a9a; }
-.bank-summary-card.bal  .bs-value { color: #90caf9; }
-/* Withdrawal table header red tint */
+.bank-summary-card.dep .bs-value { color: #a5d6a7; }
+.bank-summary-card.wd  .bs-value { color: #ef9a9a; }
+.bank-summary-card.bal .bs-value { color: #90caf9; }
 .wd-thead tr { background: rgba(183,28,28,0.55) !important; }
+/* SALES VIEWER */
+.viewer-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.vtab { padding: 7px 16px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.vtab.active { background: #1565c0; border-color: #1565c0; color: #fff; }
+.vtab:hover:not(.active) { border-color: rgba(255,255,255,0.5); color: #fff; }
+.viewer-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.viewer-controls input { padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 13px; outline: none; }
+.viewer-controls input:focus { border-color: #42a5f5; }
+.viewer-summary { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.vs-card { flex: 1; min-width: 110px; border-radius: 9px; padding: 12px 14px; text-align: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+.vs-card .vs-label { font-size: 10px; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.vs-card .vs-val { font-size: 18px; font-weight: 700; color: #90caf9; }
+.csc-thead tr { background: rgba(0,105,92,0.7) !important; }
+@media (max-width: 1000px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .three-col  { grid-template-columns: 1fr 1fr; }
+}
 @media (max-width: 900px) {
-  .stats-grid { grid-template-columns: 1fr 1fr; }
   .two-col { grid-template-columns: 1fr; }
   .header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
   .content { padding: 14px; }
 }
 @media (max-width: 600px) {
-  .stats-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .three-col  { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -112,70 +132,177 @@ tbody tr:last-child td { border-bottom: none; }
 
 <div class="content">
 
-  <!-- STAT CARDS ROW 1 -->
+  <!-- ── STAT CARDS ROW 1: Sales ── -->
   <div class="stats-grid">
-    <div class="stat-card blue"><div class="label">🔵 Cylinder Sales</div><div class="value" id="sc_cylSales">₹ —</div><div class="sub" id="sc_cylSalesCount">— records</div><div class="sub" id="sc_cylSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders sold</div></div>
-    <div class="stat-card orange"><div class="label">🛒 Product Sales</div><div class="value" id="sc_prodSales">₹ —</div><div class="sub" id="sc_prodSalesCount">— records</div></div>
-    <div class="stat-card teal"><div class="label">💰 Total Sales</div><div class="value" id="sc_totalSales">₹ —</div><div class="sub">Combined all sales</div></div>
-  </div>
-  <!-- STAT CARDS ROW 2 -->
-  <div class="stats-grid">
-    <div class="stat-card purple"><div class="label">📦 Product Purchases</div><div class="value" id="sc_prodPurchase">₹ —</div><div class="sub" id="sc_prodPurchaseCount">— records</div></div>
-    <div class="stat-card blue" style="background:linear-gradient(135deg,#0277bd,#01579b)"><div class="label">🛢️ Cylinder Purchases</div><div class="value" id="sc_cylPurchase">₹ —</div><div class="sub" id="sc_cylPurchaseCount">— records</div></div>
-    <div class="stat-card green"><div class="label">🏦 Bank Deposits</div><div class="value" id="sc_bankDeposit">₹ —</div><div class="sub" id="sc_bankDepositCount">— records</div></div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card orange" style="background:linear-gradient(135deg,#c62828,#b71c1c)"><div class="label">🔧 Maintenance</div><div class="value" id="sc_maintenance">₹ —</div><div class="sub" id="sc_maintenanceCount">— records</div></div>
-    <div class="stat-card grey"><div class="label">👤 Total Employees</div><div class="value" id="sc_employees">—</div><div class="sub">Active staff</div></div>
-    <div class="stat-card teal" style="background:linear-gradient(135deg,#283593,#1a237e)"><div class="label">📊 Net Position</div><div class="value" id="sc_net">₹ —</div><div class="sub">Sales minus expenses</div></div>
+    <div class="stat-card blue">
+      <div class="label">🔵 Cylinder Sales</div>
+      <div class="value" id="sc_cylSales">₹ —</div>
+      <div class="sub" id="sc_cylSalesCount">— records</div>
+      <div class="sub" id="sc_cylSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="label">🛒 Product Sales</div>
+      <div class="value" id="sc_prodSales">₹ —</div>
+      <div class="sub" id="sc_prodSalesCount">— records</div>
+    </div>
+    <div class="stat-card csc">
+      <div class="label">🏪 CSC Sales</div>
+      <div class="value" id="sc_cscSales">₹ —</div>
+      <div class="sub" id="sc_cscSalesCount">— records</div>
+      <div class="sub" id="sc_cscSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders</div>
+    </div>
+    <div class="stat-card teal">
+      <div class="label">💰 Total Sales</div>
+      <div class="value" id="sc_totalSales">₹ —</div>
+      <div class="sub">Cylinder + Product + CSC</div>
+    </div>
   </div>
 
-  <!-- REPORTS DOWNLOAD -->
+  <!-- ── STAT CARDS ROW 2: Expenses ── -->
+  <div class="stats-grid">
+    <div class="stat-card purple">
+      <div class="label">📦 Product Purchases</div>
+      <div class="value" id="sc_prodPurchase">₹ —</div>
+      <div class="sub" id="sc_prodPurchaseCount">— records</div>
+    </div>
+    <div class="stat-card blue" style="background:linear-gradient(135deg,#0277bd,#01579b)">
+      <div class="label">🛢️ Cylinder Purchases</div>
+      <div class="value" id="sc_cylPurchase">₹ —</div>
+      <div class="sub" id="sc_cylPurchaseCount">— records</div>
+    </div>
+    <div class="stat-card green">
+      <div class="label">🏦 Bank Deposits</div>
+      <div class="value" id="sc_bankDeposit">₹ —</div>
+      <div class="sub" id="sc_bankDepositCount">— records</div>
+    </div>
+    <div class="stat-card orange" style="background:linear-gradient(135deg,#c62828,#b71c1c)">
+      <div class="label">🔧 Maintenance</div>
+      <div class="value" id="sc_maintenance">₹ —</div>
+      <div class="sub" id="sc_maintenanceCount">— records</div>
+    </div>
+  </div>
+
+  <!-- ── STAT CARDS ROW 3 ── -->
+  <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);max-width:700px;margin-bottom:20px;">
+    <div class="stat-card grey">
+      <div class="label">👤 Total Employees</div>
+      <div class="value" id="sc_employees">—</div>
+      <div class="sub">Active staff</div>
+    </div>
+    <div class="stat-card teal" style="background:linear-gradient(135deg,#283593,#1a237e)">
+      <div class="label">📊 Net Position</div>
+      <div class="value" id="sc_net">₹ —</div>
+      <div class="sub">Sales minus expenses</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       SALES VIEWER — Daily / Monthly with type tabs
+  ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">🔍 Sales Viewer — Daily &amp; Monthly</div>
+
+    <!-- Mode: Daily / Monthly -->
+    <div class="viewer-tabs" id="viewerModeTabs">
+      <button class="vtab active" onclick="setViewerMode('daily', this)">📅 Daily</button>
+      <button class="vtab" onclick="setViewerMode('monthly', this)">📆 Monthly</button>
+    </div>
+
+    <!-- Date / Month input -->
+    <div class="viewer-controls">
+      <input type="date"  id="viewerDate"  style="display:block" onchange="runViewer()">
+      <input type="month" id="viewerMonth" style="display:none" onchange="runViewer()">
+      <span style="color:rgba(255,255,255,0.4);font-size:12px" id="viewerHint">Pick a date to see all sales for that day</span>
+    </div>
+
+    <!-- Summary mini-cards (shown after query) -->
+    <div class="viewer-summary" id="viewerSummary" style="display:none">
+      <div class="vs-card"><div class="vs-label">🔵 Cylinder Sales</div><div class="vs-val" id="vsm_cyl">₹0</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cylq">0 cylinders</div></div>
+      <div class="vs-card"><div class="vs-label">🛒 Product Sales</div><div class="vs-val" id="vsm_prod" style="color:#ffcc80">₹0</div></div>
+      <div class="vs-card"><div class="vs-label">🏪 CSC Sales</div><div class="vs-val" id="vsm_csc" style="color:#80cbc4">₹0</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cscq">0 cylinders</div></div>
+      <div class="vs-card"><div class="vs-label">💰 Combined</div><div class="vs-val" id="vsm_total" style="color:#ffd54f">₹0</div></div>
+    </div>
+
+    <!-- Type tabs: Cylinder / Product / CSC -->
+    <div class="viewer-tabs" id="viewerTypeTabs" style="display:none">
+      <button class="vtab active" onclick="setViewerType('cylinder', this)">🔵 Cylinder Sales</button>
+      <button class="vtab" onclick="setViewerType('product', this)">🛒 Product Sales</button>
+      <button class="vtab" onclick="setViewerType('csc', this)">🏪 CSC Sales</button>
+    </div>
+
+    <!-- Cylinder sales table -->
+    <div id="viewer_cylinder" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th></tr></thead>
+          <tbody id="vt_cyl"><tr><td colspan="8" class="no-data">—</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Product sales table -->
+    <div id="viewer_product" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th></tr></thead>
+          <tbody id="vt_prod"><tr><td colspan="7" class="no-data">—</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CSC sales table -->
+    <div id="viewer_csc" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead class="csc-thead"><tr><th>Date</th><th>CSC Center</th><th>Type</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th></tr></thead>
+          <tbody id="vt_csc"><tr><td colspan="9" class="no-data">—</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REPORTS DOWNLOAD ── -->
   <div class="section">
     <div class="section-title">📥 Download Reports</div>
     <div class="report-grid">
       <div class="report-box">
         <h3>📊 Product Sales PDF</h3>
         <div class="report-row">
-          <input type="month" id="rProdSalesMonth" placeholder="YYYY-MM">
+          <input type="month" id="rProdSalesMonth">
           <button class="btn btn-pdf" onclick="downloadPDF('product')">PDF</button>
         </div>
       </div>
       <div class="report-box">
         <h3>🔵 Cylinder Sales PDF</h3>
         <div class="report-row">
-          <input type="month" id="rCylSalesMonth" placeholder="YYYY-MM">
+          <input type="month" id="rCylSalesMonth">
           <button class="btn btn-pdf" onclick="downloadPDF('cylinder')">PDF</button>
+        </div>
+      </div>
+      <div class="report-box">
+        <h3>🏪 CSC Sales PDF</h3>
+        <div class="report-row">
+          <input type="month" id="rCscSalesMonth">
+          <button class="btn btn-pdf" onclick="downloadPDF('csc')">PDF</button>
         </div>
       </div>
       <div class="report-box">
         <h3>🏦 Bank Deposit &amp; Withdrawal PDF</h3>
         <div class="report-row">
-          <input type="month" id="rBankMonth" placeholder="YYYY-MM">
+          <input type="month" id="rBankMonth">
           <button class="btn btn-pdf" onclick="downloadPDF('bank')">PDF</button>
-        </div>
-      </div>
-      <div class="report-box">
-        <h3>🔧 Combined Report (Old)</h3>
-        <div class="report-row">
-          <input type="date" id="rDate">
-          <button class="btn btn-pdf" onclick="downloadOldPDF()">Daily PDF</button>
-        </div>
-        <div class="report-row">
-          <input type="month" id="rMonth">
-          <button class="btn btn-pdf" onclick="downloadOldMonthlyPDF()">Monthly PDF</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TWO-COL: CYLINDER SALES + PRODUCT SALES -->
-  <div class="two-col">
+  <!-- ── THREE-COL: Cylinder / Product / CSC Sales tables ── -->
+  <div class="three-col">
     <div class="section">
-      <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span><span id="cylSalesQtyBadge" style="color:#90caf9;font-size:13px;margin-left:10px"></span></div>
+      <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th><th></th></tr></thead>
+          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due</th><th></th></tr></thead>
           <tbody id="cylSalesTable"><tr><td colspan="8" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
@@ -197,20 +324,33 @@ tbody tr:last-child td { border-bottom: none; }
         <button onclick="paginate('prod',1)">Next →</button>
       </div>
     </div>
+    <div class="section">
+      <div class="section-title">🏪 CSC Sales <span id="cscSalesTotal" style="color:#80cbc4;font-size:13px"></span></div>
+      <div class="table-wrap">
+        <table>
+          <thead class="csc-thead"><tr><th>Date</th><th>CSC Center</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due</th></tr></thead>
+          <tbody id="cscSalesTable"><tr><td colspan="8" class="no-data">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button onclick="paginate('csc',-1)">← Prev</button>
+        <button onclick="paginate('csc',1)">Next →</button>
+      </div>
+    </div>
   </div>
 
-  <!-- PENDING DUES SECTION -->
+  <!-- ── PENDING DUES ── -->
   <div class="section" style="margin-bottom:14px">
     <div class="section-title">🔴 Pending Dues <span id="pendingDuesCount" style="color:#f7b94f;font-size:13px"></span></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th></tr></thead>
-        <tbody id="dashPendingDuesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
+        <tbody id="dashPendingDuesTable"><tr><td colspan="6" class="no-data">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
 
-  <!-- TWO-COL: PURCHASES -->
+  <!-- ── PURCHASES ── -->
   <div class="two-col">
     <div class="section">
       <div class="section-title">📦 Product Purchases <span id="prodPurchTotal" style="color:#ce93d8;font-size:13px"></span></div>
@@ -240,7 +380,7 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- MAINTENANCE -->
+  <!-- ── MAINTENANCE ── -->
   <div class="section">
     <div class="section-title">🔧 Maintenance Records <span id="maintTotal" style="color:#ef9a9a;font-size:13px"></span></div>
     <div class="table-wrap">
@@ -255,66 +395,41 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- BANK DEPOSITS + WITHDRAWALS -->
+  <!-- ── BANK ── -->
   <div class="section">
     <div class="section-title">🏦 Bank Deposits &amp; Withdrawals
       <span id="bankNetLabel" style="font-size:13px;color:#90caf9"></span>
     </div>
-
-    <!-- 3-CARD BALANCE SUMMARY -->
     <div class="bank-summary">
-      <div class="bank-summary-card dep">
-        <div class="bs-label">➕ Total Deposited</div>
-        <div class="bs-value" id="bsSumDep">₹ —</div>
-      </div>
-      <div class="bank-summary-card wd">
-        <div class="bs-label">➖ Total Withdrawn</div>
-        <div class="bs-value" id="bsSumWd">₹ —</div>
-      </div>
-      <div class="bank-summary-card bal">
-        <div class="bs-label">🏦 Net Balance</div>
-        <div class="bs-value" id="bsSumBal">₹ —</div>
-      </div>
+      <div class="bank-summary-card dep"><div class="bs-label">➕ Total Deposited</div><div class="bs-value" id="bsSumDep">₹ —</div></div>
+      <div class="bank-summary-card wd"><div class="bs-label">➖ Total Withdrawn</div><div class="bs-value" id="bsSumWd">₹ —</div></div>
+      <div class="bank-summary-card bal"><div class="bs-label">🏦 Net Balance</div><div class="bs-value" id="bsSumBal">₹ —</div></div>
     </div>
-
-    <!-- DEPOSIT TABLE -->
-    <div style="font-size:13px;font-weight:700;color:#a5d6a7;margin-bottom:8px">
-      ➕ Deposit Records <span id="bankTotal" style="font-weight:400;color:#a5d6a7;font-size:12px"></span>
-    </div>
+    <div style="font-size:13px;font-weight:700;color:#a5d6a7;margin-bottom:8px">➕ Deposit Records <span id="bankTotal" style="font-weight:400;font-size:12px"></span></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
         <tbody id="bankTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
       </table>
     </div>
-    <div class="pagination">
-      <button onclick="paginate('bank',-1)">← Prev</button>
-      <button onclick="paginate('bank',1)">Next →</button>
-    </div>
-
-    <!-- WITHDRAWAL TABLE -->
-    <div style="font-size:13px;font-weight:700;color:#ef9a9a;margin-top:20px;margin-bottom:8px">
-      ➖ Withdrawal Records <span id="wdTotal" style="font-weight:400;color:#ef9a9a;font-size:12px"></span>
-    </div>
+    <div class="pagination"><button onclick="paginate('bank',-1)">← Prev</button><button onclick="paginate('bank',1)">Next →</button></div>
+    <div style="font-size:13px;font-weight:700;color:#ef9a9a;margin-top:20px;margin-bottom:8px">➖ Withdrawal Records <span id="wdTotal" style="font-weight:400;font-size:12px"></span></div>
     <div class="table-wrap">
       <table>
         <thead class="wd-thead"><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
         <tbody id="wdTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
       </table>
     </div>
-    <div class="pagination">
-      <button onclick="paginate('wd',-1)">← Prev</button>
-      <button onclick="paginate('wd',1)">Next →</button>
-    </div>
+    <div class="pagination"><button onclick="paginate('wd',-1)">← Prev</button><button onclick="paginate('wd',1)">Next →</button></div>
   </div>
 
-  <!-- CHART -->
+  <!-- ── CHART ── -->
   <div class="section">
     <div class="section-title">📈 Sales Overview Chart</div>
     <div class="chart-wrap"><canvas id="salesChart"></canvas></div>
   </div>
 
-  <!-- CYLINDER PRICES + EMPLOYEES -->
+  <!-- ── CYLINDER PRICES + EMPLOYEES ── -->
   <div class="two-col">
     <div class="section">
       <div class="section-title">🛢️ Cylinder Prices</div>
@@ -337,16 +452,16 @@ tbody tr:last-child td { border-bottom: none; }
   </div>
 
 </div>
-
 <div id="toast"></div>
 
 <script>
 const BASE_URL = "https://gas-agency-website-1.onrender.com";
-const isAdmin = !!sessionStorage.getItem("login");
+const isAdmin  = !!sessionStorage.getItem("login");
 const ROWS = 8;
 
 if (!isAdmin) {
-  document.getElementById("navButtons").innerHTML = `<button onclick="goHome()">🏠 Home</button><button onclick="goAdmin()">🔑 Login</button>`;
+  document.getElementById("navButtons").innerHTML =
+    `<button onclick="goHome()">🏠 Home</button><button onclick="goAdmin()">🔑 Login</button>`;
 }
 
 function goHome()  { window.location.href = "index.html"; }
@@ -361,8 +476,8 @@ function showToast(msg, color = "#43a047") {
 
 function fmt(v) { return Number(v || 0).toLocaleString('en-IN'); }
 
-// ── PAGINATED TABLE STATE ──
-const pages  = { cyl:1, prod:1, pp:1, cp:1, maint:1, bank:1, wd:1 };
+// ── PAGINATED STATE ──
+const pages   = { cyl:1, prod:1, csc:1, pp:1, cp:1, maint:1, bank:1, wd:1 };
 const allData = {};
 
 function paginate(key, dir) {
@@ -371,24 +486,25 @@ function paginate(key, dir) {
 }
 
 function renderPage(key) {
-  const data = allData[key] || [];
+  const data  = allData[key] || [];
   const start = (pages[key]-1)*ROWS;
   const slice = data.slice(start, start+ROWS);
-  const renders = { cyl: renderCylSales, prod: renderProdSales, pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint, bank: renderBank, wd: renderWithdrawal };
-  renders[key](slice, data.length);
+  const renders = { cyl: renderCylSales, prod: renderProdSales, csc: renderCscSales,
+                    pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint,
+                    bank: renderBank, wd: renderWithdrawal };
+  renders[key](slice);
 }
 
 function renderCylSales(slice) {
   const tbody = document.getElementById("cylSalesTable");
   if (!slice.length) { tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records</td></tr>`; return; }
   tbody.innerHTML = slice.map(s => {
-    const due = Math.max(0, (s.cylinderTotal||0) - (s.cashReceived||0) - (s.onlineReceived||0));
-    const dueStyle = due > 0 ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
-    return `<tr>
-    <td>${s.date||"-"}</td><td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
+    const due = Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0));
+    const ds  = due > 0 ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
+    return `<tr><td>${s.date||"-"}</td><td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
     <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
     <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
-    <td><span style="${dueStyle}">₹ ${due.toFixed(2)}</span></td>
+    <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td>
     <td>${isAdmin?`<button class="btn-delete" onclick="deleteCylSale(${s.id})">🗑</button>`:""}</td></tr>`;
   }).join("");
 }
@@ -401,6 +517,21 @@ function renderProdSales(slice) {
     <td>${s.productQty||0}</td><td>₹ ${fmt(s.productTotal)}</td>
     <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
     <td>${isAdmin?`<button class="btn-delete" onclick="deleteProdSale(${s.id})">🗑</button>`:""}</td></tr>`).join("");
+}
+
+function renderCscSales(slice) {
+  const tbody = document.getElementById("cscSalesTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(s => {
+    const due = Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0));
+    const ds  = due > 0 ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
+    return `<tr><td>${s.date||"-"}</td>
+    <td style="font-weight:600">${s.cscCenterName||"-"}</td>
+    <td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
+    <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
+    <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
+    <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td></tr>`;
+  }).join("");
 }
 
 function renderProdPurch(slice) {
@@ -458,6 +589,7 @@ function updateBankSummaryCards(depTotal, wdTotal) {
   document.getElementById("bankNetLabel").textContent = "Net Balance: ₹ " + fmt(net);
 }
 
+// ── DELETE ──
 async function deleteCylSale(id) {
   if (!confirm("Delete?")) return;
   await fetch(`${BASE_URL}/sales/cylinder/delete/${id}`, {method:"DELETE"});
@@ -465,7 +597,6 @@ async function deleteCylSale(id) {
   renderPage("cyl");
   showToast("Deleted");
 }
-
 async function deleteProdSale(id) {
   if (!confirm("Delete?")) return;
   await fetch(`${BASE_URL}/sales/product/delete/${id}`, {method:"DELETE"});
@@ -474,17 +605,140 @@ async function deleteProdSale(id) {
   showToast("Deleted");
 }
 
-// ── LOAD DASHBOARD SUMMARY ──
+// ══════════════════════════════════════════════
+// SALES VIEWER
+// ══════════════════════════════════════════════
+let viewerMode = "daily";   // "daily" | "monthly"
+let viewerType = "cylinder"; // "cylinder" | "product" | "csc"
+let viewerCylData = [], viewerProdData = [], viewerCscData = [];
+
+function setViewerMode(mode, btn) {
+  viewerMode = mode;
+  document.querySelectorAll("#viewerModeTabs .vtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("viewerDate").style.display  = mode === "daily"   ? "block" : "none";
+  document.getElementById("viewerMonth").style.display = mode === "monthly" ? "block" : "none";
+  document.getElementById("viewerHint").textContent =
+    mode === "daily" ? "Pick a date to see all sales for that day"
+                     : "Pick a month to see all sales for that month";
+  // hide results until new query
+  document.getElementById("viewerSummary").style.display  = "none";
+  document.getElementById("viewerTypeTabs").style.display = "none";
+  ["cylinder","product","csc"].forEach(t => document.getElementById("viewer_"+t).style.display = "none");
+}
+
+function setViewerType(type, btn) {
+  viewerType = type;
+  document.querySelectorAll("#viewerTypeTabs .vtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  ["cylinder","product","csc"].forEach(t =>
+    document.getElementById("viewer_"+t).style.display = t === type ? "block" : "none"
+  );
+}
+
+async function runViewer() {
+  const dateVal  = document.getElementById("viewerDate").value;
+  const monthVal = document.getElementById("viewerMonth").value;
+  const prefix   = viewerMode === "daily" ? dateVal : monthVal;
+  if (!prefix) return;
+
+  // Fetch all three types filtered by prefix
+  const [cylRes, prodRes, cscRes] = await Promise.all([
+    fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()),
+    fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()),
+    fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()),
+  ]);
+
+  viewerCylData  = cylRes.filter(s  => s.date  && s.date.startsWith(prefix));
+  viewerProdData = prodRes.filter(s => s.date  && s.date.startsWith(prefix));
+  viewerCscData  = cscRes.filter(s  => s.date  && s.date.startsWith(prefix));
+
+  // Summary cards
+  const cylTotal  = viewerCylData.reduce((a,s)  => a + (s.cylinderTotal||0), 0);
+  const prodTotal = viewerProdData.reduce((a,s) => a + (s.productTotal||0),  0);
+  const cscTotal  = viewerCscData.reduce((a,s)  => a + (s.cylinderTotal||0), 0);
+  const cylQty    = viewerCylData.reduce((a,s)  => a + (s.cylinderQty||0),   0);
+  const cscQty    = viewerCscData.reduce((a,s)  => a + (s.cylinderQty||0),   0);
+
+  document.getElementById("vsm_cyl").textContent  = "₹" + fmt(cylTotal);
+  document.getElementById("vsm_cylq").textContent = cylQty + " cylinders";
+  document.getElementById("vsm_prod").textContent = "₹" + fmt(prodTotal);
+  document.getElementById("vsm_csc").textContent  = "₹" + fmt(cscTotal);
+  document.getElementById("vsm_cscq").textContent = cscQty + " cylinders";
+  document.getElementById("vsm_total").textContent= "₹" + fmt(cylTotal+prodTotal+cscTotal);
+  document.getElementById("viewerSummary").style.display = "flex";
+
+  // Type tabs
+  document.getElementById("viewerTypeTabs").style.display = "flex";
+
+  // Render current type table
+  renderViewerTable();
+}
+
+function renderViewerTable() {
+  // Cylinder
+  const vt_cyl = document.getElementById("vt_cyl");
+  if (!viewerCylData.length) {
+    vt_cyl.innerHTML = `<tr><td colspan="8" class="no-data">No cylinder sales for this period</td></tr>`;
+  } else {
+    vt_cyl.innerHTML = viewerCylData.map(s => {
+      const due = Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0));
+      const ds  = due > 0 ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
+      return `<tr><td>${s.date||"-"}</td><td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
+      <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderPrice)}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
+      <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
+      <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td></tr>`;
+    }).join("");
+  }
+
+  // Product
+  const vt_prod = document.getElementById("vt_prod");
+  if (!viewerProdData.length) {
+    vt_prod.innerHTML = `<tr><td colspan="7" class="no-data">No product sales for this period</td></tr>`;
+  } else {
+    vt_prod.innerHTML = viewerProdData.map(s => `<tr>
+      <td>${s.date||"-"}</td><td>${s.productName||"-"}</td>
+      <td>${s.productQty||0}</td><td>₹ ${fmt(s.productPrice)}</td><td>₹ ${fmt(s.productTotal)}</td>
+      <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td></tr>`).join("");
+  }
+
+  // CSC
+  const vt_csc = document.getElementById("vt_csc");
+  if (!viewerCscData.length) {
+    vt_csc.innerHTML = `<tr><td colspan="9" class="no-data">No CSC sales for this period</td></tr>`;
+  } else {
+    vt_csc.innerHTML = viewerCscData.map(s => {
+      const due = Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0));
+      const ds  = due > 0 ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
+      return `<tr><td>${s.date||"-"}</td>
+      <td style="font-weight:600">${s.cscCenterName||"-"}</td>
+      <td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
+      <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderPrice)}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
+      <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
+      <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td></tr>`;
+    }).join("");
+  }
+
+  // Show the currently active type
+  ["cylinder","product","csc"].forEach(t =>
+    document.getElementById("viewer_"+t).style.display = t === viewerType ? "block" : "none"
+  );
+}
+
+// ── SUMMARY CARDS ──
 async function loadSummary() {
   try {
     const res = await fetch(`${BASE_URL}/dashboard/summary`);
-    const d = await res.json();
-    document.getElementById("sc_cylSales").textContent      = "₹ " + fmt(d.cylinderSalesTotal);
-    document.getElementById("sc_cylSalesCount").textContent = d.cylinderSalesCount + " records";
-    document.getElementById("sc_cylSalesQty").textContent   = (d.cylinderSalesQty || 0) + " cylinders sold";
-    document.getElementById("sc_prodSales").textContent     = "₹ " + fmt(d.productSalesTotal);
-    document.getElementById("sc_prodSalesCount").textContent= d.productSalesCount + " records";
-    document.getElementById("sc_totalSales").textContent    = "₹ " + fmt(d.totalSales);
+    const d   = await res.json();
+    document.getElementById("sc_cylSales").textContent       = "₹ " + fmt(d.cylinderSalesTotal);
+    document.getElementById("sc_cylSalesCount").textContent  = d.cylinderSalesCount + " records";
+    document.getElementById("sc_cylSalesQty").textContent    = (d.cylinderSalesQty||0) + " cylinders";
+    document.getElementById("sc_prodSales").textContent      = "₹ " + fmt(d.productSalesTotal);
+    document.getElementById("sc_prodSalesCount").textContent = d.productSalesCount + " records";
+    document.getElementById("sc_cscSales").textContent       = "₹ " + fmt(d.cscSalesTotal);
+    document.getElementById("sc_cscSalesCount").textContent  = (d.cscSalesCount||0) + " records";
+    document.getElementById("sc_cscSalesQty").textContent    = (d.cscSalesQty||0) + " cylinders";
+    document.getElementById("sc_totalSales").textContent     = "₹ " + fmt(d.totalSales);
     document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(d.productPurchaseTotal);
     document.getElementById("sc_prodPurchaseCount").textContent = d.productPurchaseCount + " records";
     document.getElementById("sc_cylPurchase").textContent      = "₹ " + fmt(d.cylinderPurchaseTotal);
@@ -494,24 +748,40 @@ async function loadSummary() {
     document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(d.maintenanceTotal);
     document.getElementById("sc_maintenanceCount").textContent = d.maintenanceCount + " records";
     document.getElementById("sc_employees").textContent = d.employeeCount;
-    const net = (d.totalSales || 0) - (d.maintenanceTotal || 0);
+    const net = (d.totalSales||0) - (d.maintenanceTotal||0);
     document.getElementById("sc_net").textContent = "₹ " + fmt(net);
   } catch(e) { console.error("Summary load failed", e); }
 }
 
-// ── LOAD ALL TABLES ──
+// ── ALL TABLES ──
 let _depTotal = 0, _wdTotal = 0;
 
 async function loadAllTables() {
   // Cylinder Sales
   fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
-    allData.cyl = data.reverse();
+    allData.cyl = data.slice().reverse();
     const total = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
-    const qty   = data.reduce((s,r) => s + Number(r.cylinderQty  ||0), 0);
-    document.getElementById("cylSalesTotal").textContent     = "Total: ₹ " + fmt(total);
-    document.getElementById("cylSalesQtyBadge").textContent  = "| Qty: " + qty + " cylinders";
+    const qty   = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+    document.getElementById("cylSalesTotal").textContent = `Total: ₹ ${fmt(total)} | ${qty} cylinders`;
     renderPage("cyl");
     buildChart(data);
+  }).catch(()=>{});
+
+  // Product Sales
+  fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()).then(data => {
+    allData.prod = data.slice().reverse();
+    const total = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
+    document.getElementById("prodSalesTotal").textContent = "Total: ₹ " + fmt(total);
+    renderPage("prod");
+  }).catch(()=>{});
+
+  // CSC Sales
+  fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()).then(data => {
+    allData.csc = data.slice().reverse();
+    const total = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
+    const qty   = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+    document.getElementById("cscSalesTotal").textContent = `Total: ₹ ${fmt(total)} | ${qty} cylinders`;
+    renderPage("csc");
   }).catch(()=>{});
 
   // Pending Dues
@@ -519,30 +789,19 @@ async function loadAllTables() {
     const pending = data.filter(d => (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)) > 0.01);
     const tbody = document.getElementById("dashPendingDuesTable");
     document.getElementById("pendingDuesCount").textContent = pending.length ? `${pending.length} pending` : "✅ All clear";
-    if (!pending.length) {
-      tbody.innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`; return;
-    }
+    if (!pending.length) { tbody.innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`; return; }
     tbody.innerHTML = pending.sort((a,b)=>(a.date||"").localeCompare(b.date||"")).map(d => {
       const remaining = d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount);
-      return `<tr>
-        <td>${d.date||"-"}</td><td style="font-weight:600">${d.customerName||"-"}</td>
+      return `<tr><td>${d.date||"-"}</td><td style="font-weight:600">${d.customerName||"-"}</td>
         <td style="text-transform:capitalize">${d.cylinderType||"-"}</td>
         <td>₹ ${fmt(d.totalAmount)}</td><td>₹ ${fmt(d.paidAmount)}</td>
         <td><span style="color:#f7b94f;font-weight:700">₹ ${remaining.toFixed(2)}</span></td></tr>`;
     }).join("");
   }).catch(e => console.error("Pending dues error:", e));
 
-  // Product Sales
-  fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()).then(data => {
-    allData.prod = data.reverse();
-    const total = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
-    document.getElementById("prodSalesTotal").textContent = "Total: ₹ " + fmt(total);
-    renderPage("prod");
-  }).catch(()=>{});
-
   // Product Purchase
   fetch(`${BASE_URL}/purchase/product/all`).then(r=>r.json()).then(data => {
-    allData.pp = data.reverse();
+    allData.pp = data.slice().reverse();
     const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
     document.getElementById("prodPurchTotal").textContent = "Total: ₹ " + fmt(total);
     renderPage("pp");
@@ -550,7 +809,7 @@ async function loadAllTables() {
 
   // Cylinder Purchase
   fetch(`${BASE_URL}/purchase/cylinder/all`).then(r=>r.json()).then(data => {
-    allData.cp = data.reverse();
+    allData.cp = data.slice().reverse();
     const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
     document.getElementById("cylPurchTotal").textContent = "Total: ₹ " + fmt(total);
     renderPage("cp");
@@ -558,7 +817,7 @@ async function loadAllTables() {
 
   // Maintenance
   fetch(`${BASE_URL}/getMaintenance`).then(r=>r.json()).then(data => {
-    allData.maint = data.reverse();
+    allData.maint = data.slice().reverse();
     const total = data.reduce((s,m) => s + Number(m.fuel||0) + Number(m.otherExpense||0) + Number(m.employeePayment||0), 0);
     document.getElementById("maintTotal").textContent = "Total: ₹ " + fmt(total);
     renderPage("maint");
@@ -566,7 +825,7 @@ async function loadAllTables() {
 
   // Bank Deposits
   fetch(`${BASE_URL}/bankdeposit/all`).then(r=>r.json()).then(data => {
-    allData.bank = data.reverse();
+    allData.bank = data.slice().reverse();
     _depTotal = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
     document.getElementById("bankTotal").textContent = "Total: ₹ " + fmt(_depTotal);
     renderPage("bank");
@@ -575,7 +834,7 @@ async function loadAllTables() {
 
   // Bank Withdrawals
   fetch(`${BASE_URL}/bankwithdrawal/all`).then(r=>r.json()).then(data => {
-    allData.wd = data.reverse();
+    allData.wd = data.slice().reverse();
     _wdTotal = data.reduce((s,w) => s + Number(w.totalWithdrawal||0), 0);
     document.getElementById("wdTotal").textContent = "Total: ₹ " + fmt(_wdTotal);
     renderPage("wd");
@@ -600,14 +859,14 @@ function buildChart(cylData) {
   const labels    = cylData.slice(0,12).map(s => s.date);
   const cylTotals = cylData.slice(0,12).map(s => Number(s.cylinderTotal||0));
   new Chart(document.getElementById("salesChart"), {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Cylinder Sales', data: cylTotals, backgroundColor: 'rgba(30,136,229,0.8)', borderRadius: 4 }] },
+    type: "bar",
+    data: { labels, datasets: [{ label: "Cylinder Sales", data: cylTotals, backgroundColor: "rgba(30,136,229,0.8)", borderRadius: 4 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#c9d8ff' } } },
+      plugins: { legend: { labels: { color: "#c9d8ff" } } },
       scales: {
-        x: { ticks: { color: '#90aed4' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-        y: { beginAtZero: true, ticks: { color: '#90aed4' }, grid: { color: 'rgba(255,255,255,0.08)' } }
+        x: { ticks: { color: "#90aed4" }, grid: { color: "rgba(255,255,255,0.05)" } },
+        y: { beginAtZero: true, ticks: { color: "#90aed4" }, grid: { color: "rgba(255,255,255,0.08)" } }
       }
     }
   });
@@ -615,31 +874,16 @@ function buildChart(cylData) {
 
 // ── PDF DOWNLOADS ──
 function downloadPDF(type) {
-  if (type === 'product') {
-    const m = document.getElementById("rProdSalesMonth").value;
-    if (!m) { showToast("Select a month", "#e53935"); return; }
-    window.open(`${BASE_URL}/sales/product/pdf/${m}`);
-  } else if (type === 'cylinder') {
-    const m = document.getElementById("rCylSalesMonth").value;
-    if (!m) { showToast("Select a month", "#e53935"); return; }
-    window.open(`${BASE_URL}/sales/cylinder/pdf/${m}`);
-  } else if (type === 'bank') {
-    const m = document.getElementById("rBankMonth").value;
-    if (!m) { showToast("Select a month", "#e53935"); return; }
-    window.open(`${BASE_URL}/bankdeposit/pdf/${m}`);
-  }
-}
-
-function downloadOldPDF() {
-  const d = document.getElementById("rDate").value;
-  if (!d) { showToast("Select a date", "#e53935"); return; }
-  window.open(`${BASE_URL}/report/pdf/${d}`);
-}
-
-function downloadOldMonthlyPDF() {
-  const m = document.getElementById("rMonth").value;
+  const ids = { product:"rProdSalesMonth", cylinder:"rCylSalesMonth", csc:"rCscSalesMonth", bank:"rBankMonth" };
+  const m = document.getElementById(ids[type]).value;
   if (!m) { showToast("Select a month", "#e53935"); return; }
-  window.open(`${BASE_URL}/report/pdf/month/${m}`);
+  const urls = {
+    product:  `${BASE_URL}/sales/product/pdf/${m}`,
+    cylinder: `${BASE_URL}/sales/cylinder/pdf/${m}`,
+    csc:      `${BASE_URL}/sales/csc/pdf/${m}`,
+    bank:     `${BASE_URL}/bankdeposit/pdf/${m}`
+  };
+  window.open(urls[type]);
 }
 
 // ── INIT ──
@@ -648,3 +892,5 @@ loadAllTables();
 </script>
 </body>
 </html>
+
+
