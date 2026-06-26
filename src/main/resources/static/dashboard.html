@@ -204,7 +204,7 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="section-title">🔴 Pending Dues <span id="pendingDuesCount" style="color:#f7b94f;font-size:13px"></span></div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th></tr></thead>
+        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th></tr></thead>
         <tbody id="dashPendingDuesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
       </table>
     </div>
@@ -515,31 +515,22 @@ async function loadAllTables() {
   }).catch(()=>{});
 
   // Pending Dues
-  fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
-    const pending = data.filter(s => {
-      const due = (s.cylinderTotal||0) - (s.cashReceived||0) - (s.onlineReceived||0);
-      return due > 0.01;
-    });
+  fetch(`${BASE_URL}/due/all`).then(r=>r.json()).then(data => {
+    const pending = data.filter(d => (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)) > 0.01);
     const tbody = document.getElementById("dashPendingDuesTable");
     document.getElementById("pendingDuesCount").textContent = pending.length ? `${pending.length} pending` : "✅ All clear";
     if (!pending.length) {
-      tbody.innerHTML = `<tr><td colspan="7" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
-      return;
+      tbody.innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`; return;
     }
-    tbody.innerHTML = pending.sort((a,b)=>(a.date||"").localeCompare(b.date||"")).map(s => {
-      const paid = (s.cashReceived||0) + (s.onlineReceived||0);
-      const due  = Math.max(0, (s.cylinderTotal||0) - paid);
+    tbody.innerHTML = pending.sort((a,b)=>(a.date||"").localeCompare(b.date||"")).map(d => {
+      const remaining = d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount);
       return `<tr>
-        <td>${s.date||"-"}</td>
-        <td style="font-weight:600">${s.customerName||"-"}</td>
-        <td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
-        <td>${s.cylinderQty||0}</td>
-        <td>₹ ${fmt(s.cylinderTotal)}</td>
-        <td>₹ ${fmt(paid)}</td>
-        <td><span style="color:#f7b94f;font-weight:700">₹ ${due.toFixed(2)}</span></td>
-      </tr>`;
+        <td>${d.date||"-"}</td><td style="font-weight:600">${d.customerName||"-"}</td>
+        <td style="text-transform:capitalize">${d.cylinderType||"-"}</td>
+        <td>₹ ${fmt(d.totalAmount)}</td><td>₹ ${fmt(d.paidAmount)}</td>
+        <td><span style="color:#f7b94f;font-weight:700">₹ ${remaining.toFixed(2)}</span></td></tr>`;
     }).join("");
-  }).catch(()=>{});
+  }).catch(e => console.error("Pending dues error:", e));
 
   // Product Sales
   fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()).then(data => {

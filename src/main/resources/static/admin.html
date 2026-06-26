@@ -326,9 +326,6 @@ tbody tr:hover td { background: var(--surface2); }
     <div class="card-title">🔵 Cylinder Sales <span class="badge">Sales</span></div>
     <div class="form-row">
       <div class="form-group"><label>Date</label><input type="date" id="csDate"></div>
-      <div class="form-group"><label>Customer Name</label><input type="text" id="csCustomerName" placeholder="Enter customer name"></div>
-    </div>
-    <div class="form-row">
       <div class="form-group">
         <label>Cylinder Type</label>
         <select id="csType" onchange="onCylinderTypeChange()"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
@@ -368,8 +365,8 @@ tbody tr:hover td { background: var(--surface2); }
     <div class="section-sub">Sales Records</div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th><th>Actions</th></tr></thead>
-        <tbody id="csSalesTable"><tr><td colspan="9" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+        <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th><th>Actions</th></tr></thead>
+        <tbody id="csSalesTable"><tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -377,11 +374,60 @@ tbody tr:hover td { background: var(--surface2); }
   <!-- ===================== PENDING DUES ===================== -->
   <div class="card" id="pendingDues">
     <div class="card-title">🔴 Pending Dues <span class="badge">Due Tracker</span></div>
+
+    <!-- Add Due Form -->
+    <div class="section-sub">Add New Due Entry</div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer Name</label><input type="text" id="dueCustomerName" placeholder="Enter customer name"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="dueDate"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="dueCylinderType"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+      </div>
+      <div class="form-group"><label>Total Amount (₹)</label><input type="number" id="dueTotalAmount" placeholder="0.00" min="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Paid Amount (₹)</label><input type="number" id="duePaidAmount" value="0" min="0"></div>
+      <div class="form-group"><label>Remarks (optional)</label><input type="text" id="dueRemarks" placeholder="e.g. partial payment"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addCustomerDue()">+ Add Due Entry</button>
+
+    <hr class="divider">
+    <div class="section-sub">Due Records</div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Total (₹)</th><th>Paid (₹)</th><th>Remaining (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
         <tbody id="pendingDuesTable"><tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- ===== EDIT DUE MODAL ===== -->
+  <div id="editDueModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:420px;margin:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:18px;">✏️ Edit Due Entry</div>
+      <input type="hidden" id="editDueId">
+      <div class="form-row">
+        <div class="form-group"><label>Customer Name</label><input type="text" id="editDueCustomerName"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="editDueDate"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cylinder Type</label>
+          <select id="editDueCylinderType"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+        </div>
+        <div class="form-group"><label>Total Amount (₹)</label><input type="number" id="editDueTotalAmount" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Paid Amount (₹)</label><input type="number" id="editDuePaidAmount" min="0"></div>
+        <div class="form-group"><label>Remarks</label><input type="text" id="editDueRemarks"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1" onclick="submitEditDue()">✅ Save Changes</button>
+        <button class="btn" style="flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border);" onclick="document.getElementById('editDueModal').style.display='none'">Cancel</button>
+      </div>
     </div>
   </div>
 
@@ -876,7 +922,6 @@ async function deleteProductSale(id) {
 async function addCylinderSale() {
   const data = {
     date: document.getElementById("csDate").value,
-    customerName: document.getElementById("csCustomerName").value,
     cylinderType: document.getElementById("csType").value,
     cylinderQty: parseInt(document.getElementById("csQty").value) || 0,
     cashReceived: parseFloat(document.getElementById("csCash").value) || 0,
@@ -888,7 +933,6 @@ async function addCylinderSale() {
   document.getElementById("csQty").value = 1;
   document.getElementById("csCash").value = 0;
   document.getElementById("csOnline").value = 0;
-  document.getElementById("csCustomerName").value = "";
   // Reset display boxes
   document.getElementById("csTotalBox").style.display = "none";
   document.getElementById("csBalanceBox").style.display = "none";
@@ -904,9 +948,9 @@ async function loadCylinderSalesTable() {
   tbody.innerHTML = data.reverse().map(s => {
     const due = Math.max(0, (s.cylinderTotal || 0) - (s.cashReceived || 0) - (s.onlineReceived || 0));
     const dueColor = due > 0 ? 'color:var(--warning);font-weight:600' : 'color:var(--success);font-weight:600';
-    const payBtn = due > 0 ? `<button class="btn btn-sm" style="background:rgba(247,185,79,0.15);color:var(--warning);border:1px solid rgba(247,185,79,0.4);margin-right:4px" onclick="openPayDueModal(${s.id}, ${due}, '${s.date}', '${s.cylinderType}', '${s.customerName||""}')">💳 Pay Due</button>` : '';
+    const payBtn = due > 0 ? `<button class="btn btn-sm" style="background:rgba(247,185,79,0.15);color:var(--warning);border:1px solid rgba(247,185,79,0.4);margin-right:4px" onclick="openPayDueModal(${s.id}, ${due}, '${s.date}', '${s.cylinderType}')">💳 Pay Due</button>` : '';
     return `<tr>
-    <td>${s.date || "-"}</td><td>${s.customerName || "-"}</td><td style="text-transform:capitalize">${s.cylinderType || "-"}</td><td>${s.cylinderQty}</td>
+    <td>${s.date || "-"}</td><td style="text-transform:capitalize">${s.cylinderType || "-"}</td><td>${s.cylinderQty}</td>
     <td>₹ ${s.cylinderTotal}</td><td>₹ ${s.cashReceived}</td><td>₹ ${s.onlineReceived}</td>
     <td><span style="${dueColor}">₹ ${due.toFixed(2)}</span></td>
     <td style="white-space:nowrap">${payBtn}<button class="btn btn-sm btn-danger" onclick="deleteCylinderSale(${s.id})">🗑</button></td></tr>`;
@@ -922,43 +966,107 @@ async function deleteCylinderSale(id, fromPending = false) {
 }
 
 // ── PENDING DUES ──
+const DUE_API = API.replace("/sales", "") + "/due";
+
+async function addCustomerDue() {
+  const name   = document.getElementById("dueCustomerName").value.trim();
+  const date   = document.getElementById("dueDate").value;
+  const type   = document.getElementById("dueCylinderType").value;
+  const total  = parseFloat(document.getElementById("dueTotalAmount").value) || 0;
+  const paid   = parseFloat(document.getElementById("duePaidAmount").value)  || 0;
+  const remarks= document.getElementById("dueRemarks").value.trim();
+  if (!name)  { showToast("Enter customer name", "error"); return; }
+  if (!date)  { showToast("Select a date", "error"); return; }
+  if (total <= 0) { showToast("Enter total amount", "error"); return; }
+  if (paid > total) { showToast("Paid cannot exceed total", "error"); return; }
+  await fetch(`${DUE_API}/add`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ customerName: name, date, cylinderType: type, totalAmount: total, paidAmount: paid, remarks })
+  });
+  showToast("Due entry added ✓", "success");
+  ["dueCustomerName","dueDate","dueTotalAmount","dueRemarks"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("duePaidAmount").value = 0;
+  loadPendingDues();
+}
+
 async function loadPendingDues() {
   const tbody = document.getElementById("pendingDuesTable");
   if (!tbody) return;
   try {
-    const res  = await fetch(`${API}/sales/cylinder/all`);
-    const data = await res.json();
-    const pending = data.filter(s => {
-      const due = (s.cylinderTotal||0) - (s.cashReceived||0) - (s.onlineReceived||0);
-      return due > 0.01;
-    });
-    if (!pending.length) {
-      tbody.innerHTML = `<tr><td colspan="8" style="color:var(--success);text-align:center;padding:18px;font-weight:600">✅ No pending dues!</td></tr>`;
+    const data = await fetch(`${DUE_API}/all`).then(r => r.json());
+    const pending = data.filter(d => d.remainingAmount > 0.01);
+    const cleared = data.filter(d => d.remainingAmount <= 0.01);
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">No due entries yet</td></tr>`;
       return;
     }
-    tbody.innerHTML = pending.sort((a,b) => (a.date||"").localeCompare(b.date||"")).map(s => {
-      const paid = (s.cashReceived||0) + (s.onlineReceived||0);
-      const due  = Math.max(0, (s.cylinderTotal||0) - paid);
-      return `<tr>
-        <td>${s.date||"-"}</td>
-        <td style="font-weight:600;color:var(--text)">${s.customerName||"-"}</td>
-        <td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
-        <td>${s.cylinderQty||0}</td>
-        <td>₹ ${s.cylinderTotal}</td>
-        <td>₹ ${paid.toFixed(2)}</td>
-        <td><span style="color:var(--warning);font-weight:700">₹ ${due.toFixed(2)}</span></td>
+    const rows = [...pending, ...cleared].map(d => {
+      const remaining = d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount);
+      const isPending  = remaining > 0.01;
+      const remStyle   = isPending ? "color:var(--warning);font-weight:700" : "color:var(--success);font-weight:600";
+      return `<tr style="${isPending ? "" : "opacity:0.6"}">
+        <td>${d.date||"-"}</td>
+        <td style="font-weight:600">${d.customerName||"-"}</td>
+        <td style="text-transform:capitalize">${d.cylinderType||"-"}</td>
+        <td>₹ ${(d.totalAmount||0).toFixed(2)}</td>
+        <td>₹ ${(d.paidAmount||0).toFixed(2)}</td>
+        <td><span style="${remStyle}">₹ ${remaining.toFixed(2)}</span></td>
+        <td style="color:var(--muted);font-size:12px">${d.remarks||"-"}</td>
         <td style="white-space:nowrap">
-          <button class="btn btn-sm" style="background:rgba(247,185,79,0.15);color:var(--warning);border:1px solid rgba(247,185,79,0.4);margin-right:4px" onclick="openPayDueModal(${s.id}, ${due}, '${s.date}', '${s.cylinderType}', '${s.customerName||""}')">💳 Pay</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteCylinderSale(${s.id}, true)">🗑</button>
+          <button class="btn btn-sm" style="background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.4);margin-right:4px" onclick="openEditDue(${d.id})">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteCustomerDue(${d.id})">🗑</button>
         </td></tr>`;
     }).join("");
+    tbody.innerHTML = rows;
   } catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:var(--danger);text-align:center;padding:18px">Failed to load</td></tr>`; }
+}
+
+async function openEditDue(id) {
+  const data = await fetch(`${DUE_API}/all`).then(r => r.json());
+  const d = data.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById("editDueId").value          = d.id;
+  document.getElementById("editDueCustomerName").value = d.customerName || "";
+  document.getElementById("editDueDate").value         = d.date || "";
+  document.getElementById("editDueCylinderType").value = d.cylinderType || "domestic";
+  document.getElementById("editDueTotalAmount").value  = d.totalAmount || 0;
+  document.getElementById("editDuePaidAmount").value   = d.paidAmount  || 0;
+  document.getElementById("editDueRemarks").value      = d.remarks     || "";
+  document.getElementById("editDueModal").style.display = "flex";
+}
+
+async function submitEditDue() {
+  const id = parseInt(document.getElementById("editDueId").value);
+  const total = parseFloat(document.getElementById("editDueTotalAmount").value) || 0;
+  const paid  = parseFloat(document.getElementById("editDuePaidAmount").value)  || 0;
+  if (paid > total) { showToast("Paid cannot exceed total", "error"); return; }
+  await fetch(`${DUE_API}/update/${id}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      customerName: document.getElementById("editDueCustomerName").value,
+      date:         document.getElementById("editDueDate").value,
+      cylinderType: document.getElementById("editDueCylinderType").value,
+      totalAmount:  total,
+      paidAmount:   paid,
+      remarks:      document.getElementById("editDueRemarks").value
+    })
+  });
+  showToast("Due updated ✓", "success");
+  document.getElementById("editDueModal").style.display = "none";
+  loadPendingDues();
+}
+
+async function deleteCustomerDue(id) {
+  if (!confirm("Delete this due entry?")) return;
+  await fetch(`${DUE_API}/delete/${id}`, { method: "DELETE" });
+  showToast("Deleted", "info");
+  loadPendingDues();
 }
 
 // ── PAY DUE ──
 let _payDueId = null, _payDueMax = 0, _payDueCurrentCash = 0, _payDueCurrentOnline = 0;
 
-function openPayDueModal(id, due, date, type, customer = "") {
+function openPayDueModal(id, due, date, type) {
   _payDueId = id;
   _payDueMax = due;
   fetch(`${API}/sales/cylinder/all`).then(r => r.json()).then(list => {
@@ -966,7 +1074,7 @@ function openPayDueModal(id, due, date, type, customer = "") {
     _payDueCurrentCash   = rec ? rec.cashReceived   : 0;
     _payDueCurrentOnline = rec ? rec.onlineReceived  : 0;
   });
-  document.getElementById("payDueInfo").textContent = `${customer ? customer + "  ·  " : ""}${date}  ·  ${type}`;
+  document.getElementById("payDueInfo").textContent = `${date}  ·  ${type}`;
   document.getElementById("payDueRemaining").textContent = due.toFixed(2);
   document.getElementById("payDueCash").value   = 0;
   document.getElementById("payDueOnline").value = 0;
