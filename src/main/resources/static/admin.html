@@ -1045,16 +1045,34 @@ async function addCylinderSale() {
     onlineReceived: parseFloat(document.getElementById("csOnline").value) || 0
   };
   if (!data.date || !data.cylinderQty) { showToast("Fill date and quantity", "error"); return; }
-  await fetch(`${API}/sales/cylinder/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
-  showToast("Cylinder Sale added ✓", "success");
-  document.getElementById("csQty").value = 1;
-  document.getElementById("csCash").value = 0;
-  document.getElementById("csOnline").value = 0;
-  // Reset display boxes
-  document.getElementById("csTotalBox").style.display = "none";
-  document.getElementById("csBalanceBox").style.display = "none";
-  loadCylinderSalesTable();
-  loadPendingDues();
+
+  try {
+    const res = await fetch(`${API}/sales/cylinder/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      showToast("Save failed: " + errText, "error");
+      console.error("Server error:", errText);
+      return;
+    }
+
+    showToast("Cylinder Sale added ✓", "success");
+    document.getElementById("csQty").value = 1;
+    document.getElementById("csCash").value = 0;
+    document.getElementById("csOnline").value = 0;
+    document.getElementById("csTotalBox").style.display = "none";
+    document.getElementById("csBalanceBox").style.display = "none";
+    loadCylinderSalesTable();
+    loadPendingDues();
+
+  } catch (err) {
+    showToast("Network error: " + err.message, "error");
+    console.error("Fetch error:", err);
+  }
 }
 
 async function loadCylinderSalesTable() {
