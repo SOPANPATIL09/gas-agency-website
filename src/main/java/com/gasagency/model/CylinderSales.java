@@ -11,6 +11,7 @@ public class CylinderSales {
     private int id;
 
     private String date;
+    private String customerName;
     private String cylinderType;
     private int cylinderQty;
     private double cylinderPrice;
@@ -24,6 +25,9 @@ public class CylinderSales {
 
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
 
     public String getCylinderType() { return cylinderType; }
     public void setCylinderType(String cylinderType) { this.cylinderType = cylinderType; }

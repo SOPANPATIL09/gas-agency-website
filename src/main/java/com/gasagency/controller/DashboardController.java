@@ -30,6 +30,8 @@ public class DashboardController {
         double cylSalesTotal = cylinderSalesRepo.findAll().stream()
                 .mapToDouble(s -> s.getCylinderTotal()).sum();
         long cylSalesCount = cylinderSalesRepo.count();
+        long cylSalesQty = cylinderSalesRepo.findAll().stream()
+                .mapToLong(s -> s.getCylinderQty()).sum();
 
         // Product Sales totals
         double prodSalesTotal = productSalesRepo.findAll().stream()
@@ -71,6 +73,7 @@ public class DashboardController {
 
         summary.put("cylinderSalesTotal", cylSalesTotal + legacyCylTotal);
         summary.put("cylinderSalesCount", cylSalesCount);
+        summary.put("cylinderSalesQty", cylSalesQty);
         summary.put("productSalesTotal", prodSalesTotal + legacyProdTotal);
         summary.put("productSalesCount", prodSalesCount);
         summary.put("maintenanceTotal", maintenanceTotal);

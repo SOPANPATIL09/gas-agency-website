@@ -68,6 +68,7 @@ public class SalesController {
             @PathVariable int id, @RequestBody CylinderSales updated) {
         return cylinderSalesRepo.findById(id).map(s -> {
             s.setDate(updated.getDate());
+            s.setCustomerName(updated.getCustomerName());
             s.setCylinderType(updated.getCylinderType());
             s.setCylinderQty(updated.getCylinderQty());
             s.setCashReceived(updated.getCashReceived());

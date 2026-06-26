@@ -114,7 +114,7 @@ tbody tr:last-child td { border-bottom: none; }
 
   <!-- STAT CARDS ROW 1 -->
   <div class="stats-grid">
-    <div class="stat-card blue"><div class="label">🔵 Cylinder Sales</div><div class="value" id="sc_cylSales">₹ —</div><div class="sub" id="sc_cylSalesCount">— records</div></div>
+    <div class="stat-card blue"><div class="label">🔵 Cylinder Sales</div><div class="value" id="sc_cylSales">₹ —</div><div class="sub" id="sc_cylSalesCount">— records</div><div class="sub" id="sc_cylSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders sold</div></div>
     <div class="stat-card orange"><div class="label">🛒 Product Sales</div><div class="value" id="sc_prodSales">₹ —</div><div class="sub" id="sc_prodSalesCount">— records</div></div>
     <div class="stat-card teal"><div class="label">💰 Total Sales</div><div class="value" id="sc_totalSales">₹ —</div><div class="sub">Combined all sales</div></div>
   </div>
@@ -172,11 +172,11 @@ tbody tr:last-child td { border-bottom: none; }
   <!-- TWO-COL: CYLINDER SALES + PRODUCT SALES -->
   <div class="two-col">
     <div class="section">
-      <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span></div>
+      <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span><span id="cylSalesQtyBadge" style="color:#90caf9;font-size:13px;margin-left:10px"></span></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th></th></tr></thead>
-          <tbody id="cylSalesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
+          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th><th></th></tr></thead>
+          <tbody id="cylSalesTable"><tr><td colspan="8" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
       <div class="pagination">
@@ -196,6 +196,17 @@ tbody tr:last-child td { border-bottom: none; }
         <button onclick="paginate('prod',-1)">← Prev</button>
         <button onclick="paginate('prod',1)">Next →</button>
       </div>
+    </div>
+  </div>
+
+  <!-- PENDING DUES SECTION -->
+  <div class="section" style="margin-bottom:14px">
+    <div class="section-title">🔴 Pending Dues <span id="pendingDuesCount" style="color:#f7b94f;font-size:13px"></span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th></tr></thead>
+        <tbody id="dashPendingDuesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
+      </table>
     </div>
   </div>
 
@@ -369,12 +380,17 @@ function renderPage(key) {
 
 function renderCylSales(slice) {
   const tbody = document.getElementById("cylSalesTable");
-  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="7" class="no-data">No records</td></tr>`; return; }
-  tbody.innerHTML = slice.map(s => `<tr>
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(s => {
+    const due = Math.max(0, (s.cylinderTotal||0) - (s.cashReceived||0) - (s.onlineReceived||0));
+    const dueStyle = due > 0 ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
+    return `<tr>
     <td>${s.date||"-"}</td><td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
     <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
     <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
-    <td>${isAdmin?`<button class="btn-delete" onclick="deleteCylSale(${s.id})">🗑</button>`:""}</td></tr>`).join("");
+    <td><span style="${dueStyle}">₹ ${due.toFixed(2)}</span></td>
+    <td>${isAdmin?`<button class="btn-delete" onclick="deleteCylSale(${s.id})">🗑</button>`:""}</td></tr>`;
+  }).join("");
 }
 
 function renderProdSales(slice) {
@@ -465,6 +481,7 @@ async function loadSummary() {
     const d = await res.json();
     document.getElementById("sc_cylSales").textContent      = "₹ " + fmt(d.cylinderSalesTotal);
     document.getElementById("sc_cylSalesCount").textContent = d.cylinderSalesCount + " records";
+    document.getElementById("sc_cylSalesQty").textContent   = (d.cylinderSalesQty || 0) + " cylinders sold";
     document.getElementById("sc_prodSales").textContent     = "₹ " + fmt(d.productSalesTotal);
     document.getElementById("sc_prodSalesCount").textContent= d.productSalesCount + " records";
     document.getElementById("sc_totalSales").textContent    = "₹ " + fmt(d.totalSales);
@@ -490,9 +507,38 @@ async function loadAllTables() {
   fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
     allData.cyl = data.reverse();
     const total = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
-    document.getElementById("cylSalesTotal").textContent = "Total: ₹ " + fmt(total);
+    const qty   = data.reduce((s,r) => s + Number(r.cylinderQty  ||0), 0);
+    document.getElementById("cylSalesTotal").textContent     = "Total: ₹ " + fmt(total);
+    document.getElementById("cylSalesQtyBadge").textContent  = "| Qty: " + qty + " cylinders";
     renderPage("cyl");
     buildChart(data);
+  }).catch(()=>{});
+
+  // Pending Dues
+  fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
+    const pending = data.filter(s => {
+      const due = (s.cylinderTotal||0) - (s.cashReceived||0) - (s.onlineReceived||0);
+      return due > 0.01;
+    });
+    const tbody = document.getElementById("dashPendingDuesTable");
+    document.getElementById("pendingDuesCount").textContent = pending.length ? `${pending.length} pending` : "✅ All clear";
+    if (!pending.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = pending.sort((a,b)=>(a.date||"").localeCompare(b.date||"")).map(s => {
+      const paid = (s.cashReceived||0) + (s.onlineReceived||0);
+      const due  = Math.max(0, (s.cylinderTotal||0) - paid);
+      return `<tr>
+        <td>${s.date||"-"}</td>
+        <td style="font-weight:600">${s.customerName||"-"}</td>
+        <td style="text-transform:capitalize">${s.cylinderType||"-"}</td>
+        <td>${s.cylinderQty||0}</td>
+        <td>₹ ${fmt(s.cylinderTotal)}</td>
+        <td>₹ ${fmt(paid)}</td>
+        <td><span style="color:#f7b94f;font-weight:700">₹ ${due.toFixed(2)}</span></td>
+      </tr>`;
+    }).join("");
   }).catch(()=>{});
 
   // Product Sales
