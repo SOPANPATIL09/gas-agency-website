@@ -19,6 +19,7 @@ body::before { content: ""; position: fixed; inset: 0; background: rgba(5,15,40,
 .nav-buttons button { padding: 7px 18px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.4); background: transparent; color: #fff; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; }
 .nav-buttons button:hover { background: #fff; color: #0a2e6e; border-color: #fff; }
 .content { max-width: 1300px; margin: 0 auto; padding: 24px 20px 60px; }
+/* STATS */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
 .stat-card { border-radius: 12px; padding: 18px 20px; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
 .stat-card:hover { transform: translateY(-3px); }
@@ -29,13 +30,14 @@ body::before { content: ""; position: fixed; inset: 0; background: rgba(5,15,40,
 .stat-card.purple { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
 .stat-card.grey   { background: linear-gradient(135deg,#37474f,#263238); }
 .stat-card.csc    { background: linear-gradient(135deg,#00695c,#00897b); }
-.stat-card.red    { background: linear-gradient(135deg,#b71c1c,#7f0000); }
 .stat-card .label { font-size: 11px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
 .stat-card .value { font-size: 24px; font-weight: 700; margin-top: 6px; }
 .stat-card .sub   { font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.6); }
+/* SECTION */
 .section { background: rgba(10,25,60,0.62); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
 .section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .section-title span { font-size: 13px; }
+/* TABLE */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 thead tr { background: rgba(21,101,192,0.7); }
@@ -44,9 +46,11 @@ td { padding: 10px 12px; text-align: center; color: #e3eaff; border-bottom: 1px 
 tbody tr:hover td { background: rgba(255,255,255,0.05); }
 tbody tr:last-child td { border-bottom: none; }
 .no-data { color: #7899cc; text-align: center; padding: 20px; font-size: 13px; }
+/* PAGINATION */
 .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
 .pagination button { padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .pagination button:hover { background: #1565c0; border-color: #1565c0; }
+/* REPORT */
 .report-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 14px; }
 .report-box { background: rgba(21,101,192,0.2); border: 1px solid rgba(66,165,245,0.25); border-radius: 10px; padding: 16px; transition: transform 0.2s; }
 .report-box:hover { transform: translateY(-2px); }
@@ -58,14 +62,21 @@ tbody tr:last-child td { border-bottom: none; }
 .btn-pdf  { background: linear-gradient(135deg,#e53935,#b71c1c); color: #fff; }
 .btn-view { background: linear-gradient(135deg,#1565c0,#0d47a1); color: #fff; }
 .btn:hover { transform: scale(1.04); opacity: 0.9; }
+/* DELETE */
 .btn-delete { padding: 4px 10px; background: rgba(229,57,53,0.2); color: #ef5350; border: 1px solid rgba(229,57,53,0.4); border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; }
 .btn-delete:hover { background: rgba(229,57,53,0.4); }
+/* CHART */
 .chart-wrap { position: relative; height: 260px; }
+/* BADGE */
 .badge-type { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 5px; padding: 2px 7px; font-size: 11px; font-weight: 600; }
+/* TOAST */
 #toast { position: fixed; bottom: 28px; right: 28px; padding: 11px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; z-index: 999; background: #43a047; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 #toast.show { transform: translateY(0); opacity: 1; }
+/* TWO-COL */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* THREE-COL */
 .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+/* BANK */
 .bank-summary { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
 .bank-summary-card { flex: 1; min-width: 120px; border-radius: 10px; padding: 14px 16px; text-align: center; }
 .bank-summary-card.dep { background: rgba(46,125,50,0.25);  border: 1.5px solid #4caf50; }
@@ -77,6 +88,7 @@ tbody tr:last-child td { border-bottom: none; }
 .bank-summary-card.wd  .bs-value { color: #ef9a9a; }
 .bank-summary-card.bal .bs-value { color: #90caf9; }
 .wd-thead tr { background: rgba(183,28,28,0.55) !important; }
+/* SALES VIEWER */
 .viewer-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 .vtab { padding: 7px 16px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .vtab.active { background: #1565c0; border-color: #1565c0; color: #fff; }
@@ -89,8 +101,6 @@ tbody tr:last-child td { border-bottom: none; }
 .vs-card .vs-label { font-size: 10px; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
 .vs-card .vs-val { font-size: 18px; font-weight: 700; color: #90caf9; }
 .csc-thead tr { background: rgba(0,105,92,0.7) !important; }
-/* FIX: pending due total badge in header */
-.due-header-total { background: rgba(247,185,79,0.15); border: 1px solid rgba(247,185,79,0.4); border-radius: 8px; padding: 4px 12px; color: #f7b94f; font-size: 13px; font-weight: 700; }
 @media (max-width: 1000px) {
   .stats-grid { grid-template-columns: repeat(2,1fr); }
   .three-col  { grid-template-columns: 1fr 1fr; }
@@ -121,7 +131,7 @@ tbody tr:last-child td { border-bottom: none; }
 
 <div class="content">
 
-  <!-- ROW 1: Sales -->
+  <!-- ── STAT CARDS ROW 1: Sales ── -->
   <div class="stats-grid">
     <div class="stat-card blue">
       <div class="label">🔵 Cylinder Sales</div>
@@ -147,7 +157,7 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- ROW 2: Expenses -->
+  <!-- ── STAT CARDS ROW 2: Expenses ── -->
   <div class="stats-grid">
     <div class="stat-card purple">
       <div class="label">📦 Product Purchases</div>
@@ -171,18 +181,12 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- ROW 3 -->
-  <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);max-width:900px;margin-bottom:20px;">
+  <!-- ── STAT CARDS ROW 3 ── -->
+  <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);max-width:700px;margin-bottom:20px;">
     <div class="stat-card grey">
       <div class="label">👤 Total Employees</div>
       <div class="value" id="sc_employees">—</div>
       <div class="sub">Active staff</div>
-    </div>
-    <!-- FIX: Added Pending Dues card with total amount -->
-    <div class="stat-card red">
-      <div class="label">🔴 Pending Dues</div>
-      <div class="value" id="sc_pendingDueAmount">₹ —</div>
-      <div class="sub" id="sc_pendingDueCount">— pending</div>
     </div>
     <div class="stat-card teal" style="background:linear-gradient(135deg,#283593,#1a237e)">
       <div class="label">📊 Net Position</div>
@@ -191,29 +195,41 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- SALES VIEWER -->
+  <!-- ══════════════════════════════════════════════════
+       SALES VIEWER — Daily / Monthly with type tabs
+  ══════════════════════════════════════════════════ -->
   <div class="section">
     <div class="section-title">🔍 Sales Viewer — Daily &amp; Monthly</div>
+
+    <!-- Mode: Daily / Monthly -->
     <div class="viewer-tabs" id="viewerModeTabs">
       <button class="vtab active" onclick="setViewerMode('daily', this)">📅 Daily</button>
       <button class="vtab" onclick="setViewerMode('monthly', this)">📆 Monthly</button>
     </div>
+
+    <!-- Date / Month input -->
     <div class="viewer-controls">
       <input type="date"  id="viewerDate"  style="display:block" onchange="runViewer()">
       <input type="month" id="viewerMonth" style="display:none" onchange="runViewer()">
       <span style="color:rgba(255,255,255,0.4);font-size:12px" id="viewerHint">Pick a date to see all sales for that day</span>
     </div>
+
+    <!-- Summary mini-cards (shown after query) -->
     <div class="viewer-summary" id="viewerSummary" style="display:none">
       <div class="vs-card"><div class="vs-label">🔵 Cylinder Sales</div><div class="vs-val" id="vsm_cyl">₹0</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cylq">0 cylinders</div></div>
       <div class="vs-card"><div class="vs-label">🛒 Product Sales</div><div class="vs-val" id="vsm_prod" style="color:#ffcc80">₹0</div></div>
       <div class="vs-card"><div class="vs-label">🏪 CSC Sales</div><div class="vs-val" id="vsm_csc" style="color:#80cbc4">₹0</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cscq">0 cylinders</div></div>
       <div class="vs-card"><div class="vs-label">💰 Combined</div><div class="vs-val" id="vsm_total" style="color:#ffd54f">₹0</div></div>
     </div>
+
+    <!-- Type tabs: Cylinder / Product / CSC -->
     <div class="viewer-tabs" id="viewerTypeTabs" style="display:none">
       <button class="vtab active" onclick="setViewerType('cylinder', this)">🔵 Cylinder Sales</button>
       <button class="vtab" onclick="setViewerType('product', this)">🛒 Product Sales</button>
       <button class="vtab" onclick="setViewerType('csc', this)">🏪 CSC Sales</button>
     </div>
+
+    <!-- Cylinder sales table -->
     <div id="viewer_cylinder" style="display:none">
       <div class="table-wrap">
         <table>
@@ -222,6 +238,8 @@ tbody tr:last-child td { border-bottom: none; }
         </table>
       </div>
     </div>
+
+    <!-- Product sales table -->
     <div id="viewer_product" style="display:none">
       <div class="table-wrap">
         <table>
@@ -230,6 +248,8 @@ tbody tr:last-child td { border-bottom: none; }
         </table>
       </div>
     </div>
+
+    <!-- CSC sales table -->
     <div id="viewer_csc" style="display:none">
       <div class="table-wrap">
         <table>
@@ -240,30 +260,42 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
-  <!-- REPORTS -->
+  <!-- ── REPORTS DOWNLOAD ── -->
   <div class="section">
     <div class="section-title">📥 Download Reports</div>
     <div class="report-grid">
       <div class="report-box">
         <h3>📊 Product Sales PDF</h3>
-        <div class="report-row"><input type="month" id="rProdSalesMonth"><button class="btn btn-pdf" onclick="downloadPDF('product')">PDF</button></div>
+        <div class="report-row">
+          <input type="month" id="rProdSalesMonth">
+          <button class="btn btn-pdf" onclick="downloadPDF('product')">PDF</button>
+        </div>
       </div>
       <div class="report-box">
         <h3>🔵 Cylinder Sales PDF</h3>
-        <div class="report-row"><input type="month" id="rCylSalesMonth"><button class="btn btn-pdf" onclick="downloadPDF('cylinder')">PDF</button></div>
+        <div class="report-row">
+          <input type="month" id="rCylSalesMonth">
+          <button class="btn btn-pdf" onclick="downloadPDF('cylinder')">PDF</button>
+        </div>
       </div>
       <div class="report-box">
         <h3>🏪 CSC Sales PDF</h3>
-        <div class="report-row"><input type="month" id="rCscSalesMonth"><button class="btn btn-pdf" onclick="downloadPDF('csc')">PDF</button></div>
+        <div class="report-row">
+          <input type="month" id="rCscSalesMonth">
+          <button class="btn btn-pdf" onclick="downloadPDF('csc')">PDF</button>
+        </div>
       </div>
       <div class="report-box">
         <h3>🏦 Bank Deposit &amp; Withdrawal PDF</h3>
-        <div class="report-row"><input type="month" id="rBankMonth"><button class="btn btn-pdf" onclick="downloadPDF('bank')">PDF</button></div>
+        <div class="report-row">
+          <input type="month" id="rBankMonth">
+          <button class="btn btn-pdf" onclick="downloadPDF('bank')">PDF</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- THREE-COL: Sales tables -->
+  <!-- ── THREE-COL: Cylinder / Product / CSC Sales tables ── -->
   <div class="three-col">
     <div class="section">
       <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span></div>
@@ -273,7 +305,10 @@ tbody tr:last-child td { border-bottom: none; }
           <tbody id="cylSalesTable"><tr><td colspan="8" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
-      <div class="pagination"><button onclick="paginate('cyl',-1)">← Prev</button><button onclick="paginate('cyl',1)">Next →</button></div>
+      <div class="pagination">
+        <button onclick="paginate('cyl',-1)">← Prev</button>
+        <button onclick="paginate('cyl',1)">Next →</button>
+      </div>
     </div>
     <div class="section">
       <div class="section-title">📊 Product Sales <span id="prodSalesTotal" style="color:#ffcc80;font-size:13px"></span></div>
@@ -283,7 +318,10 @@ tbody tr:last-child td { border-bottom: none; }
           <tbody id="prodSalesTable"><tr><td colspan="7" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
-      <div class="pagination"><button onclick="paginate('prod',-1)">← Prev</button><button onclick="paginate('prod',1)">Next →</button></div>
+      <div class="pagination">
+        <button onclick="paginate('prod',-1)">← Prev</button>
+        <button onclick="paginate('prod',1)">Next →</button>
+      </div>
     </div>
     <div class="section">
       <div class="section-title">🏪 CSC Sales <span id="cscSalesTotal" style="color:#80cbc4;font-size:13px"></span></div>
@@ -293,28 +331,29 @@ tbody tr:last-child td { border-bottom: none; }
           <tbody id="cscSalesTable"><tr><td colspan="8" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
-      <div class="pagination"><button onclick="paginate('csc',-1)">← Prev</button><button onclick="paginate('csc',1)">Next →</button></div>
+      <div class="pagination">
+        <button onclick="paginate('csc',-1)">← Prev</button>
+        <button onclick="paginate('csc',1)">Next →</button>
+      </div>
     </div>
   </div>
 
-  <!-- PENDING DUES — FIX: added total amount in section-title -->
+  <!-- ── PENDING DUES ── -->
   <div class="section" style="margin-bottom:14px">
-    <div class="section-title">
-      🔴 Pending Dues
-      <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span id="pendingDuesCount" style="color:#f7b94f;font-size:13px"></span>
-        <span id="pendingDuesTotalBadge" class="due-header-total" style="display:none">Total Due: ₹ <span id="pendingDuesTotal">0</span></span>
-      </span>
-    </div>
+    <div class="section-title">🔴 Pending Dues <span id="pendingDuesCount" style="color:#f7b94f;font-size:13px"></span></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th></tr></thead>
         <tbody id="dashPendingDuesTable"><tr><td colspan="6" class="no-data">Loading...</td></tr></tbody>
       </table>
     </div>
+    <div class="pagination">
+      <button onclick="paginate('due',-1)">← Prev</button>
+      <button onclick="paginate('due',1)">Next →</button>
+    </div>
   </div>
 
-  <!-- PURCHASES -->
+  <!-- ── PURCHASES ── -->
   <div class="two-col">
     <div class="section">
       <div class="section-title">📦 Product Purchases <span id="prodPurchTotal" style="color:#ce93d8;font-size:13px"></span></div>
@@ -324,7 +363,10 @@ tbody tr:last-child td { border-bottom: none; }
           <tbody id="prodPurchTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
-      <div class="pagination"><button onclick="paginate('pp',-1)">← Prev</button><button onclick="paginate('pp',1)">Next →</button></div>
+      <div class="pagination">
+        <button onclick="paginate('pp',-1)">← Prev</button>
+        <button onclick="paginate('pp',1)">Next →</button>
+      </div>
     </div>
     <div class="section">
       <div class="section-title">🛢️ Cylinder Purchases <span id="cylPurchTotal" style="color:#90caf9;font-size:13px"></span></div>
@@ -334,11 +376,14 @@ tbody tr:last-child td { border-bottom: none; }
           <tbody id="cylPurchTable"><tr><td colspan="5" class="no-data">Loading...</td></tr></tbody>
         </table>
       </div>
-      <div class="pagination"><button onclick="paginate('cp',-1)">← Prev</button><button onclick="paginate('cp',1)">Next →</button></div>
+      <div class="pagination">
+        <button onclick="paginate('cp',-1)">← Prev</button>
+        <button onclick="paginate('cp',1)">Next →</button>
+      </div>
     </div>
   </div>
 
-  <!-- MAINTENANCE -->
+  <!-- ── MAINTENANCE ── -->
   <div class="section">
     <div class="section-title">🔧 Maintenance Records <span id="maintTotal" style="color:#ef9a9a;font-size:13px"></span></div>
     <div class="table-wrap">
@@ -347,10 +392,13 @@ tbody tr:last-child td { border-bottom: none; }
         <tbody id="maintTable"><tr><td colspan="6" class="no-data">Loading...</td></tr></tbody>
       </table>
     </div>
-    <div class="pagination"><button onclick="paginate('maint',-1)">← Prev</button><button onclick="paginate('maint',1)">Next →</button></div>
+    <div class="pagination">
+      <button onclick="paginate('maint',-1)">← Prev</button>
+      <button onclick="paginate('maint',1)">Next →</button>
+    </div>
   </div>
 
-  <!-- BANK -->
+  <!-- ── BANK ── -->
   <div class="section">
     <div class="section-title">🏦 Bank Deposits &amp; Withdrawals
       <span id="bankNetLabel" style="font-size:13px;color:#90caf9"></span>
@@ -378,13 +426,13 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="pagination"><button onclick="paginate('wd',-1)">← Prev</button><button onclick="paginate('wd',1)">Next →</button></div>
   </div>
 
-  <!-- CHART -->
+  <!-- ── CHART ── -->
   <div class="section">
     <div class="section-title">📈 Sales Overview Chart</div>
     <div class="chart-wrap"><canvas id="salesChart"></canvas></div>
   </div>
 
-  <!-- CYLINDER PRICES + EMPLOYEES -->
+  <!-- ── CYLINDER PRICES + EMPLOYEES ── -->
   <div class="two-col">
     <div class="section">
       <div class="section-title">🛢️ Cylinder Prices</div>
@@ -431,7 +479,8 @@ function showToast(msg, color = "#43a047") {
 
 function fmt(v) { return Number(v || 0).toLocaleString('en-IN'); }
 
-const pages   = { cyl:1, prod:1, csc:1, pp:1, cp:1, maint:1, bank:1, wd:1 };
+// ── PAGINATED STATE ──
+const pages   = { cyl:1, prod:1, csc:1, pp:1, cp:1, maint:1, bank:1, wd:1, due:1 };
 const allData = {};
 
 function paginate(key, dir) {
@@ -445,7 +494,7 @@ function renderPage(key) {
   const slice = data.slice(start, start+ROWS);
   const renders = { cyl: renderCylSales, prod: renderProdSales, csc: renderCscSales,
                     pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint,
-                    bank: renderBank, wd: renderWithdrawal };
+                    bank: renderBank, wd: renderWithdrawal, due: renderPendingDues };
   renders[key](slice);
 }
 
@@ -533,6 +582,18 @@ function renderWithdrawal(slice) {
     <td>${w.remarks||"—"}</td></tr>`).join("");
 }
 
+function renderPendingDues(slice) {
+  const tbody = document.getElementById("dashPendingDuesTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`; return; }
+  tbody.innerHTML = slice.map(d => {
+    const remaining = d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount);
+    return `<tr><td>${d.date||"-"}</td><td style="font-weight:600">${d.customerName||"-"}</td>
+      <td style="text-transform:capitalize">${d.cylinderType||"-"}</td>
+      <td>₹ ${fmt(d.totalAmount)}</td><td>₹ ${fmt(d.paidAmount)}</td>
+      <td><span style="color:#f7b94f;font-weight:700">₹ ${remaining.toFixed(2)}</span></td></tr>`;
+  }).join("");
+}
+
 function updateBankSummaryCards(depTotal, wdTotal) {
   const net = depTotal - wdTotal;
   document.getElementById("bsSumDep").textContent = "₹ " + fmt(depTotal);
@@ -543,6 +604,7 @@ function updateBankSummaryCards(depTotal, wdTotal) {
   document.getElementById("bankNetLabel").textContent = "Net Balance: ₹ " + fmt(net);
 }
 
+// ── DELETE ──
 async function deleteCylSale(id) {
   if (!confirm("Delete?")) return;
   await fetch(`${BASE_URL}/sales/cylinder/delete/${id}`, {method:"DELETE"});
@@ -558,9 +620,11 @@ async function deleteProdSale(id) {
   showToast("Deleted");
 }
 
+// ══════════════════════════════════════════════
 // SALES VIEWER
-let viewerMode = "daily";
-let viewerType = "cylinder";
+// ══════════════════════════════════════════════
+let viewerMode = "daily";   // "daily" | "monthly"
+let viewerType = "cylinder"; // "cylinder" | "product" | "csc"
 let viewerCylData = [], viewerProdData = [], viewerCscData = [];
 
 function setViewerMode(mode, btn) {
@@ -572,6 +636,7 @@ function setViewerMode(mode, btn) {
   document.getElementById("viewerHint").textContent =
     mode === "daily" ? "Pick a date to see all sales for that day"
                      : "Pick a month to see all sales for that month";
+  // hide results until new query
   document.getElementById("viewerSummary").style.display  = "none";
   document.getElementById("viewerTypeTabs").style.display = "none";
   ["cylinder","product","csc"].forEach(t => document.getElementById("viewer_"+t).style.display = "none");
@@ -592,16 +657,18 @@ async function runViewer() {
   const prefix   = viewerMode === "daily" ? dateVal : monthVal;
   if (!prefix) return;
 
+  // Fetch all three types filtered by prefix
   const [cylRes, prodRes, cscRes] = await Promise.all([
     fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()),
     fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()),
     fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()),
   ]);
 
-  viewerCylData  = cylRes.filter(s  => s.date && s.date.startsWith(prefix));
-  viewerProdData = prodRes.filter(s => s.date && s.date.startsWith(prefix));
-  viewerCscData  = cscRes.filter(s  => s.date && s.date.startsWith(prefix));
+  viewerCylData  = cylRes.filter(s  => s.date  && s.date.startsWith(prefix));
+  viewerProdData = prodRes.filter(s => s.date  && s.date.startsWith(prefix));
+  viewerCscData  = cscRes.filter(s  => s.date  && s.date.startsWith(prefix));
 
+  // Summary cards
   const cylTotal  = viewerCylData.reduce((a,s)  => a + (s.cylinderTotal||0), 0);
   const prodTotal = viewerProdData.reduce((a,s) => a + (s.productTotal||0),  0);
   const cscTotal  = viewerCscData.reduce((a,s)  => a + (s.cylinderTotal||0), 0);
@@ -615,11 +682,16 @@ async function runViewer() {
   document.getElementById("vsm_cscq").textContent = cscQty + " cylinders";
   document.getElementById("vsm_total").textContent= "₹" + fmt(cylTotal+prodTotal+cscTotal);
   document.getElementById("viewerSummary").style.display = "flex";
+
+  // Type tabs
   document.getElementById("viewerTypeTabs").style.display = "flex";
+
+  // Render current type table
   renderViewerTable();
 }
 
 function renderViewerTable() {
+  // Cylinder
   const vt_cyl = document.getElementById("vt_cyl");
   if (!viewerCylData.length) {
     vt_cyl.innerHTML = `<tr><td colspan="8" class="no-data">No cylinder sales for this period</td></tr>`;
@@ -634,6 +706,7 @@ function renderViewerTable() {
     }).join("");
   }
 
+  // Product
   const vt_prod = document.getElementById("vt_prod");
   if (!viewerProdData.length) {
     vt_prod.innerHTML = `<tr><td colspan="7" class="no-data">No product sales for this period</td></tr>`;
@@ -644,6 +717,7 @@ function renderViewerTable() {
       <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td></tr>`).join("");
   }
 
+  // CSC
   const vt_csc = document.getElementById("vt_csc");
   if (!viewerCscData.length) {
     vt_csc.innerHTML = `<tr><td colspan="9" class="no-data">No CSC sales for this period</td></tr>`;
@@ -660,42 +734,41 @@ function renderViewerTable() {
     }).join("");
   }
 
+  // Show the currently active type
   ["cylinder","product","csc"].forEach(t =>
     document.getElementById("viewer_"+t).style.display = t === viewerType ? "block" : "none"
   );
 }
 
 // ── SUMMARY CARDS ──
-// FIX: reads cscSalesTotal, cscSalesCount, cscSalesQty from backend
-//      (requires DashboardController.java to also be updated — see instructions)
 async function loadSummary() {
   try {
     const res = await fetch(`${BASE_URL}/dashboard/summary`);
     const d   = await res.json();
     document.getElementById("sc_cylSales").textContent       = "₹ " + fmt(d.cylinderSalesTotal);
-    document.getElementById("sc_cylSalesCount").textContent  = (d.cylinderSalesCount || 0) + " records";
-    document.getElementById("sc_cylSalesQty").textContent    = (d.cylinderSalesQty || 0) + " cylinders";
+    document.getElementById("sc_cylSalesCount").textContent  = d.cylinderSalesCount + " records";
+    document.getElementById("sc_cylSalesQty").textContent    = (d.cylinderSalesQty||0) + " cylinders";
     document.getElementById("sc_prodSales").textContent      = "₹ " + fmt(d.productSalesTotal);
-    document.getElementById("sc_prodSalesCount").textContent = (d.productSalesCount || 0) + " records";
-    // FIX: CSC — use 0 as fallback so it never shows "undefined"
-    document.getElementById("sc_cscSales").textContent       = "₹ " + fmt(d.cscSalesTotal || 0);
-    document.getElementById("sc_cscSalesCount").textContent  = (d.cscSalesCount || 0) + " records";
-    document.getElementById("sc_cscSalesQty").textContent    = (d.cscSalesQty || 0) + " cylinders";
+    document.getElementById("sc_prodSalesCount").textContent = d.productSalesCount + " records";
+    document.getElementById("sc_cscSales").textContent       = "₹ " + fmt(d.cscSalesTotal);
+    document.getElementById("sc_cscSalesCount").textContent  = (d.cscSalesCount||0) + " records";
+    document.getElementById("sc_cscSalesQty").textContent    = (d.cscSalesQty||0) + " cylinders";
     document.getElementById("sc_totalSales").textContent     = "₹ " + fmt(d.totalSales);
     document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(d.productPurchaseTotal);
-    document.getElementById("sc_prodPurchaseCount").textContent = (d.productPurchaseCount || 0) + " records";
+    document.getElementById("sc_prodPurchaseCount").textContent = d.productPurchaseCount + " records";
     document.getElementById("sc_cylPurchase").textContent      = "₹ " + fmt(d.cylinderPurchaseTotal);
-    document.getElementById("sc_cylPurchaseCount").textContent = (d.cylinderPurchaseCount || 0) + " records";
+    document.getElementById("sc_cylPurchaseCount").textContent = d.cylinderPurchaseCount + " records";
     document.getElementById("sc_bankDeposit").textContent      = "₹ " + fmt(d.bankDepositTotal);
-    document.getElementById("sc_bankDepositCount").textContent = (d.bankDepositCount || 0) + " records";
+    document.getElementById("sc_bankDepositCount").textContent = d.bankDepositCount + " records";
     document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(d.maintenanceTotal);
-    document.getElementById("sc_maintenanceCount").textContent = (d.maintenanceCount || 0) + " records";
-    document.getElementById("sc_employees").textContent = d.employeeCount || 0;
-    const net = (d.totalSales || 0) - (d.maintenanceTotal || 0);
+    document.getElementById("sc_maintenanceCount").textContent = d.maintenanceCount + " records";
+    document.getElementById("sc_employees").textContent = d.employeeCount;
+    const net = (d.totalSales||0) - (d.maintenanceTotal||0);
     document.getElementById("sc_net").textContent = "₹ " + fmt(net);
   } catch(e) { console.error("Summary load failed", e); }
 }
 
+// ── ALL TABLES ──
 let _depTotal = 0, _wdTotal = 0;
 
 async function loadAllTables() {
@@ -726,44 +799,17 @@ async function loadAllTables() {
     renderPage("csc");
   }).catch(()=>{});
 
-  // FIX: Pending Dues — now calculates and shows total due amount in header
+  // Pending Dues
   fetch(`${BASE_URL}/due/all`).then(r=>r.json()).then(data => {
     const pending = data.filter(d => (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)) > 0.01);
-    const tbody = document.getElementById("dashPendingDuesTable");
-
-    // Calculate total due amount
-    const totalDue = pending.reduce((sum, d) => {
-      return sum + (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount));
-    }, 0);
-
-    // Update header count
-    document.getElementById("pendingDuesCount").textContent =
-      pending.length ? `${pending.length} pending` : "✅ All clear";
-
-    // FIX: Show total due amount badge in header
-    if (pending.length > 0) {
-      document.getElementById("pendingDuesTotal").textContent = fmt(totalDue);
-      document.getElementById("pendingDuesTotalBadge").style.display = "inline-block";
-      // Also update the stat card
-      document.getElementById("sc_pendingDueAmount").textContent = "₹ " + fmt(totalDue);
-      document.getElementById("sc_pendingDueCount").textContent  = pending.length + " pending";
-    } else {
-      document.getElementById("pendingDuesTotalBadge").style.display = "none";
-      document.getElementById("sc_pendingDueAmount").textContent = "₹ 0";
-      document.getElementById("sc_pendingDueCount").textContent  = "All clear ✅";
-    }
-
+    pending.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+    allData.due = pending;
+    document.getElementById("pendingDuesCount").textContent = pending.length ? `${pending.length} pending` : "✅ All clear";
     if (!pending.length) {
-      tbody.innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
+      document.getElementById("dashPendingDuesTable").innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
       return;
     }
-    tbody.innerHTML = pending.sort((a,b)=>(a.date||"").localeCompare(b.date||"")).map(d => {
-      const remaining = d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount);
-      return `<tr><td>${d.date||"-"}</td><td style="font-weight:600">${d.customerName||"-"}</td>
-        <td style="text-transform:capitalize">${d.cylinderType||"-"}</td>
-        <td>₹ ${fmt(d.totalAmount)}</td><td>₹ ${fmt(d.paidAmount)}</td>
-        <td><span style="color:#f7b94f;font-weight:700">₹ ${remaining.toFixed(2)}</span></td></tr>`;
-    }).join("");
+    renderPage("due");
   }).catch(e => console.error("Pending dues error:", e));
 
   // Product Purchase
@@ -839,6 +885,7 @@ function buildChart(cylData) {
   });
 }
 
+// ── PDF DOWNLOADS ──
 function downloadPDF(type) {
   const ids = { product:"rProdSalesMonth", cylinder:"rCylSalesMonth", csc:"rCscSalesMonth", bank:"rBankMonth" };
   const m = document.getElementById(ids[type]).value;
@@ -852,6 +899,7 @@ function downloadPDF(type) {
   window.open(urls[type]);
 }
 
+// ── INIT ──
 loadSummary();
 loadAllTables();
 </script>

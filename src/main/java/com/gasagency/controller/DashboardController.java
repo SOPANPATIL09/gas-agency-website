@@ -16,6 +16,7 @@ public class DashboardController {
     @Autowired SalesRepository salesRepo;
     @Autowired CylinderSalesRepository cylinderSalesRepo;
     @Autowired ProductSalesRepository productSalesRepo;
+    @Autowired CscSalesRepository cscSalesRepo;
     @Autowired MaintenanceRepository maintenanceRepo;
     @Autowired BankDepositRepository bankDepositRepo;
     @Autowired EmployeeRepository employeeRepo;
@@ -68,6 +69,13 @@ public class DashboardController {
                 .mapToDouble(p -> p.getTotalAmount()).sum();
         long cylinderPurchaseCount = cylinderPurchaseRepo.count();
 
+        // CSC Sales totals
+        double cscSalesTotal = cscSalesRepo.findAll().stream()
+                .mapToDouble(s -> s.getCylinderTotal()).sum();
+        long cscSalesCount = cscSalesRepo.count();
+        long cscSalesQty = cscSalesRepo.findAll().stream()
+                .mapToLong(s -> s.getCylinderQty()).sum();
+
         // Employees
         long employeeCount = employeeRepo.count();
 
@@ -76,6 +84,9 @@ public class DashboardController {
         summary.put("cylinderSalesQty", cylSalesQty);
         summary.put("productSalesTotal", prodSalesTotal + legacyProdTotal);
         summary.put("productSalesCount", prodSalesCount);
+        summary.put("cscSalesTotal", cscSalesTotal);
+        summary.put("cscSalesCount", cscSalesCount);
+        summary.put("cscSalesQty", cscSalesQty);
         summary.put("maintenanceTotal", maintenanceTotal);
         summary.put("maintenanceCount", maintenanceCount);
         summary.put("bankDepositTotal", bankDepositTotal);
@@ -87,7 +98,7 @@ public class DashboardController {
         summary.put("cylinderPurchaseTotal", cylinderPurchaseTotal);
         summary.put("cylinderPurchaseCount", cylinderPurchaseCount);
         summary.put("employeeCount", employeeCount);
-        summary.put("totalSales", cylSalesTotal + prodSalesTotal + legacyCylTotal + legacyProdTotal);
+        summary.put("totalSales", cylSalesTotal + prodSalesTotal + legacyCylTotal + legacyProdTotal + cscSalesTotal);
 
         return ResponseEntity.ok(summary);
     }
