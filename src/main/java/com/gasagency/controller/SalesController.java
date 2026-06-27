@@ -98,10 +98,16 @@ public class SalesController {
                 s.setCylinderTotal(updated.getCylinderQty() * cyl.getPrice());
                 s.setTotalAmount(s.getCylinderTotal());
             }
-            return ResponseEntity.ok(cylinderSalesRepo.save(s));
+            CylinderSales saved = cylinderSalesRepo.save(s);
+            if (updated.getOnlineReceived() > 0) {
+                String remark = "Cylinder Sale (Edit) - " + updated.getCylinderQty()
+                    + " " + updated.getCylinderType()
+                    + " (Online) [Sale ID: " + id + "]";
+                autoDepositOnline(updated.getOnlineReceived(), updated.getDate(), remark);
+            }
+            return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }
-
     @DeleteMapping("/cylinder/delete/{id}")
     public ResponseEntity<String> deleteCylinderSale(@PathVariable int id) {
         cylinderSalesRepo.deleteById(id);

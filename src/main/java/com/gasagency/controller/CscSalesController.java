@@ -87,7 +87,14 @@ public class CscSalesController {
             s.setTotalAmount(s.getCylinderTotal());
             s.setCashReceived(updated.getCashReceived());
             s.setOnlineReceived(updated.getOnlineReceived());
-            return ResponseEntity.ok(cscSalesRepo.save(s));
+            CscSales saved = cscSalesRepo.save(s);
+            if (updated.getOnlineReceived() > 0) {
+                String remark = "CSC Sale (Edit) - " + updated.getCscCenterName()
+                    + " | " + updated.getCylinderQty() + " " + updated.getCylinderType()
+                    + " (Online) [Sale ID: " + id + "]";
+                autoDepositOnline(updated.getOnlineReceived(), updated.getDate(), remark);
+            }
+            return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }
 

@@ -116,7 +116,21 @@ public class GasController {
             existing.setOnlineAmount(updated.getOnlineAmount());
             existing.setDueAmount(updated.getDueAmount());
             existing.setDate(updated.getDate());
-            return ResponseEntity.ok(newConnectionRepo.save(existing));
+            NewConnection savedConn = newConnectionRepo.save(existing);
+
+            if (updated.getOnlineAmount() > 0) {
+                BankDeposit deposit = new BankDeposit();
+                deposit.setDate(updated.getDate());
+                deposit.setOnlineDeposit(updated.getOnlineAmount());
+                deposit.setCashDeposit(0);
+                deposit.setTotalDeposit(updated.getOnlineAmount());
+                deposit.setRemarks("New Connection (Edit) - " + updated.getCustomerName()
+                    + " | " + (updated.getConnectionType() != null ? updated.getConnectionType() : "NC")
+                    + " (Online) [ID: " + id + "]");
+                bankDepositRepo.save(deposit);
+            }
+
+            return ResponseEntity.ok(savedConn);
         }).orElse(ResponseEntity.notFound().build());
     }
 

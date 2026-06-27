@@ -181,7 +181,7 @@ tbody tr:hover td { background: var(--surface2); }
     </div>
     <div class="form-row">
       <div class="form-group"><label>Cylinder Qty</label><input type="number" id="connCylQty" placeholder="0" min="0" value="1"></div>
-      <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="connectionPrice" placeholder="0" oninput="updateConnPaymentTotal()"></div>
+      <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="connectionPrice" placeholder="0" oninput="updateConnDue()"></div>
     </div>
     <div class="section-sub" style="margin:10px 0 8px">Payment</div>
     <div class="form-row">
@@ -818,24 +818,29 @@ function updateConnDue() {
 }
 
 async function addConnection() {
-  const date = document.getElementById("connDate").value;
-  const customerName = document.getElementById("customerName").value;
-  const phoneNumber = document.getElementById("phoneNumber").value;
-  const connectionType = document.getElementById("connType").value;
-  const connectionPrice = parseFloat(document.getElementById("connectionPrice").value) || 0;
-  const cylinderQty = parseInt(document.getElementById("connCylQty").value) || 0;
-  const cashAmount = parseFloat(document.getElementById("connCash").value) || 0;
-  const onlineAmount = parseFloat(document.getElementById("connOnline").value) || 0;
-  const dueAmount = parseFloat(document.getElementById("connDue").value) || 0;
-  if (!customerName) { showToast("Enter customer name", "error"); return; }
-  if (!date) { showToast("Select date", "error"); return; }
-  const data = { customerName, phoneNumber, connectionPrice, connectionType, cylinderQty, cashAmount, onlineAmount, dueAmount, date };
-  await fetch(`${API}/addConnection`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
-  showToast("Connection added ✓", "success");
-  ["customerName","phoneNumber","connectionPrice","connCash","connOnline","connDue"].forEach(id => document.getElementById(id).value = "");
-  document.getElementById("connCylQty").value = "1";
-  loadConnectionTable();
-}
+	  const date = document.getElementById("connDate").value;
+	  const customerName = document.getElementById("customerName").value;
+	  const phoneNumber = document.getElementById("phoneNumber").value;
+	  const connectionType = document.getElementById("connType").value;
+	  const connectionPrice = parseFloat(document.getElementById("connectionPrice").value) || 0;
+	  const cylinderQty = parseInt(document.getElementById("connCylQty").value) || 0;
+	  const cashAmount = parseFloat(document.getElementById("connCash").value) || 0;
+	  const onlineAmount = parseFloat(document.getElementById("connOnline").value) || 0;
+	  const dueAmount = parseFloat(document.getElementById("connDue").value) || 0;
+	  if (!customerName) { showToast("Enter customer name", "error"); return; }
+	  if (!date) { showToast("Select date", "error"); return; }
+	  const data = { customerName, phoneNumber, connectionPrice, connectionType, cylinderQty, cashAmount, onlineAmount, dueAmount, date };
+	  try {
+	    const res = await fetch(`${API}/addConnection`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+	    if (!res.ok) { showToast("Save failed: " + res.status, "error"); return; }
+	    showToast("Connection added ✓", "success");
+	    ["customerName","phoneNumber","connectionPrice","connCash","connOnline","connDue"].forEach(id => document.getElementById(id).value = "");
+	    document.getElementById("connCylQty").value = "1";
+	    loadConnectionTable();
+	  } catch(e) {
+	    showToast("Network error: " + e.message, "error");
+	  }
+	}
 
 function recalcEditConnDue() {
   const price = parseFloat(document.getElementById("editConnPrice").value) || 0;
