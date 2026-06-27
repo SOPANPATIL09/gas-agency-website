@@ -899,6 +899,8 @@ async function deleteConn(id) {
   loadConnectionTable();
 }
 
+function fmt(v) { return Number(v || 0).toLocaleString('en-IN'); }
+
 async function loadConnectionTable() {
   const tbody = document.getElementById("connTable");
   if (!tbody) return;
