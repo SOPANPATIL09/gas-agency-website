@@ -21,18 +21,20 @@ body::before { content: ""; position: fixed; inset: 0; background: rgba(5,15,40,
 .content { max-width: 1300px; margin: 0 auto; padding: 24px 20px 60px; }
 /* STATS */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
-.stat-card { border-radius: 12px; padding: 18px 20px; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,0.4); transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1); }
-.stat-card:hover { transform: translateY(-3px); }
-.stat-card.blue   { background: linear-gradient(135deg,#1565c0,#0d47a1); }
-.stat-card.green  { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
-.stat-card.orange { background: linear-gradient(135deg,#e65100,#bf360c); }
-.stat-card.teal   { background: linear-gradient(135deg,#00695c,#004d40); }
-.stat-card.purple { background: linear-gradient(135deg,#6a1b9a,#4a148c); }
-.stat-card.grey   { background: linear-gradient(135deg,#37474f,#263238); }
-.stat-card.csc    { background: linear-gradient(135deg,#00695c,#00897b); }
-.stat-card .label { font-size: 11px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-.stat-card .value { font-size: 24px; font-weight: 700; margin-top: 6px; }
+.stat-card { border-radius: 14px; padding: 18px 20px 16px; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid rgba(255,255,255,0.1); position:relative; overflow:hidden; }
+.stat-card::before { content:""; position:absolute; top:-30px; right:-20px; width:90px; height:90px; border-radius:50%; background:rgba(255,255,255,0.06); pointer-events:none; }
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px rgba(0,0,0,0.55); }
+.stat-card.blue   { background: linear-gradient(145deg,#1e6fcc,#0c3d8f); }
+.stat-card.green  { background: linear-gradient(145deg,#2e8b42,#1a5228); }
+.stat-card.orange { background: linear-gradient(145deg,#e8620d,#c0380a); }
+.stat-card.teal   { background: linear-gradient(145deg,#00796b,#004d40); }
+.stat-card.purple { background: linear-gradient(145deg,#7b25a8,#4a148c); }
+.stat-card.grey   { background: linear-gradient(145deg,#455a64,#263238); }
+.stat-card.csc    { background: linear-gradient(145deg,#00837a,#005a52); }
+.stat-card .label { font-size: 10.5px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.7px; font-weight: 700; }
+.stat-card .value { font-size: 26px; font-weight: 800; margin-top: 8px; letter-spacing:-0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 .stat-card .sub   { font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.6); }
+.stat-card .divider { height:1px; background:rgba(255,255,255,0.12); margin: 10px 0 8px; }
 /* SECTION */
 .section { background: rgba(10,25,60,0.62); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
 .section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 10px; display: block; }
@@ -146,14 +148,16 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="value" id="sc_cylSales">₹ —</div>
       <div class="sub" id="sc_cylSalesCount">— records</div>
       <div class="sub" id="sc_cylSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders</div>
-      <div class="sub" id="sc_cylSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="divider"></div>
+      <div class="sub" id="sc_cylSalesCash" style="color:rgba(255,255,255,0.8)">💵 Cash: ₹ —</div>
       <div class="sub" id="sc_cylSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card orange">
       <div class="label">🛒 Product Sales</div>
       <div class="value" id="sc_prodSales">₹ —</div>
       <div class="sub" id="sc_prodSalesCount">— records</div>
-      <div class="sub" id="sc_prodSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="divider"></div>
+      <div class="sub" id="sc_prodSalesCash" style="color:rgba(255,255,255,0.8)">💵 Cash: ₹ —</div>
       <div class="sub" id="sc_prodSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card csc">
@@ -161,14 +165,16 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="value" id="sc_cscSales">₹ —</div>
       <div class="sub" id="sc_cscSalesCount">— records</div>
       <div class="sub" id="sc_cscSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders</div>
-      <div class="sub" id="sc_cscSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="divider"></div>
+      <div class="sub" id="sc_cscSalesCash" style="color:rgba(255,255,255,0.8)">💵 Cash: ₹ —</div>
       <div class="sub" id="sc_cscSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card" style="background:linear-gradient(135deg,#6a1b9a,#4a148c)">
       <div class="label">🔗 New Connection</div>
       <div class="value" id="sc_newConn">₹ —</div>
       <div class="sub" id="sc_newConnCount">— records</div>
-      <div class="sub" id="sc_newConnCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="divider"></div>
+      <div class="sub" id="sc_newConnCash" style="color:rgba(255,255,255,0.8)">💵 Cash: ₹ —</div>
       <div class="sub" id="sc_newConnOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
       <div class="sub" id="sc_newConnDue" style="color:#ffb3b3">⚠️ Due: ₹ —</div>
     </div>
@@ -195,7 +201,8 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="label">🏦 Bank Deposits</div>
       <div class="value" id="sc_bankDeposit">₹ —</div>
       <div class="sub" id="sc_bankDepositCount">— records</div>
-      <div class="sub" id="sc_bankDepositCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="divider"></div>
+      <div class="sub" id="sc_bankDepositCash" style="color:rgba(255,255,255,0.8)">💵 Cash: ₹ —</div>
       <div class="sub" id="sc_bankDepositOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card orange" style="background:linear-gradient(135deg,#c62828,#b71c1c)">
@@ -221,7 +228,8 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="label">🔴 Pending Dues</div>
       <div class="value" id="sc_pendingDueCount">—</div>
       <div class="sub">Customers with dues</div>
-      <div class="sub" id="sc_pendingDueTotal" style="margin-top:4px;font-weight:700;color:rgba(255,255,255,0.9)">⏳ Due: ₹ —</div>
+      <div class="divider"></div>
+      <div class="sub" id="sc_pendingDueTotal" style="font-weight:700;color:rgba(255,255,255,0.9)">⏳ Due: ₹ —</div>
       <div class="sub" id="sc_pendingDueAmt" style="color:rgba(255,255,255,0.7)">💰 Total billed: ₹ —</div>
     </div>
   </div>
@@ -1099,6 +1107,14 @@ async function loadSummary() {
 
 // ── ALL TABLES ──
 let _depTotal = 0, _wdTotal = 0;
+// Totals accumulated across fetches so Net Position updates correctly
+const _totals = { cyl:0, prod:0, csc:0, conn:0, maint:0 };
+function _updateNetPosition() {
+  const sales = _totals.cyl + _totals.prod + _totals.csc + _totals.conn;
+  const net   = sales - _totals.maint;
+  document.getElementById("sc_totalSales").textContent = "₹ " + fmt(sales);
+  document.getElementById("sc_net").textContent        = "₹ " + fmt(net);
+}
 
 async function loadAllTables() {
   // Cylinder Sales
@@ -1109,14 +1125,19 @@ async function loadAllTables() {
     const cash    = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
     const online  = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
     const due     = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+    // section pills
     document.getElementById("cylSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
     document.getElementById("cylSalesQtyPill").textContent    = `${qty} cylinders`;
     document.getElementById("cylSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
     document.getElementById("cylSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
     document.getElementById("cylSalesDuePill").textContent    = `⏳ Due: ₹ ${fmt(due)}`;
-    // dashboard card cash/online
-    document.getElementById("sc_cylSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_cylSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
+    // ✅ FIX: stat card — all fields from raw data
+    document.getElementById("sc_cylSales").textContent        = "₹ " + fmt(total);
+    document.getElementById("sc_cylSalesCount").textContent   = data.length + " records";
+    document.getElementById("sc_cylSalesQty").textContent     = qty + " cylinders";
+    document.getElementById("sc_cylSalesCash").textContent    = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_cylSalesOnline").textContent  = "📱 Online: ₹ " + fmt(online);
+    _totals.cyl = total; _updateNetPosition();
     renderPage("cyl");
     buildChart(data);
   }).catch(()=>{});
@@ -1127,11 +1148,16 @@ async function loadAllTables() {
     const total  = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
     const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
     const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
-    document.getElementById("prodSalesTotal").textContent       = "Total: ₹ " + fmt(total);
-    document.getElementById("prodSalesCashPill").textContent    = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("prodSalesOnlinePill").textContent  = "📱 Online: ₹ " + fmt(online);
-    document.getElementById("sc_prodSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_prodSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
+    // section pills
+    document.getElementById("prodSalesTotal").textContent      = "Total: ₹ " + fmt(total);
+    document.getElementById("prodSalesCashPill").textContent   = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("prodSalesOnlinePill").textContent = "📱 Online: ₹ " + fmt(online);
+    // ✅ FIX: stat card — all fields from raw data
+    document.getElementById("sc_prodSales").textContent        = "₹ " + fmt(total);
+    document.getElementById("sc_prodSalesCount").textContent   = data.length + " records";
+    document.getElementById("sc_prodSalesCash").textContent    = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_prodSalesOnline").textContent  = "📱 Online: ₹ " + fmt(online);
+    _totals.prod = total; _updateNetPosition();
     renderPage("prod");
   }).catch(()=>{});
 
@@ -1143,13 +1169,19 @@ async function loadAllTables() {
     const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
     const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
     const due    = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+    // section pills
     document.getElementById("cscSalesTotal").textContent       = `Total: ₹ ${fmt(total)}`;
     document.getElementById("cscSalesQtyPill").textContent     = `${qty} cylinders`;
     document.getElementById("cscSalesCashPill").textContent    = `💵 Cash: ₹ ${fmt(cash)}`;
     document.getElementById("cscSalesOnlinePill").textContent  = `📱 Online: ₹ ${fmt(online)}`;
     document.getElementById("cscSalesDuePill").textContent     = `⏳ Due: ₹ ${fmt(due)}`;
-    document.getElementById("sc_cscSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_cscSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
+    // ✅ FIX: stat card — all fields from raw data
+    document.getElementById("sc_cscSales").textContent         = "₹ " + fmt(total);
+    document.getElementById("sc_cscSalesCount").textContent    = data.length + " records";
+    document.getElementById("sc_cscSalesQty").textContent      = qty + " cylinders";
+    document.getElementById("sc_cscSalesCash").textContent     = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_cscSalesOnline").textContent   = "📱 Online: ₹ " + fmt(online);
+    _totals.csc = total; _updateNetPosition();
     renderPage("csc");
   }).catch(()=>{});
 
@@ -1161,11 +1193,19 @@ async function loadAllTables() {
     const cash   = data.reduce((s,r) => s + Number(r.cashAmount||0), 0);
     const online = data.reduce((s,r) => s + Number(r.onlineAmount||0), 0);
     const due    = data.reduce((s,r) => s + Number(r.dueAmount||0), 0);
+    // section pills
     document.getElementById("connSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
     document.getElementById("connSalesQtyPill").textContent    = `${qty} cylinders`;
     document.getElementById("connSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
     document.getElementById("connSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
     document.getElementById("connSalesDuePill").textContent    = `⚠️ Due: ₹ ${fmt(due)}`;
+    // ✅ FIX: stat card — all fields from raw data
+    document.getElementById("sc_newConn").textContent          = "₹ " + fmt(total);
+    document.getElementById("sc_newConnCount").textContent     = data.length + " records";
+    document.getElementById("sc_newConnCash").textContent      = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_newConnOnline").textContent    = "📱 Online: ₹ " + fmt(online);
+    document.getElementById("sc_newConnDue").textContent       = "⚠️ Due: ₹ " + fmt(due);
+    _totals.conn = total; _updateNetPosition();
     renderPage("conn");
   }).catch(()=>{});
 
@@ -1203,6 +1243,9 @@ async function loadAllTables() {
     allData.pp = data.slice().reverse();
     const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
     document.getElementById("prodPurchTotal").textContent = "Total: ₹ " + fmt(total);
+    // FIX: stat card from raw data
+    document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(total);
+    document.getElementById("sc_prodPurchaseCount").textContent = data.length + " records";
     renderPage("pp");
   }).catch(()=>{});
 
@@ -1211,6 +1254,9 @@ async function loadAllTables() {
     allData.cp = data.slice().reverse();
     const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
     document.getElementById("cylPurchTotal").textContent = "Total: ₹ " + fmt(total);
+    // FIX: stat card from raw data
+    document.getElementById("sc_cylPurchase").textContent      = "₹ " + fmt(total);
+    document.getElementById("sc_cylPurchaseCount").textContent = data.length + " records";
     renderPage("cp");
   }).catch(()=>{});
 
@@ -1219,6 +1265,10 @@ async function loadAllTables() {
     allData.maint = data.slice().reverse();
     const total = data.reduce((s,m) => s + Number(m.fuel||0) + Number(m.otherExpense||0) + Number(m.employeePayment||0), 0);
     document.getElementById("maintTotal").textContent = "Total: ₹ " + fmt(total);
+    // FIX: stat card from raw data
+    document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(total);
+    document.getElementById("sc_maintenanceCount").textContent = data.length + " records";
+    _totals.maint = total; _updateNetPosition();
     renderPage("maint");
   }).catch(()=>{});
 
@@ -1231,8 +1281,11 @@ async function loadAllTables() {
     document.getElementById("bankTotal").textContent              = "Total: ₹ " + fmt(_depTotal);
     document.getElementById("bankDepositCashPill").textContent    = "💵 Cash: ₹ " + fmt(depCash);
     document.getElementById("bankDepositOnlinePill").textContent  = "📱 Online: ₹ " + fmt(depOnline);
-    document.getElementById("sc_bankDepositCash").textContent   = "💵 Cash: ₹ " + fmt(depCash);
-    document.getElementById("sc_bankDepositOnline").textContent = "📱 Online: ₹ " + fmt(depOnline);
+    // FIX: stat card total/count from raw data
+    document.getElementById("sc_bankDeposit").textContent        = "₹ " + fmt(_depTotal);
+    document.getElementById("sc_bankDepositCount").textContent   = data.length + " records";
+    document.getElementById("sc_bankDepositCash").textContent    = "💵 Cash: ₹ " + fmt(depCash);
+    document.getElementById("sc_bankDepositOnline").textContent  = "📱 Online: ₹ " + fmt(depOnline);
     renderPage("bank");
     updateBankSummaryCards(_depTotal, _wdTotal);
   }).catch(()=>{});
@@ -1257,6 +1310,8 @@ async function loadAllTables() {
     document.getElementById("employeeTable").innerHTML = !data.length
       ? `<tr><td colspan="2" class="no-data">No employees</td></tr>`
       : data.map(e => `<tr><td style="font-weight:600">${e.name}</td><td>₹ ${fmt(e.salary)}</td></tr>`).join("");
+    // FIX: stat card from raw data
+    document.getElementById("sc_employees").textContent = data.length || "0";
   }).catch(()=>{});
 }
 
@@ -1292,7 +1347,7 @@ function downloadPDF(type) {
 }
 
 // ── INIT ──
-loadSummary();
+// loadSummary() removed — all stat card values now computed from raw table data in loadAllTables()
 loadAllTables();
 </script>
 </body>
