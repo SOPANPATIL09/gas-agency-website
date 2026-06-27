@@ -35,8 +35,16 @@ body::before { content: ""; position: fixed; inset: 0; background: rgba(5,15,40,
 .stat-card .sub   { font-size: 11px; margin-top: 4px; color: rgba(255,255,255,0.6); }
 /* SECTION */
 .section { background: rgba(10,25,60,0.62); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 22px; margin-bottom: 18px; }
-.section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.section-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 10px; display: block; }
 .section-title span { font-size: 13px; }
+.section-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.ss-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.ss-pill.total  { background: rgba(144,202,249,0.15); border: 1px solid rgba(144,202,249,0.35); color: #90caf9; }
+.ss-pill.qty    { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); }
+.ss-pill.cash   { background: rgba(165,214,167,0.15); border: 1px solid rgba(165,214,167,0.35); color: #a5d6a7; }
+.ss-pill.online { background: rgba(129,212,250,0.12); border: 1px solid rgba(129,212,250,0.30); color: #81d4fa; }
+.ss-pill.due    { background: rgba(247,185,79,0.15);  border: 1px solid rgba(247,185,79,0.35);  color: #f7b94f; }
+.ss-pill.pending{ background: rgba(239,83,80,0.15);   border: 1px solid rgba(239,83,80,0.35);   color: #ef9a9a; }
 /* TABLE */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -138,17 +146,23 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="value" id="sc_cylSales">₹ —</div>
       <div class="sub" id="sc_cylSalesCount">— records</div>
       <div class="sub" id="sc_cylSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders</div>
+      <div class="sub" id="sc_cylSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="sub" id="sc_cylSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card orange">
       <div class="label">🛒 Product Sales</div>
       <div class="value" id="sc_prodSales">₹ —</div>
       <div class="sub" id="sc_prodSalesCount">— records</div>
+      <div class="sub" id="sc_prodSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="sub" id="sc_prodSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card csc">
       <div class="label">🏪 CSC Sales</div>
       <div class="value" id="sc_cscSales">₹ —</div>
       <div class="sub" id="sc_cscSalesCount">— records</div>
       <div class="sub" id="sc_cscSalesQty" style="margin-top:2px;font-weight:600;color:rgba(255,255,255,0.9)">— cylinders</div>
+      <div class="sub" id="sc_cscSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="sub" id="sc_cscSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card teal">
       <div class="label">💰 Total Sales</div>
@@ -173,6 +187,8 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="label">🏦 Bank Deposits</div>
       <div class="value" id="sc_bankDeposit">₹ —</div>
       <div class="sub" id="sc_bankDepositCount">— records</div>
+      <div class="sub" id="sc_bankDepositCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="sub" id="sc_bankDepositOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
     <div class="stat-card orange" style="background:linear-gradient(135deg,#c62828,#b71c1c)">
       <div class="label">🔧 Maintenance</div>
@@ -182,7 +198,7 @@ tbody tr:last-child td { border-bottom: none; }
   </div>
 
   <!-- ── STAT CARDS ROW 3 ── -->
-  <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);max-width:700px;margin-bottom:20px;">
+  <div class="stats-grid" style="margin-bottom:20px;">
     <div class="stat-card grey">
       <div class="label">👤 Total Employees</div>
       <div class="value" id="sc_employees">—</div>
@@ -192,6 +208,13 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="label">📊 Net Position</div>
       <div class="value" id="sc_net">₹ —</div>
       <div class="sub">Sales minus expenses</div>
+    </div>
+    <div class="stat-card orange" style="background:linear-gradient(135deg,#b71c1c,#7f0000)">
+      <div class="label">🔴 Pending Dues</div>
+      <div class="value" id="sc_pendingDueCount">—</div>
+      <div class="sub">Customers with dues</div>
+      <div class="sub" id="sc_pendingDueTotal" style="margin-top:4px;font-weight:700;color:rgba(255,255,255,0.9)">⏳ Due: ₹ —</div>
+      <div class="sub" id="sc_pendingDueAmt" style="color:rgba(255,255,255,0.7)">💰 Total billed: ₹ —</div>
     </div>
   </div>
 
@@ -298,7 +321,14 @@ tbody tr:last-child td { border-bottom: none; }
   <!-- ── THREE-COL: Cylinder / Product / CSC Sales tables ── -->
   <div class="three-col">
     <div class="section">
-      <div class="section-title">🔵 Cylinder Sales <span id="cylSalesTotal" style="color:#90caf9;font-size:13px"></span></div>
+      <div class="section-title">🔵 Cylinder Sales</div>
+      <div class="section-stats" id="cylSalesStats">
+        <span class="ss-pill total" id="cylSalesTotal">Total: ₹ —</span>
+        <span class="ss-pill qty"   id="cylSalesQtyPill">— cylinders</span>
+        <span class="ss-pill cash"  id="cylSalesCashPill">💵 Cash: ₹ —</span>
+        <span class="ss-pill online" id="cylSalesOnlinePill">📱 Online: ₹ —</span>
+        <span class="ss-pill due"   id="cylSalesDuePill">⏳ Due: ₹ —</span>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due</th><th></th></tr></thead>
@@ -311,7 +341,12 @@ tbody tr:last-child td { border-bottom: none; }
       </div>
     </div>
     <div class="section">
-      <div class="section-title">📊 Product Sales <span id="prodSalesTotal" style="color:#ffcc80;font-size:13px"></span></div>
+      <div class="section-title">📊 Product Sales</div>
+      <div class="section-stats">
+        <span class="ss-pill total"  id="prodSalesTotal">Total: ₹ —</span>
+        <span class="ss-pill cash"   id="prodSalesCashPill">💵 Cash: ₹ —</span>
+        <span class="ss-pill online" id="prodSalesOnlinePill">📱 Online: ₹ —</span>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th></th></tr></thead>
@@ -324,7 +359,14 @@ tbody tr:last-child td { border-bottom: none; }
       </div>
     </div>
     <div class="section">
-      <div class="section-title">🏪 CSC Sales <span id="cscSalesTotal" style="color:#80cbc4;font-size:13px"></span></div>
+      <div class="section-title">🏪 CSC Sales</div>
+      <div class="section-stats">
+        <span class="ss-pill total"  id="cscSalesTotal">Total: ₹ —</span>
+        <span class="ss-pill qty"    id="cscSalesQtyPill">— cylinders</span>
+        <span class="ss-pill cash"   id="cscSalesCashPill">💵 Cash: ₹ —</span>
+        <span class="ss-pill online" id="cscSalesOnlinePill">📱 Online: ₹ —</span>
+        <span class="ss-pill due"    id="cscSalesDuePill">⏳ Due: ₹ —</span>
+      </div>
       <div class="table-wrap">
         <table>
           <thead class="csc-thead"><tr><th>Date</th><th>CSC Center</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due</th></tr></thead>
@@ -340,11 +382,24 @@ tbody tr:last-child td { border-bottom: none; }
 
   <!-- ── PENDING DUES ── -->
   <div class="section" style="margin-bottom:14px">
-    <div class="section-title">🔴 Pending Dues <span id="pendingDuesCount" style="color:#f7b94f;font-size:13px"></span></div>
+    <div class="section-title">🔴 Pending Dues</div>
+    <div class="section-stats">
+      <span class="ss-pill pending" id="pendingDuesCount">— pending</span>
+      <span class="ss-pill total"   id="pendingDuesAmount">💰 Total: ₹ —</span>
+      <span class="ss-pill due"     id="pendingDuesPill">⏳ Due: ₹ —</span>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Total (₹)</th><th>Paid (₹)</th><th>Due (₹)</th></tr></thead>
         <tbody id="dashPendingDuesTable"><tr><td colspan="6" class="no-data">Loading...</td></tr></tbody>
+        <tfoot id="pendingDuesTfoot" style="display:none">
+          <tr style="background:rgba(247,185,79,0.12);border-top:1px solid rgba(247,185,79,0.35)">
+            <td colspan="3" style="text-align:right;font-weight:700;color:#f7b94f;padding:10px 12px;font-size:12px;text-transform:uppercase;letter-spacing:0.4px">Grand Total</td>
+            <td style="font-weight:700;color:#fff;padding:10px 12px;text-align:center" id="dueFootTotal">₹ —</td>
+            <td style="font-weight:700;color:#a5d6a7;padding:10px 12px;text-align:center" id="dueFootPaid">₹ —</td>
+            <td style="font-weight:700;color:#f7b94f;padding:10px 12px;text-align:center" id="dueFootDue">₹ —</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
     <div class="pagination">
@@ -408,7 +463,12 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="bank-summary-card wd"><div class="bs-label">➖ Total Withdrawn</div><div class="bs-value" id="bsSumWd">₹ —</div></div>
       <div class="bank-summary-card bal"><div class="bs-label">🏦 Net Balance</div><div class="bs-value" id="bsSumBal">₹ —</div></div>
     </div>
-    <div style="font-size:13px;font-weight:700;color:#a5d6a7;margin-bottom:8px">➕ Deposit Records <span id="bankTotal" style="font-weight:400;font-size:12px"></span></div>
+    <div style="font-size:13px;font-weight:700;color:#a5d6a7;margin-bottom:8px">➕ Deposit Records</div>
+    <div class="section-stats" style="margin-top:-6px">
+      <span class="ss-pill total"  id="bankTotal">Total: ₹ —</span>
+      <span class="ss-pill cash"   id="bankDepositCashPill">💵 Cash: ₹ —</span>
+      <span class="ss-pill online" id="bankDepositOnlinePill">📱 Online: ₹ —</span>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
@@ -748,11 +808,17 @@ async function loadSummary() {
     document.getElementById("sc_cylSales").textContent       = "₹ " + fmt(d.cylinderSalesTotal);
     document.getElementById("sc_cylSalesCount").textContent  = d.cylinderSalesCount + " records";
     document.getElementById("sc_cylSalesQty").textContent    = (d.cylinderSalesQty||0) + " cylinders";
+    if (d.cylinderSalesCash   != null) document.getElementById("sc_cylSalesCash").textContent   = "💵 Cash: ₹ " + fmt(d.cylinderSalesCash);
+    if (d.cylinderSalesOnline != null) document.getElementById("sc_cylSalesOnline").textContent = "📱 Online: ₹ " + fmt(d.cylinderSalesOnline);
     document.getElementById("sc_prodSales").textContent      = "₹ " + fmt(d.productSalesTotal);
     document.getElementById("sc_prodSalesCount").textContent = d.productSalesCount + " records";
+    if (d.productSalesCash   != null) document.getElementById("sc_prodSalesCash").textContent   = "💵 Cash: ₹ " + fmt(d.productSalesCash);
+    if (d.productSalesOnline != null) document.getElementById("sc_prodSalesOnline").textContent = "📱 Online: ₹ " + fmt(d.productSalesOnline);
     document.getElementById("sc_cscSales").textContent       = "₹ " + fmt(d.cscSalesTotal);
     document.getElementById("sc_cscSalesCount").textContent  = (d.cscSalesCount||0) + " records";
     document.getElementById("sc_cscSalesQty").textContent    = (d.cscSalesQty||0) + " cylinders";
+    if (d.cscSalesCash   != null) document.getElementById("sc_cscSalesCash").textContent   = "💵 Cash: ₹ " + fmt(d.cscSalesCash);
+    if (d.cscSalesOnline != null) document.getElementById("sc_cscSalesOnline").textContent = "📱 Online: ₹ " + fmt(d.cscSalesOnline);
     document.getElementById("sc_totalSales").textContent     = "₹ " + fmt(d.totalSales);
     document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(d.productPurchaseTotal);
     document.getElementById("sc_prodPurchaseCount").textContent = d.productPurchaseCount + " records";
@@ -760,6 +826,8 @@ async function loadSummary() {
     document.getElementById("sc_cylPurchaseCount").textContent = d.cylinderPurchaseCount + " records";
     document.getElementById("sc_bankDeposit").textContent      = "₹ " + fmt(d.bankDepositTotal);
     document.getElementById("sc_bankDepositCount").textContent = d.bankDepositCount + " records";
+    if (d.bankDepositCash   != null) document.getElementById("sc_bankDepositCash").textContent   = "💵 Cash: ₹ " + fmt(d.bankDepositCash);
+    if (d.bankDepositOnline != null) document.getElementById("sc_bankDepositOnline").textContent = "📱 Online: ₹ " + fmt(d.bankDepositOnline);
     document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(d.maintenanceTotal);
     document.getElementById("sc_maintenanceCount").textContent = d.maintenanceCount + " records";
     document.getElementById("sc_employees").textContent = d.employeeCount;
@@ -775,9 +843,19 @@ async function loadAllTables() {
   // Cylinder Sales
   fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
     allData.cyl = data.slice().reverse();
-    const total = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
-    const qty   = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
-    document.getElementById("cylSalesTotal").textContent = `Total: ₹ ${fmt(total)} | ${qty} cylinders`;
+    const total   = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
+    const qty     = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+    const cash    = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
+    const online  = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
+    const due     = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+    document.getElementById("cylSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
+    document.getElementById("cylSalesQtyPill").textContent    = `${qty} cylinders`;
+    document.getElementById("cylSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
+    document.getElementById("cylSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
+    document.getElementById("cylSalesDuePill").textContent    = `⏳ Due: ₹ ${fmt(due)}`;
+    // dashboard card cash/online
+    document.getElementById("sc_cylSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_cylSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
     renderPage("cyl");
     buildChart(data);
   }).catch(()=>{});
@@ -785,17 +863,32 @@ async function loadAllTables() {
   // Product Sales
   fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()).then(data => {
     allData.prod = data.slice().reverse();
-    const total = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
-    document.getElementById("prodSalesTotal").textContent = "Total: ₹ " + fmt(total);
+    const total  = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
+    const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
+    const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
+    document.getElementById("prodSalesTotal").textContent       = "Total: ₹ " + fmt(total);
+    document.getElementById("prodSalesCashPill").textContent    = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("prodSalesOnlinePill").textContent  = "📱 Online: ₹ " + fmt(online);
+    document.getElementById("sc_prodSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_prodSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
     renderPage("prod");
   }).catch(()=>{});
 
   // CSC Sales
   fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()).then(data => {
     allData.csc = data.slice().reverse();
-    const total = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
-    const qty   = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
-    document.getElementById("cscSalesTotal").textContent = `Total: ₹ ${fmt(total)} | ${qty} cylinders`;
+    const total  = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
+    const qty    = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+    const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
+    const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
+    const due    = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+    document.getElementById("cscSalesTotal").textContent       = `Total: ₹ ${fmt(total)}`;
+    document.getElementById("cscSalesQtyPill").textContent     = `${qty} cylinders`;
+    document.getElementById("cscSalesCashPill").textContent    = `💵 Cash: ₹ ${fmt(cash)}`;
+    document.getElementById("cscSalesOnlinePill").textContent  = `📱 Online: ₹ ${fmt(online)}`;
+    document.getElementById("cscSalesDuePill").textContent     = `⏳ Due: ₹ ${fmt(due)}`;
+    document.getElementById("sc_cscSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
+    document.getElementById("sc_cscSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
     renderPage("csc");
   }).catch(()=>{});
 
@@ -804,11 +897,27 @@ async function loadAllTables() {
     const pending = data.filter(d => (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)) > 0.01);
     pending.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
     allData.due = pending;
-    document.getElementById("pendingDuesCount").textContent = pending.length ? `${pending.length} pending` : "✅ All clear";
+    const totalDue  = pending.reduce((s,d) => s + (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)), 0);
+    const totalAmt  = pending.reduce((s,d) => s + Number(d.totalAmount||0), 0);
+    const totalPaid = pending.reduce((s,d) => s + Number(d.paidAmount||0), 0);
+    // pills — always visible
+    document.getElementById("pendingDuesCount").textContent  = pending.length ? `${pending.length} pending` : "✅ All clear";
+    document.getElementById("pendingDuesAmount").textContent = `💰 Total: ₹ ${fmt(totalAmt)}`;
+    document.getElementById("pendingDuesPill").textContent   = `⏳ Due: ₹ ${fmt(totalDue)}`;
+    // dashboard summary cards
+    document.getElementById("sc_pendingDueCount").textContent = pending.length ? pending.length : "0";
+    document.getElementById("sc_pendingDueTotal").textContent = `⏳ Due: ₹ ${fmt(totalDue)}`;
+    document.getElementById("sc_pendingDueAmt").textContent   = `💰 Total billed: ₹ ${fmt(totalAmt)}`;
     if (!pending.length) {
       document.getElementById("dashPendingDuesTable").innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
+      document.getElementById("pendingDuesTfoot").style.display = "none";
       return;
     }
+    // grand-total footer row (shows across all pages)
+    document.getElementById("dueFootTotal").textContent = "₹ " + fmt(totalAmt);
+    document.getElementById("dueFootPaid").textContent  = "₹ " + fmt(totalPaid);
+    document.getElementById("dueFootDue").textContent   = "₹ " + fmt(totalDue);
+    document.getElementById("pendingDuesTfoot").style.display = "";
     renderPage("due");
   }).catch(e => console.error("Pending dues error:", e));
 
@@ -840,7 +949,13 @@ async function loadAllTables() {
   fetch(`${BASE_URL}/bankdeposit/all`).then(r=>r.json()).then(data => {
     allData.bank = data.slice().reverse();
     _depTotal = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
-    document.getElementById("bankTotal").textContent = "Total: ₹ " + fmt(_depTotal);
+    const depCash   = data.reduce((s,d) => s + Number(d.cashDeposit||0), 0);
+    const depOnline = data.reduce((s,d) => s + Number(d.onlineDeposit||0), 0);
+    document.getElementById("bankTotal").textContent              = "Total: ₹ " + fmt(_depTotal);
+    document.getElementById("bankDepositCashPill").textContent    = "💵 Cash: ₹ " + fmt(depCash);
+    document.getElementById("bankDepositOnlinePill").textContent  = "📱 Online: ₹ " + fmt(depOnline);
+    document.getElementById("sc_bankDepositCash").textContent   = "💵 Cash: ₹ " + fmt(depCash);
+    document.getElementById("sc_bankDepositOnline").textContent = "📱 Online: ₹ " + fmt(depOnline);
     renderPage("bank");
     updateBankSummaryCards(_depTotal, _wdTotal);
   }).catch(()=>{});
