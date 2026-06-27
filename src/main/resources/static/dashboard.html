@@ -219,65 +219,123 @@ tbody tr:last-child td { border-bottom: none; }
   </div>
 
   <!-- ══════════════════════════════════════════════════
-       SALES VIEWER — Daily / Monthly with type tabs
+       SALES VIEWER — Daily / Monthly / Range
   ══════════════════════════════════════════════════ -->
   <div class="section">
-    <div class="section-title">🔍 Sales Viewer — Daily &amp; Monthly</div>
+    <div class="section-title">🔍 Sales Viewer — Daily, Monthly &amp; Range</div>
 
-    <!-- Mode: Daily / Monthly -->
+    <!-- Mode tabs -->
     <div class="viewer-tabs" id="viewerModeTabs">
-      <button class="vtab active" onclick="setViewerMode('daily', this)">📅 Daily</button>
-      <button class="vtab" onclick="setViewerMode('monthly', this)">📆 Monthly</button>
+      <button class="vtab active" onclick="setViewerMode('daily',   this)">📅 Daily</button>
+      <button class="vtab"        onclick="setViewerMode('monthly', this)">📆 Monthly</button>
+      <button class="vtab"        onclick="setViewerMode('range',   this)">📆 Date Range</button>
     </div>
 
-    <!-- Date / Month input -->
+    <!-- Inputs -->
     <div class="viewer-controls">
       <input type="date"  id="viewerDate"  style="display:block" onchange="runViewer()">
-      <input type="month" id="viewerMonth" style="display:none" onchange="runViewer()">
+      <input type="month" id="viewerMonth" style="display:none"  onchange="runViewer()">
+      <div id="viewerRangeWrap" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;display:none">
+        <input type="date" id="viewerRangeFrom" placeholder="From">
+        <span style="color:rgba(255,255,255,0.5);font-size:12px">to</span>
+        <input type="date" id="viewerRangeTo" placeholder="To">
+        <button class="btn btn-view" onclick="runViewer()" style="padding:7px 16px;font-size:12px">Search</button>
+      </div>
       <span style="color:rgba(255,255,255,0.4);font-size:12px" id="viewerHint">Pick a date to see all sales for that day</span>
     </div>
 
-    <!-- Summary mini-cards (shown after query) -->
+    <!-- Summary mini-cards -->
     <div class="viewer-summary" id="viewerSummary" style="display:none">
-      <div class="vs-card"><div class="vs-label">🔵 Cylinder Sales</div><div class="vs-val" id="vsm_cyl">₹0</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cylq">0 cylinders</div></div>
-      <div class="vs-card"><div class="vs-label">🛒 Product Sales</div><div class="vs-val" id="vsm_prod" style="color:#ffcc80">₹0</div></div>
-      <div class="vs-card"><div class="vs-label">🏪 CSC Sales</div><div class="vs-val" id="vsm_csc" style="color:#80cbc4">₹0</div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cscq">0 cylinders</div></div>
-      <div class="vs-card"><div class="vs-label">💰 Combined</div><div class="vs-val" id="vsm_total" style="color:#ffd54f">₹0</div></div>
+      <div class="vs-card">
+        <div class="vs-label">🔵 Cylinder Sales</div>
+        <div class="vs-val" id="vsm_cyl">₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cylq">0 cylinders</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_cylcash">💵 ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                 id="vsm_cylonline">📱 ₹0</div>
+        <div style="font-size:11px;color:#f7b94f"                 id="vsm_cyldue">⏳ ₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">🛒 Product Sales</div>
+        <div class="vs-val" id="vsm_prod" style="color:#ffcc80">₹0</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_prodcash">💵 ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                 id="vsm_prodonline">📱 ₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">🏪 CSC Sales</div>
+        <div class="vs-val" id="vsm_csc" style="color:#80cbc4">₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_cscq">0 cylinders</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_csccash">💵 ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                 id="vsm_csconline">📱 ₹0</div>
+        <div style="font-size:11px;color:#f7b94f"                 id="vsm_cscdue">⏳ ₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">💰 Combined Total</div>
+        <div class="vs-val" id="vsm_total" style="color:#ffd54f">₹0</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_allcash">💵 Cash: ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                 id="vsm_allonline">📱 Online: ₹0</div>
+        <div style="font-size:11px;color:#f7b94f"                 id="vsm_alldue">⏳ Due: ₹0</div>
+      </div>
     </div>
 
-    <!-- Type tabs: Cylinder / Product / CSC -->
+    <!-- Type tabs -->
     <div class="viewer-tabs" id="viewerTypeTabs" style="display:none">
       <button class="vtab active" onclick="setViewerType('cylinder', this)">🔵 Cylinder Sales</button>
-      <button class="vtab" onclick="setViewerType('product', this)">🛒 Product Sales</button>
-      <button class="vtab" onclick="setViewerType('csc', this)">🏪 CSC Sales</button>
+      <button class="vtab"        onclick="setViewerType('product',  this)">🛒 Product Sales</button>
+      <button class="vtab"        onclick="setViewerType('csc',      this)">🏪 CSC Sales</button>
     </div>
 
-    <!-- Cylinder sales table -->
+    <!-- Cylinder table -->
     <div id="viewer_cylinder" style="display:none">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th></tr></thead>
+          <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash (₹)</th><th>Online (₹)</th><th>Due (₹)</th></tr></thead>
           <tbody id="vt_cyl"><tr><td colspan="8" class="no-data">—</td></tr></tbody>
+          <tfoot id="vt_cyl_foot" style="display:none">
+            <tr style="background:rgba(21,101,192,0.25);border-top:1px solid rgba(144,202,249,0.3)">
+              <td colspan="4" style="text-align:right;font-weight:700;color:#90caf9;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"      id="vt_cyl_ftotal">—</td>
+              <td style="font-weight:700;color:#a5d6a7;padding:9px 12px;text-align:center"   id="vt_cyl_fcash">—</td>
+              <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center"   id="vt_cyl_fonline">—</td>
+              <td style="font-weight:700;color:#f7b94f;padding:9px 12px;text-align:center"   id="vt_cyl_fdue">—</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
 
-    <!-- Product sales table -->
+    <!-- Product table -->
     <div id="viewer_product" style="display:none">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th></tr></thead>
+          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash (₹)</th><th>Online (₹)</th></tr></thead>
           <tbody id="vt_prod"><tr><td colspan="7" class="no-data">—</td></tr></tbody>
+          <tfoot id="vt_prod_foot" style="display:none">
+            <tr style="background:rgba(230,81,0,0.2);border-top:1px solid rgba(255,204,128,0.3)">
+              <td colspan="4" style="text-align:right;font-weight:700;color:#ffcc80;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"      id="vt_prod_ftotal">—</td>
+              <td style="font-weight:700;color:#a5d6a7;padding:9px 12px;text-align:center"   id="vt_prod_fcash">—</td>
+              <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center"   id="vt_prod_fonline">—</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
 
-    <!-- CSC sales table -->
+    <!-- CSC table -->
     <div id="viewer_csc" style="display:none">
       <div class="table-wrap">
         <table>
-          <thead class="csc-thead"><tr><th>Date</th><th>CSC Center</th><th>Type</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th></tr></thead>
+          <thead class="csc-thead"><tr><th>Date</th><th>CSC Center</th><th>Type</th><th>Qty</th><th>Price (₹)</th><th>Total (₹)</th><th>Cash (₹)</th><th>Online (₹)</th><th>Due (₹)</th></tr></thead>
           <tbody id="vt_csc"><tr><td colspan="9" class="no-data">—</td></tr></tbody>
+          <tfoot id="vt_csc_foot" style="display:none">
+            <tr style="background:rgba(0,105,92,0.25);border-top:1px solid rgba(128,203,196,0.3)">
+              <td colspan="5" style="text-align:right;font-weight:700;color:#80cbc4;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"      id="vt_csc_ftotal">—</td>
+              <td style="font-weight:700;color:#a5d6a7;padding:9px 12px;text-align:center"   id="vt_csc_fcash">—</td>
+              <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center"   id="vt_csc_fonline">—</td>
+              <td style="font-weight:700;color:#f7b94f;padding:9px 12px;text-align:center"   id="vt_csc_fdue">—</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -683,20 +741,22 @@ async function deleteProdSale(id) {
 // ══════════════════════════════════════════════
 // SALES VIEWER
 // ══════════════════════════════════════════════
-let viewerMode = "daily";   // "daily" | "monthly"
-let viewerType = "cylinder"; // "cylinder" | "product" | "csc"
+let viewerMode = "daily";    // "daily" | "monthly" | "range"
+let viewerType = "cylinder";
 let viewerCylData = [], viewerProdData = [], viewerCscData = [];
 
 function setViewerMode(mode, btn) {
   viewerMode = mode;
   document.querySelectorAll("#viewerModeTabs .vtab").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  document.getElementById("viewerDate").style.display  = mode === "daily"   ? "block" : "none";
-  document.getElementById("viewerMonth").style.display = mode === "monthly" ? "block" : "none";
-  document.getElementById("viewerHint").textContent =
-    mode === "daily" ? "Pick a date to see all sales for that day"
-                     : "Pick a month to see all sales for that month";
-  // hide results until new query
+  document.getElementById("viewerDate").style.display      = mode === "daily"   ? "block" : "none";
+  document.getElementById("viewerMonth").style.display     = mode === "monthly" ? "block" : "none";
+  const rw = document.getElementById("viewerRangeWrap");
+  rw.style.display = mode === "range" ? "flex" : "none";
+  const hints = { daily:"Pick a date to see all sales for that day",
+                  monthly:"Pick a month to see all sales for that month",
+                  range:"Pick a from–to date range" };
+  document.getElementById("viewerHint").textContent = hints[mode];
   document.getElementById("viewerSummary").style.display  = "none";
   document.getElementById("viewerTypeTabs").style.display = "none";
   ["cylinder","product","csc"].forEach(t => document.getElementById("viewer_"+t).style.display = "none");
@@ -712,49 +772,91 @@ function setViewerType(type, btn) {
 }
 
 async function runViewer() {
-  const dateVal  = document.getElementById("viewerDate").value;
-  const monthVal = document.getElementById("viewerMonth").value;
-  const prefix   = viewerMode === "daily" ? dateVal : monthVal;
-  if (!prefix) return;
+  let prefix = null, fromDate = null, toDate = null;
+  if (viewerMode === "daily")   prefix   = document.getElementById("viewerDate").value;
+  if (viewerMode === "monthly") prefix   = document.getElementById("viewerMonth").value;
+  if (viewerMode === "range") {
+    fromDate = document.getElementById("viewerRangeFrom").value;
+    toDate   = document.getElementById("viewerRangeTo").value;
+    if (!fromDate || !toDate) return;
+  } else {
+    if (!prefix) return;
+  }
 
-  // Fetch all three types filtered by prefix
   const [cylRes, prodRes, cscRes] = await Promise.all([
     fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()),
     fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()),
     fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()),
   ]);
 
-  viewerCylData  = cylRes.filter(s  => s.date  && s.date.startsWith(prefix));
-  viewerProdData = prodRes.filter(s => s.date  && s.date.startsWith(prefix));
-  viewerCscData  = cscRes.filter(s  => s.date  && s.date.startsWith(prefix));
+  function inRange(date) {
+    if (!date) return false;
+    return date >= fromDate && date <= toDate;
+  }
 
-  // Summary cards
-  const cylTotal  = viewerCylData.reduce((a,s)  => a + (s.cylinderTotal||0), 0);
-  const prodTotal = viewerProdData.reduce((a,s) => a + (s.productTotal||0),  0);
-  const cscTotal  = viewerCscData.reduce((a,s)  => a + (s.cylinderTotal||0), 0);
-  const cylQty    = viewerCylData.reduce((a,s)  => a + (s.cylinderQty||0),   0);
-  const cscQty    = viewerCscData.reduce((a,s)  => a + (s.cylinderQty||0),   0);
+  if (viewerMode === "range") {
+    viewerCylData  = cylRes.filter(s  => inRange(s.date));
+    viewerProdData = prodRes.filter(s => inRange(s.date));
+    viewerCscData  = cscRes.filter(s  => inRange(s.date));
+  } else {
+    viewerCylData  = cylRes.filter(s  => s.date && s.date.startsWith(prefix));
+    viewerProdData = prodRes.filter(s => s.date && s.date.startsWith(prefix));
+    viewerCscData  = cscRes.filter(s  => s.date && s.date.startsWith(prefix));
+  }
 
-  document.getElementById("vsm_cyl").textContent  = "₹" + fmt(cylTotal);
-  document.getElementById("vsm_cylq").textContent = cylQty + " cylinders";
-  document.getElementById("vsm_prod").textContent = "₹" + fmt(prodTotal);
-  document.getElementById("vsm_csc").textContent  = "₹" + fmt(cscTotal);
-  document.getElementById("vsm_cscq").textContent = cscQty + " cylinders";
-  document.getElementById("vsm_total").textContent= "₹" + fmt(cylTotal+prodTotal+cscTotal);
-  document.getElementById("viewerSummary").style.display = "flex";
+  // ── Summary cards with cash / online / due ──
+  const cylTotal   = viewerCylData.reduce((a,s)  => a + Number(s.cylinderTotal||0), 0);
+  const cylCash    = viewerCylData.reduce((a,s)  => a + Number(s.cashReceived||0),  0);
+  const cylOnline  = viewerCylData.reduce((a,s)  => a + Number(s.onlineReceived||0),0);
+  const cylDue     = viewerCylData.reduce((a,s)  => a + Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0)), 0);
+  const cylQty     = viewerCylData.reduce((a,s)  => a + Number(s.cylinderQty||0),   0);
 
-  // Type tabs
+  const prodTotal  = viewerProdData.reduce((a,s) => a + Number(s.productTotal||0),  0);
+  const prodCash   = viewerProdData.reduce((a,s) => a + Number(s.cashReceived||0),  0);
+  const prodOnline = viewerProdData.reduce((a,s) => a + Number(s.onlineReceived||0),0);
+
+  const cscTotal   = viewerCscData.reduce((a,s)  => a + Number(s.cylinderTotal||0), 0);
+  const cscCash    = viewerCscData.reduce((a,s)  => a + Number(s.cashReceived||0),  0);
+  const cscOnline  = viewerCscData.reduce((a,s)  => a + Number(s.onlineReceived||0),0);
+  const cscDue     = viewerCscData.reduce((a,s)  => a + Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0)), 0);
+  const cscQty     = viewerCscData.reduce((a,s)  => a + Number(s.cylinderQty||0),   0);
+
+  const allCash    = cylCash   + prodCash   + cscCash;
+  const allOnline  = cylOnline + prodOnline + cscOnline;
+  const allDue     = cylDue    + cscDue;
+
+  document.getElementById("vsm_cyl").textContent      = "₹" + fmt(cylTotal);
+  document.getElementById("vsm_cylq").textContent     = cylQty + " cylinders";
+  document.getElementById("vsm_cylcash").textContent  = "💵 ₹" + fmt(cylCash);
+  document.getElementById("vsm_cylonline").textContent= "📱 ₹" + fmt(cylOnline);
+  document.getElementById("vsm_cyldue").textContent   = "⏳ ₹" + fmt(cylDue);
+
+  document.getElementById("vsm_prod").textContent     = "₹" + fmt(prodTotal);
+  document.getElementById("vsm_prodcash").textContent = "💵 ₹" + fmt(prodCash);
+  document.getElementById("vsm_prodonline").textContent="📱 ₹" + fmt(prodOnline);
+
+  document.getElementById("vsm_csc").textContent      = "₹" + fmt(cscTotal);
+  document.getElementById("vsm_cscq").textContent     = cscQty + " cylinders";
+  document.getElementById("vsm_csccash").textContent  = "💵 ₹" + fmt(cscCash);
+  document.getElementById("vsm_csconline").textContent= "📱 ₹" + fmt(cscOnline);
+  document.getElementById("vsm_cscdue").textContent   = "⏳ ₹" + fmt(cscDue);
+
+  document.getElementById("vsm_total").textContent    = "₹" + fmt(cylTotal + prodTotal + cscTotal);
+  document.getElementById("vsm_allcash").textContent  = "💵 Cash: ₹"   + fmt(allCash);
+  document.getElementById("vsm_allonline").textContent= "📱 Online: ₹" + fmt(allOnline);
+  document.getElementById("vsm_alldue").textContent   = "⏳ Due: ₹"    + fmt(allDue);
+
+  document.getElementById("viewerSummary").style.display  = "flex";
   document.getElementById("viewerTypeTabs").style.display = "flex";
-
-  // Render current type table
   renderViewerTable();
 }
 
 function renderViewerTable() {
-  // Cylinder
+  // ── Cylinder ──
   const vt_cyl = document.getElementById("vt_cyl");
   if (!viewerCylData.length) {
     vt_cyl.innerHTML = `<tr><td colspan="8" class="no-data">No cylinder sales for this period</td></tr>`;
+    document.getElementById("vt_cyl_foot").style.display = "none";
   } else {
     vt_cyl.innerHTML = viewerCylData.map(s => {
       const due = Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0));
@@ -764,23 +866,41 @@ function renderViewerTable() {
       <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
       <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td></tr>`;
     }).join("");
+    const t = viewerCylData.reduce((a,s)=>a+Number(s.cylinderTotal||0),0);
+    const c = viewerCylData.reduce((a,s)=>a+Number(s.cashReceived||0),0);
+    const o = viewerCylData.reduce((a,s)=>a+Number(s.onlineReceived||0),0);
+    const d = viewerCylData.reduce((a,s)=>a+Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0)),0);
+    document.getElementById("vt_cyl_ftotal").textContent  = "₹ " + fmt(t);
+    document.getElementById("vt_cyl_fcash").textContent   = "₹ " + fmt(c);
+    document.getElementById("vt_cyl_fonline").textContent = "₹ " + fmt(o);
+    document.getElementById("vt_cyl_fdue").textContent    = "₹ " + fmt(d);
+    document.getElementById("vt_cyl_foot").style.display  = "";
   }
 
-  // Product
+  // ── Product ──
   const vt_prod = document.getElementById("vt_prod");
   if (!viewerProdData.length) {
     vt_prod.innerHTML = `<tr><td colspan="7" class="no-data">No product sales for this period</td></tr>`;
+    document.getElementById("vt_prod_foot").style.display = "none";
   } else {
     vt_prod.innerHTML = viewerProdData.map(s => `<tr>
       <td>${s.date||"-"}</td><td>${s.productName||"-"}</td>
       <td>${s.productQty||0}</td><td>₹ ${fmt(s.productPrice)}</td><td>₹ ${fmt(s.productTotal)}</td>
       <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td></tr>`).join("");
+    const t = viewerProdData.reduce((a,s)=>a+Number(s.productTotal||0),0);
+    const c = viewerProdData.reduce((a,s)=>a+Number(s.cashReceived||0),0);
+    const o = viewerProdData.reduce((a,s)=>a+Number(s.onlineReceived||0),0);
+    document.getElementById("vt_prod_ftotal").textContent  = "₹ " + fmt(t);
+    document.getElementById("vt_prod_fcash").textContent   = "₹ " + fmt(c);
+    document.getElementById("vt_prod_fonline").textContent = "₹ " + fmt(o);
+    document.getElementById("vt_prod_foot").style.display  = "";
   }
 
-  // CSC
+  // ── CSC ──
   const vt_csc = document.getElementById("vt_csc");
   if (!viewerCscData.length) {
     vt_csc.innerHTML = `<tr><td colspan="9" class="no-data">No CSC sales for this period</td></tr>`;
+    document.getElementById("vt_csc_foot").style.display = "none";
   } else {
     vt_csc.innerHTML = viewerCscData.map(s => {
       const due = Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0));
@@ -792,9 +912,18 @@ function renderViewerTable() {
       <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
       <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td></tr>`;
     }).join("");
+    const t = viewerCscData.reduce((a,s)=>a+Number(s.cylinderTotal||0),0);
+    const c = viewerCscData.reduce((a,s)=>a+Number(s.cashReceived||0),0);
+    const o = viewerCscData.reduce((a,s)=>a+Number(s.onlineReceived||0),0);
+    const d = viewerCscData.reduce((a,s)=>a+Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0)),0);
+    document.getElementById("vt_csc_ftotal").textContent  = "₹ " + fmt(t);
+    document.getElementById("vt_csc_fcash").textContent   = "₹ " + fmt(c);
+    document.getElementById("vt_csc_fonline").textContent = "₹ " + fmt(o);
+    document.getElementById("vt_csc_fdue").textContent    = "₹ " + fmt(d);
+    document.getElementById("vt_csc_foot").style.display  = "";
   }
 
-  // Show the currently active type
+  // Show active type
   ["cylinder","product","csc"].forEach(t =>
     document.getElementById("viewer_"+t).style.display = t === viewerType ? "block" : "none"
   );
