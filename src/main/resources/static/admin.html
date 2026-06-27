@@ -315,4 +315,1522 @@ tbody tr:hover td { background: var(--surface2); }
     </div>
   </div>
 
-  <!-- =========
+  <!-- ===================== PRODUCT SALES ===================== -->
+  <div class="card" id="sales">
+    <div class="card-title">📊 Product Sales <span class="badge">Sales</span></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="psDate"></div>
+      <div class="form-group">
+        <label>Product</label>
+        <select id="psProduct" onchange="onProductChange()"></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity</label><input type="number" id="psQty" value="1" min="1" oninput="calcProductTotal()"></div>
+      <div class="form-group"><label>Unit Price (₹)</label><input type="number" id="psPrice" readonly></div>
+    </div>
+
+    <!-- TOTAL AMOUNT BOX -->
+    <div id="psTotalBox" style="display:none;background:var(--accent-dim);border:1px solid rgba(79,142,247,0.3);border-radius:8px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Total Amount</div>
+      <div style="font-size:22px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;">₹ <span id="psTotalAmt">0.00</span></div>
+    </div>
+
+    <div class="section-sub" style="margin-top:4px">Payment Received</div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="psCash" value="0" oninput="calcProductBalance()"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="psOnline" value="0" oninput="calcProductBalance()"></div>
+    </div>
+
+    <!-- BALANCE BOX -->
+    <div id="psBalanceBox" style="display:none;border-radius:8px;padding:11px 16px;margin-bottom:12px;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total Received</div>
+        <div style="font-size:16px;font-weight:700;color:var(--success);font-family:'DM Mono',monospace;">₹ <span id="psTotalReceived">0.00</span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Balance Due</div>
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;"><span id="psBalanceDue" style="color:var(--warning)">₹ 0.00</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="addProductSale()">+ Add Product Sale</button>
+    <hr class="divider">
+    <div class="section-sub">Sales Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Actions</th></tr></thead>
+        <tbody id="psSalesTable"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== CYLINDER SALES ===================== -->
+  <div class="card" id="cylinderSales">
+    <div class="card-title">🔵 Cylinder Sales <span class="badge">Sales</span></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="csDate"></div>
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="csType" onchange="onCylinderTypeChange()"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Quantity</label><input type="number" id="csQty" value="1" min="1" oninput="calcCylTotal()"></div>
+      <div class="form-group"><label>Unit Price (₹)</label><input type="number" id="csPrice" readonly></div>
+    </div>
+
+    <!-- TOTAL AMOUNT BOX -->
+    <div id="csTotalBox" style="display:none;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.28);border-radius:8px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Total Amount</div>
+      <div style="font-size:22px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;">₹ <span id="csTotalAmt">0.00</span></div>
+    </div>
+
+    <div class="section-sub" style="margin-top:4px">Payment Received</div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="csCash" value="0" oninput="calcCylBalance()"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="csOnline" value="0" oninput="calcCylBalance()"></div>
+    </div>
+
+    <!-- BALANCE BOX -->
+    <div id="csBalanceBox" style="border-radius:8px;padding:11px 16px;margin-bottom:12px;display:flex;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total Received</div>
+        <div style="font-size:16px;font-weight:700;color:var(--success);font-family:'DM Mono',monospace;">₹ <span id="csTotalReceived">0.00</span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Balance Due</div>
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;"><span id="csBalanceDue" style="color:var(--warning)">₹ 0.00</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="addCylinderSale()">+ Add Cylinder Sale</button>
+    <hr class="divider">
+    <div class="section-sub">Sales Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th><th>Actions</th></tr></thead>
+        <tbody id="csSalesTable"><tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== CSC SALES ===================== -->
+  <div class="card" id="cscSales">
+    <div class="card-title">🏪 CSC Sales <span class="badge">Sales</span></div>
+
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="cscDate"></div>
+      <div class="form-group"><label>CSC Center Name</label><input type="text" id="cscCenterName" placeholder="e.g. Gram Panchayat CSC"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="cscType" onchange="calcCscTotal()">
+          <option value="domestic">Domestic</option>
+          <option value="commercial">Commercial</option>
+          <option value="5kg">5 KG</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Quantity</label><input type="number" id="cscQty" value="1" min="1" oninput="calcCscTotal()"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Unit Price (₹) <span style="color:var(--accent);font-size:11px">— enter manually</span></label>
+        <input type="number" id="cscPrice" placeholder="Enter CSC price" min="0" oninput="calcCscTotal()">
+      </div>
+      <div class="form-group">
+        <label>Total Amount (₹)</label>
+        <input type="number" id="cscTotal" readonly style="background:rgba(79,142,247,0.07);font-weight:700;color:var(--accent);">
+      </div>
+    </div>
+
+    <!-- TOTAL AMOUNT BOX -->
+    <div id="cscTotalBox" style="display:none;background:rgba(0,137,123,0.1);border:1px solid rgba(0,137,123,0.28);border-radius:8px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Total Amount</div>
+      <div style="font-size:22px;font-weight:700;color:#00897b;font-family:'DM Mono',monospace;">₹ <span id="cscTotalAmt">0.00</span></div>
+    </div>
+
+    <div class="section-sub" style="margin-top:4px">Payment Received</div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="cscCash" value="0" oninput="calcCscBalance()"></div>
+      <div class="form-group"><label>Online Received (₹)</label><input type="number" id="cscOnline" value="0" oninput="calcCscBalance()"></div>
+    </div>
+
+    <!-- BALANCE BOX -->
+    <div id="cscBalanceBox" style="border-radius:8px;padding:11px 16px;margin-bottom:12px;display:none;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Total Received</div>
+        <div style="font-size:16px;font-weight:700;color:var(--success);font-family:'DM Mono',monospace;">₹ <span id="cscTotalReceived">0.00</span></div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Balance Due</div>
+        <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;"><span id="cscBalanceDue" style="color:var(--warning)">₹ 0.00</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="addCscSale()">+ Add CSC Sale</button>
+    <hr class="divider">
+
+    <!-- PDF Export -->
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+      <div class="section-sub" style="margin:0;flex:1">CSC Sales Records</div>
+      <select id="cscPdfPeriod" style="width:auto;padding:6px 10px;font-size:12px;">
+        <option value="">Select Month/Year</option>
+      </select>
+      <button class="btn" style="background:rgba(0,137,123,0.15);color:#00897b;border:1px solid rgba(0,137,123,0.35);padding:7px 14px;font-size:12px;" onclick="downloadCscPdf()">📄 PDF</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>CSC Center</th><th>Type</th><th>Qty</th>
+            <th>Price (₹)</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due (₹)</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="cscSalesTable"><tr><td colspan="10" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== EDIT CSC SALE MODAL ===== -->
+  <div id="editCscModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:460px;margin:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:18px;">✏️ Edit CSC Sale</div>
+      <input type="hidden" id="editCscId">
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date" id="editCscDate"></div>
+        <div class="form-group"><label>CSC Center Name</label><input type="text" id="editCscCenterName"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cylinder Type</label>
+          <select id="editCscType">
+            <option value="domestic">Domestic</option>
+            <option value="commercial">Commercial</option>
+            <option value="5kg">5 KG</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Quantity</label><input type="number" id="editCscQty" min="1" oninput="calcEditCscTotal()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Unit Price (₹)</label><input type="number" id="editCscPrice" oninput="calcEditCscTotal()"></div>
+        <div class="form-group"><label>Total (₹)</label><input type="number" id="editCscTotal" readonly style="background:rgba(79,142,247,0.07);font-weight:700;color:var(--accent);"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Cash Received (₹)</label><input type="number" id="editCscCash" min="0"></div>
+        <div class="form-group"><label>Online Received (₹)</label><input type="number" id="editCscOnline" min="0"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1" onclick="submitEditCsc()">✅ Save Changes</button>
+        <button class="btn" style="flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border);" onclick="document.getElementById('editCscModal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PENDING DUES ===================== -->
+  <div class="card" id="pendingDues">
+    <div class="card-title">🔴 Pending Dues <span class="badge">Due Tracker</span></div>
+
+    <!-- Add Due Form -->
+    <div class="section-sub">Add New Due Entry</div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer Name</label><input type="text" id="dueCustomerName" placeholder="Enter customer name"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="dueDate"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cylinder Type</label>
+        <select id="dueCylinderType"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+      </div>
+      <div class="form-group"><label>Total Amount (₹)</label><input type="number" id="dueTotalAmount" placeholder="0.00" min="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Paid Amount (₹)</label><input type="number" id="duePaidAmount" value="0" min="0"></div>
+      <div class="form-group"><label>Remarks (optional)</label><input type="text" id="dueRemarks" placeholder="e.g. partial payment"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addCustomerDue()">+ Add Due Entry</button>
+
+    <hr class="divider">
+    <div class="section-sub">Due Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Customer</th><th>Type</th><th>Total (₹)</th><th>Paid (₹)</th><th>Remaining (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="pendingDuesTable"><tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== EDIT DUE MODAL ===== -->
+  <div id="editDueModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:100%;max-width:420px;margin:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:18px;">✏️ Edit Due Entry</div>
+      <input type="hidden" id="editDueId">
+      <div class="form-row">
+        <div class="form-group"><label>Customer Name</label><input type="text" id="editDueCustomerName"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="editDueDate"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cylinder Type</label>
+          <select id="editDueCylinderType"><option value="domestic">Domestic</option><option value="commercial">Commercial</option><option value="5kg">5 KG</option></select>
+        </div>
+        <div class="form-group"><label>Total Amount (₹)</label><input type="number" id="editDueTotalAmount" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Paid Amount (₹)</label><input type="number" id="editDuePaidAmount" min="0"></div>
+        <div class="form-group"><label>Remarks</label><input type="text" id="editDueRemarks"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1" onclick="submitEditDue()">✅ Save Changes</button>
+        <button class="btn" style="flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border);" onclick="document.getElementById('editDueModal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAY DUE MODAL ===== -->
+  <div id="payDueModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 28px 24px;width:100%;max-width:380px;margin:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;">💳 Pay Due Amount</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px;" id="payDueInfo">—</div>
+      <div style="background:rgba(247,185,79,0.1);border:1px solid rgba(247,185,79,0.3);border-radius:8px;padding:12px 16px;margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;">Remaining Due</div>
+        <div style="font-size:24px;font-weight:700;color:var(--warning);font-family:'DM Mono',monospace;">₹ <span id="payDueRemaining">0.00</span></div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;display:block;">Cash Payment (₹)</label>
+        <input type="number" id="payDueCash" value="0" min="0" oninput="calcPayDueBalance()" style="width:100%;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;display:block;">Online Payment (₹)</label>
+        <input type="number" id="payDueOnline" value="0" min="0" oninput="calcPayDueBalance()" style="width:100%;box-sizing:border-box;">
+      </div>
+      <div id="payDueNewBalance" style="background:rgba(62,207,142,0.1);border:1px solid rgba(62,207,142,0.3);border-radius:8px;padding:10px 16px;margin-bottom:16px;display:none;">
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">Balance After Payment</div>
+        <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--success);">₹ <span id="payDueAfter">0.00</span></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" style="flex:1" onclick="submitPayDue()">✅ Confirm Payment</button>
+        <button class="btn" style="flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border);" onclick="closePayDueModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MAINTENANCE ===================== -->
+  <div class="card" id="maintenance">
+    <div class="card-title">🔧 Maintenance Log <span class="badge">Expenses</span></div>
+    <div class="form-group"><label>Date</label><input type="date" id="mdate"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Fuel Expense (₹)</label><input id="fuel" type="number" placeholder="0"></div>
+      <div class="form-group">
+        <label>Other Expense (₹)</label>
+        <input id="other" type="number" placeholder="0">
+        <div style="margin-top:6px">
+          <label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Expense Type</label>
+          <div class="toggle-group" id="expenseTypeGroup">
+            <button type="button" class="toggle-btn active" onclick="selectExpenseType(this,'Maintenance')">🔧 Maintenance</button>
+            <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Transport')">🚚 Transport</button>
+            <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Office')">🏢 Office</button>
+            <button type="button" class="toggle-btn" onclick="selectExpenseType(this,'Other')">📦 Other</button>
+          </div>
+          <input type="hidden" id="expenseType" value="Maintenance">
+          <!-- Custom input shown only when "Other" is selected -->
+          <div id="otherExpenseInputWrap" style="display:none;margin-top:8px;">
+            <input type="text" id="otherExpenseText" placeholder="Describe the expense (e.g. Equipment repair, Cleaning...)" style="font-size:12px;">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Employee</label>
+        <select id="empName"><option value="">Select Employee</option></select>
+      </div>
+      <div class="form-group"><label>Employee Payment (₹)</label><input id="empPay" type="number" placeholder="0"></div>
+    </div>
+    <button class="btn btn-primary" onclick="addMaintenance()">+ Add Record</button>
+    <hr class="divider">
+    <div class="section-sub">Maintenance Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Fuel</th><th>Other</th><th>Type</th><th>Employee</th><th>Payment</th></tr></thead>
+        <tbody id="maintTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== BANK DEPOSIT ===================== -->
+  <div class="card" id="bankdeposit">
+    <div class="card-title">🏦 Bank Deposit <span class="badge">Finance</span></div>
+
+    <!-- DEPOSIT FORM -->
+    <div class="section-sub" style="margin-top:0;margin-bottom:12px">➕ Add Deposit</div>
+    <div class="form-group"><label>Date</label><input type="date" id="bdDate"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Online Deposit (₹)</label><input type="number" id="bdOnline" placeholder="0" value="0"></div>
+      <div class="form-group"><label>Cash Deposit (₹)</label><input type="number" id="bdCash" placeholder="0" value="0"></div>
+    </div>
+    <div class="form-group"><label>Remarks (optional)</label><input type="text" id="bdRemarks" placeholder="e.g. SBI Bank, Branch deposit..."></div>
+    <button class="btn btn-primary" onclick="addBankDeposit()">+ Add Deposit</button>
+
+    <hr class="divider">
+
+    <!-- WITHDRAWAL FORM -->
+    <div class="section-sub" style="margin-bottom:12px">➖ Add Withdrawal</div>
+    <div class="form-group"><label>Date</label><input type="date" id="wdDate"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Online Withdrawal (₹)</label><input type="number" id="wdOnline" placeholder="0" value="0"></div>
+      <div class="form-group"><label>Cash Withdrawal (₹)</label><input type="number" id="wdCash" placeholder="0" value="0"></div>
+    </div>
+    <div class="form-group"><label>Remarks (optional)</label><input type="text" id="wdRemarks" placeholder="e.g. Rent payment, Supplier payment..."></div>
+    <button class="btn btn-danger" onclick="addBankWithdrawal()">− Add Withdrawal</button>
+
+    <hr class="divider">
+
+    <!-- BALANCE SUMMARY -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px">
+      <div style="flex:1;min-width:130px;background:var(--success,#22c55e)22;border:1.5px solid var(--success,#22c55e);border-radius:10px;padding:14px 18px;text-align:center">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Total Deposited</div>
+        <div id="bdSummaryDeposit" style="font-size:20px;font-weight:700;color:var(--success,#22c55e)">₹ 0</div>
+      </div>
+      <div style="flex:1;min-width:130px;background:#ef444422;border:1.5px solid #ef4444;border-radius:10px;padding:14px 18px;text-align:center">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Total Withdrawn</div>
+        <div id="bdSummaryWithdrawal" style="font-size:20px;font-weight:700;color:#ef4444">₹ 0</div>
+      </div>
+      <div style="flex:1;min-width:130px;background:var(--primary,#6366f1)22;border:1.5px solid var(--primary,#6366f1);border-radius:10px;padding:14px 18px;text-align:center">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Net Balance</div>
+        <div id="bdSummaryBalance" style="font-size:20px;font-weight:700;color:var(--primary,#6366f1)">₹ 0</div>
+      </div>
+    </div>
+
+    <!-- DEPOSIT RECORDS -->
+    <div class="section-sub">Deposit Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="bdTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- WITHDRAWAL RECORDS -->
+    <div class="section-sub" style="margin-top:20px">Withdrawal Records</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="wdTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = "https://gas-agency-website-1.onrender.com";
+
+if (!sessionStorage.getItem("login")) {
+  showToast("Login required ❌", "error");
+  setTimeout(() => window.location.href = "login.html", 1500);
+}
+
+function showToast(msg, type = "info") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.className = "", 3000);
+}
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
+}
+
+const SECTION_TITLES = {
+  product: ["Products", "Manage product inventory"],
+  connection: ["New Connection", "Record and manage new customer connections — NC, DBC, Re-connection"],
+  cylinder: ["Cylinder", "Manage cylinders and pricing"],
+  employee: ["Employee", "Manage employee records"],
+  productPurchase: ["Product Purchase", "Record product purchases"],
+  cylinderPurchase: ["Cylinder Purchase", "Record cylinder purchases"],
+  sales: ["Product Sales", "Record and view product sales"],
+  cylinderSales: ["Cylinder Sales", "Record and view cylinder sales"],
+  cscSales: ["CSC Sales", "Record and view CSC center cylinder sales"],
+  pendingDues: ["Pending Dues", "Track and collect outstanding due amounts"],
+  maintenance: ["Maintenance", "Log maintenance expenses"],
+  bankdeposit: ["Bank Deposit", "Manage bank deposits"],
+};
+
+function showSection(id, link) {
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("active-section"));
+  document.getElementById(id)?.classList.add("active-section");
+  document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+  if (link) link.classList.add("active");
+  const info = SECTION_TITLES[id] || ["Admin Panel", ""];
+  document.getElementById("pageTitle").textContent = info[0];
+  document.getElementById("pageSub").textContent = info[1];
+  if (window.innerWidth <= 768) toggleSidebar();
+
+  // Load data when section opens
+  if (id === "employee") loadEmployees();
+  if (id === "productPurchase") loadProductPurchases();
+  if (id === "cylinderPurchase") loadCylinderPurchases();
+  if (id === "sales") loadProductSales();
+  if (id === "cylinderSales") loadCylinderSalesTable();
+  if (id === "cscSales") loadCscSalesTable();
+  if (id === "connection") loadConnectionTable();
+  if (id === "pendingDues") loadPendingDues();
+  if (id === "maintenance") { loadEmployeeDropdown(); loadMaintenanceTable(); }
+  if (id === "bankdeposit") { loadBankDeposits(); loadBankWithdrawals(); }
+}
+
+function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
+
+// ── PRODUCT ──
+async function addProduct() {
+  const data = { productName: document.getElementById("productName").value, price: document.getElementById("productPrice").value };
+  if (!data.price) { showToast("Enter a price", "error"); return; }
+  await fetch(`${API}/addProduct`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  loadProducts();
+  showToast("Product Added ✓", "success");
+  document.getElementById("productPrice").value = "";
+}
+
+async function loadProducts() {
+  const res = await fetch(`${API}/getProducts`);
+  const data = await res.json();
+  const sel = document.getElementById("psProduct");
+  if (sel) {
+    sel.innerHTML = data.map(p => `<option value="${p.productName}" data-price="${p.price}">${p.productName}</option>`).join("");
+    onProductChange();
+  }
+}
+
+// ── CONNECTION ──
+function updateConnDue() {
+  const price = parseFloat(document.getElementById("connectionPrice").value) || 0;
+  const cash = parseFloat(document.getElementById("connCash").value) || 0;
+  const online = parseFloat(document.getElementById("connOnline").value) || 0;
+  const due = price - cash - online;
+  document.getElementById("connDue").value = due > 0 ? due.toFixed(2) : 0;
+}
+
+async function addConnection() {
+	  const date = document.getElementById("connDate").value;
+	  const customerName = document.getElementById("customerName").value;
+	  const phoneNumber = document.getElementById("phoneNumber").value;
+	  const connectionType = document.getElementById("connType").value;
+	  const connectionPrice = parseFloat(document.getElementById("connectionPrice").value) || 0;
+	  const cylinderQty = parseInt(document.getElementById("connCylQty").value) || 0;
+	  const cashAmount = parseFloat(document.getElementById("connCash").value) || 0;
+	  const onlineAmount = parseFloat(document.getElementById("connOnline").value) || 0;
+	  const dueAmount = parseFloat(document.getElementById("connDue").value) || 0;
+	  if (!customerName) { showToast("Enter customer name", "error"); return; }
+	  if (!date) { showToast("Select date", "error"); return; }
+	  const data = { customerName, phoneNumber, connectionPrice, connectionType, cylinderQty, cashAmount, onlineAmount, dueAmount, date };
+	  try {
+	    const res = await fetch(`${API}/addConnection`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+	    if (!res.ok) { showToast("Save failed: " + res.status, "error"); return; }
+	    showToast("Connection added ✓", "success");
+	    ["customerName","phoneNumber","connectionPrice","connCash","connOnline","connDue"].forEach(id => document.getElementById(id).value = "");
+	    document.getElementById("connCylQty").value = "1";
+	    loadConnectionTable();
+	  } catch(e) {
+	    showToast("Network error: " + e.message, "error");
+	  }
+	}
+
+function recalcEditConnDue() {
+  const price = parseFloat(document.getElementById("editConnPrice").value) || 0;
+  const cash  = parseFloat(document.getElementById("editConnCash").value)  || 0;
+  const online= parseFloat(document.getElementById("editConnOnline").value)|| 0;
+  const due   = Math.max(0, price - cash - online);
+  document.getElementById("editConnDue").value = due.toFixed(2);
+}
+
+async function openEditConn(id) {
+  const data = await fetch(`${API}/getConnection`).then(r => r.json());
+  const c = data.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById("editConnId").value       = c.id;
+  document.getElementById("editConnDate").value     = c.date || "";
+  document.getElementById("editConnType").value     = c.connectionType || "NC";
+  document.getElementById("editConnCustomer").value = c.customerName || "";
+  document.getElementById("editConnPhone").value    = c.phoneNumber || "";
+  document.getElementById("editConnCylQty").value   = c.cylinderQty || 0;
+  document.getElementById("editConnPrice").value    = c.connectionPrice || 0;
+  document.getElementById("editConnCash").value     = c.cashAmount || 0;
+  document.getElementById("editConnOnline").value   = c.onlineAmount || 0;
+  document.getElementById("editConnDue").value      = c.dueAmount || 0;
+  document.getElementById("editConnModal").style.display = "flex";
+}
+
+async function submitEditConn() {
+  const id = parseInt(document.getElementById("editConnId").value);
+  const price  = parseFloat(document.getElementById("editConnPrice").value)  || 0;
+  const cash   = parseFloat(document.getElementById("editConnCash").value)   || 0;
+  const online = parseFloat(document.getElementById("editConnOnline").value) || 0;
+  const due    = parseFloat(document.getElementById("editConnDue").value)    || 0;
+  const data = {
+    date:            document.getElementById("editConnDate").value,
+    connectionType:  document.getElementById("editConnType").value,
+    customerName:    document.getElementById("editConnCustomer").value.trim(),
+    phoneNumber:     document.getElementById("editConnPhone").value.trim(),
+    cylinderQty:     parseInt(document.getElementById("editConnCylQty").value) || 0,
+    connectionPrice: price,
+    cashAmount:      cash,
+    onlineAmount:    online,
+    dueAmount:       due
+  };
+  await fetch(`${API}/updateConnection/${id}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
+  });
+  showToast("Connection updated ✓", "success");
+  document.getElementById("editConnModal").style.display = "none";
+  loadConnectionTable();
+}
+
+async function deleteConn(id) {
+  if (!confirm("Delete this connection record?")) return;
+  await fetch(`${API}/deleteConnection/${id}`, { method: "DELETE" });
+  showToast("Deleted", "info");
+  loadConnectionTable();
+}
+
+async function loadConnectionTable() {
+  const tbody = document.getElementById("connTable");
+  if (!tbody) return;
+  tbody.innerHTML = `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr>`;
+  try {
+    const res = await fetch(`${API}/getConnection`);
+    if (!res.ok) throw new Error("Server error: " + res.status);
+    const data = await res.json();
+    let totalAmt = 0, totalCash = 0, totalOnline = 0, totalDue = 0;
+    tbody.innerHTML = data.length === 0
+      ? `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`
+      : data.map(c => {
+          totalAmt += c.connectionPrice || 0;
+          totalCash += c.cashAmount || 0;
+          totalOnline += c.onlineAmount || 0;
+          totalDue += c.dueAmount || 0;
+          return `<tr>
+            <td>${c.date || "—"}</td>
+            <td><span class="badge">${c.connectionType || "—"}</span></td>
+            <td style="font-weight:600">${c.customerName || "—"}</td>
+            <td>${c.phoneNumber || "—"}</td>
+            <td style="text-align:center">${c.cylinderQty || 0}</td>
+            <td style="color:var(--accent);font-weight:600">₹ ${fmt(c.connectionPrice)}</td>
+            <td>₹ ${fmt(c.cashAmount)}</td>
+            <td>₹ ${fmt(c.onlineAmount)}</td>
+            <td><span style="${c.dueAmount > 0 ? 'color:#c62828;font-weight:700' : 'color:#2e7d32;font-weight:600'}">₹ ${fmt(c.dueAmount)}</span></td>
+            <td style="white-space:nowrap">
+              <button class="btn btn-sm" style="background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.4);margin-right:4px;padding:3px 8px" onclick="openEditConn(${c.id})">✏️</button>
+              <button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="deleteConn(${c.id})">🗑</button>
+            </td>
+          </tr>`;
+        }).join("");
+    const fmtV = v => "₹ " + fmt(v);
+    document.getElementById("connTotalAmount").textContent = "Total: " + fmtV(totalAmt);
+    document.getElementById("connTotalCash").textContent = "💵 Cash: " + fmtV(totalCash);
+    document.getElementById("connTotalOnline").textContent = "📱 Online: " + fmtV(totalOnline);
+    document.getElementById("connTotalDue").textContent = "⚠️ Due: " + fmtV(totalDue);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="10" style="color:#c62828;text-align:center;padding:18px">⚠️ Failed to load: ${e.message} <button class="btn btn-sm" onclick="loadConnectionTable()" style="margin-left:8px">🔄 Retry</button></td></tr>`;
+    console.error("loadConnectionTable error:", e);
+  }
+}
+
+// ── CYLINDER ──
+async function addCylinder() {
+  const date = document.getElementById("cdate").value, type = document.getElementById("ctype").value, price = document.getElementById("cprice").value;
+  if (!date || !price) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/addCylinder`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ date, type, price }) });
+  showToast("Cylinder added ✓", "success");
+  document.getElementById("cprice").value = "";
+  loadCylinderPrices();
+}
+
+async function updatePrice() {
+  const type = document.getElementById("utype").value, price = document.getElementById("uprice").value;
+  if (!type || !price) { showToast("Select type and enter price", "error"); return; }
+  await fetch(`${API}/updatePrice`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ type, price }) });
+  showToast("Price updated ✓", "success");
+  loadCylinderPrices();
+  document.getElementById("uprice").value = "";
+}
+
+let cylinderPrices = {};
+async function loadCylinderPrices() {
+  const res = await fetch(`${API}/getCylinder`);
+  const data = await res.json();
+  data.forEach(c => cylinderPrices[c.type] = c.price);
+  onCylinderTypeChange();
+}
+
+function onCylinderTypeChange() {
+  const type = document.getElementById("csType")?.value;
+  const price = cylinderPrices[type] || 0;
+  if (document.getElementById("csPrice")) document.getElementById("csPrice").value = price;
+  calcCylTotal();
+}
+
+function calcCylTotal() {
+  const qty   = parseFloat(document.getElementById("csQty")?.value)   || 0;
+  const price = parseFloat(document.getElementById("csPrice")?.value) || 0;
+  const total = qty * price;
+
+  const box = document.getElementById("csTotalBox");
+  if (box) {
+    box.style.display = qty > 0 && price > 0 ? "block" : "none";
+    document.getElementById("csTotalAmt").textContent = total.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  calcCylBalance();
+}
+
+function calcCylBalance() {
+  const total   = (parseFloat(document.getElementById("csQty")?.value)   || 0)
+                * (parseFloat(document.getElementById("csPrice")?.value) || 0);
+  const cash    = parseFloat(document.getElementById("csCash")?.value)   || 0;
+  const online  = parseFloat(document.getElementById("csOnline")?.value) || 0;
+  const received = cash + online;
+  const balance  = total - received;
+
+  const box = document.getElementById("csBalanceBox");
+  if (box) {
+    box.style.display = total > 0 ? "flex" : "none";
+    document.getElementById("csTotalReceived").textContent =
+      received.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    const balEl = document.getElementById("csBalanceDue");
+    balEl.textContent = "₹ " + Math.abs(balance).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    balEl.style.color  = balance <= 0 ? "var(--success)" : "var(--warning)";
+    balEl.closest("div").querySelector("div:first-child").textContent =
+      balance <= 0 ? "Overpaid / Settled ✓" : "Balance Due";
+  }
+}
+
+// ── EMPLOYEE ──
+async function addEmployee() {
+  const name = document.getElementById("ename").value.trim(), salary = document.getElementById("esalary").value;
+  if (!name || !salary) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/addEmployee`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ name, salary }) });
+  showToast("Employee added ✓", "success");
+  document.getElementById("ename").value = ""; document.getElementById("esalary").value = "";
+  loadEmployees();
+}
+
+async function loadEmployees() {
+  const res = await fetch(`${API}/getEmployee`);
+  const data = await res.json();
+  const table = document.getElementById("empTable");
+  if (!data.length) { table.innerHTML = `<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:18px">No employees found</td></tr>`; return; }
+  table.innerHTML = data.map(e => `<tr>
+    <td style="font-weight:600">${e.name}</td>
+    <td><input type="number" data-name="${e.name}" value="${e.salary}" style="width:130px"></td>
+    <td style="display:flex;gap:6px">
+      <button class="btn btn-sm btn-ghost" onclick="updateSalary('${e.name}')">Update</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteEmp('${e.name}')">Delete</button>
+    </td></tr>`).join("");
+}
+
+async function updateSalary(name) {
+  const input = document.querySelector(`input[data-name="${name}"]`);
+  await fetch(`${API}/updateEmployee`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ name, salary: input.value }) });
+  showToast("Salary updated ✓", "success");
+}
+
+async function deleteEmp(name) {
+  if (!confirm(`Delete "${name}"?`)) return;
+  await fetch(`${API}/deleteEmployee/${encodeURIComponent(name)}`, { method:"DELETE" });
+  showToast(`${name} deleted`, "info");
+  loadEmployees();
+}
+
+async function loadEmployeeDropdown() {
+  const res = await fetch(`${API}/getEmployee`);
+  const data = await res.json();
+  const sel = document.getElementById("empName");
+  sel.innerHTML = `<option value="">Select Employee</option>` + data.map(e => `<option value="${e.name}">${e.name}</option>`).join("");
+}
+
+// ── PRODUCT PURCHASE ──
+async function addProductPurchase() {
+  const data = {
+    productType: document.getElementById("ppType").value,
+    purchaseDate: document.getElementById("ppDate").value,
+    quantity: parseInt(document.getElementById("ppQty").value) || 0,
+    pricePerUnit: parseFloat(document.getElementById("ppPrice").value) || 0
+  };
+  if (!data.purchaseDate || !data.quantity || !data.pricePerUnit) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/purchase/product/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Product Purchase added ✓", "success");
+  ["ppDate","ppQty","ppPrice"].forEach(id => document.getElementById(id).value = "");
+  loadProductPurchases();
+}
+
+async function loadProductPurchases() {
+  const res = await fetch(`${API}/purchase/product/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("ppTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(p => `<tr>
+    <td>${p.purchaseDate || "-"}</td><td>${p.productType}</td><td>${p.quantity}</td>
+    <td>₹ ${p.pricePerUnit}</td><td>₹ ${p.totalAmount}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteProductPurchase(${p.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteProductPurchase(id) {
+  if (!confirm("Delete this purchase?")) return;
+  await fetch(`${API}/purchase/product/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadProductPurchases();
+}
+
+// ── CYLINDER PURCHASE ──
+async function addCylinderPurchase() {
+  const data = {
+    cylinderType: document.getElementById("cpType").value,
+    purchaseDate: document.getElementById("cpDate").value,
+    quantity: parseInt(document.getElementById("cpQty").value) || 0,
+    pricePerUnit: parseFloat(document.getElementById("cpPrice").value) || 0
+  };
+  if (!data.purchaseDate || !data.quantity || !data.pricePerUnit) { showToast("Fill all fields", "error"); return; }
+  await fetch(`${API}/purchase/cylinder/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Cylinder Purchase added ✓", "success");
+  ["cpDate","cpQty","cpPrice"].forEach(id => document.getElementById(id).value = "");
+  loadCylinderPurchases();
+}
+
+async function loadCylinderPurchases() {
+  const res = await fetch(`${API}/purchase/cylinder/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("cpTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(p => `<tr>
+    <td>${p.purchaseDate || "-"}</td><td style="text-transform:capitalize">${p.cylinderType}</td><td>${p.quantity}</td>
+    <td>₹ ${p.pricePerUnit}</td><td>₹ ${p.totalAmount}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteCylinderPurchase(${p.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteCylinderPurchase(id) {
+  if (!confirm("Delete this purchase?")) return;
+  await fetch(`${API}/purchase/cylinder/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadCylinderPurchases();
+}
+
+// ── PRODUCT SALES ──
+function onProductChange() {
+  const sel = document.getElementById("psProduct");
+  if (!sel || !sel.options[sel.selectedIndex]) return;
+  const price = parseFloat(sel.options[sel.selectedIndex].getAttribute("data-price")) || 0;
+  document.getElementById("psPrice").value = price;
+  calcProductTotal();
+}
+
+function calcProductTotal() {
+  const qty   = parseFloat(document.getElementById("psQty")?.value)   || 0;
+  const price = parseFloat(document.getElementById("psPrice")?.value) || 0;
+  const total = qty * price;
+
+  const box = document.getElementById("psTotalBox");
+  if (box) {
+    box.style.display = qty > 0 && price > 0 ? "block" : "none";
+    document.getElementById("psTotalAmt").textContent =
+      total.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  calcProductBalance();
+}
+
+function calcProductBalance() {
+  const qty     = parseFloat(document.getElementById("psQty")?.value)   || 0;
+  const price   = parseFloat(document.getElementById("psPrice")?.value) || 0;
+  const total   = qty * price;
+  const cash    = parseFloat(document.getElementById("psCash")?.value)   || 0;
+  const online  = parseFloat(document.getElementById("psOnline")?.value) || 0;
+  const received = cash + online;
+  const balance  = total - received;
+
+  const box = document.getElementById("psBalanceBox");
+  if (box) {
+    box.style.display = total > 0 ? "flex" : "none";
+    document.getElementById("psTotalReceived").textContent =
+      received.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    const balEl = document.getElementById("psBalanceDue");
+    balEl.textContent = "₹ " + Math.abs(balance).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    balEl.style.color  = balance <= 0 ? "var(--success)" : "var(--warning)";
+    balEl.closest("div").querySelector("div:first-child").textContent =
+      balance <= 0 ? "Overpaid / Settled ✓" : "Balance Due";
+  }
+}
+
+async function addProductSale() {
+  const sel = document.getElementById("psProduct");
+  const data = {
+    date: document.getElementById("psDate").value,
+    productName: sel.value,
+    productQty: parseInt(document.getElementById("psQty").value) || 0,
+    cashReceived: parseFloat(document.getElementById("psCash").value) || 0,
+    onlineReceived: parseFloat(document.getElementById("psOnline").value) || 0
+  };
+  if (!data.date || !data.productQty) { showToast("Fill date and quantity", "error"); return; }
+  await fetch(`${API}/sales/product/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Product Sale added ✓", "success");
+  document.getElementById("psQty").value = 1;
+  document.getElementById("psCash").value = 0;
+  document.getElementById("psOnline").value = 0;
+  // Reset display boxes
+  document.getElementById("psTotalBox").style.display = "none";
+  document.getElementById("psBalanceBox").style.display = "none";
+  loadProductSales();
+}
+
+async function loadProductSales() {
+  const res = await fetch(`${API}/sales/product/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("psSalesTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(s => `<tr>
+    <td>${s.date || "-"}</td><td>${s.productName || "-"}</td><td>${s.productQty}</td>
+    <td>₹ ${s.productTotal}</td><td>₹ ${s.cashReceived}</td><td>₹ ${s.onlineReceived}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteProductSale(${s.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteProductSale(id) {
+  if (!confirm("Delete this sale?")) return;
+  await fetch(`${API}/sales/product/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadProductSales();
+}
+
+// ── CYLINDER SALES ──
+async function addCylinderSale() {
+  const data = {
+    date: document.getElementById("csDate").value,
+    cylinderType: document.getElementById("csType").value,
+    cylinderQty: parseInt(document.getElementById("csQty").value) || 0,
+    cashReceived: parseFloat(document.getElementById("csCash").value) || 0,
+    onlineReceived: parseFloat(document.getElementById("csOnline").value) || 0
+  };
+  if (!data.date || !data.cylinderQty) { showToast("Fill date and quantity", "error"); return; }
+
+  try {
+    const res = await fetch(`${API}/sales/cylinder/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      showToast("Save failed: " + errText, "error");
+      console.error("Server error:", errText);
+      return;
+    }
+
+    showToast("Cylinder Sale added ✓", "success");
+    document.getElementById("csQty").value = 1;
+    document.getElementById("csCash").value = 0;
+    document.getElementById("csOnline").value = 0;
+    document.getElementById("csTotalBox").style.display = "none";
+    document.getElementById("csBalanceBox").style.display = "none";
+    loadCylinderSalesTable();
+    loadPendingDues();
+
+  } catch (err) {
+    showToast("Network error: " + err.message, "error");
+    console.error("Fetch error:", err);
+  }
+}
+
+async function loadCylinderSalesTable() {
+  const res = await fetch(`${API}/sales/cylinder/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("csSalesTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(s => {
+    const due = Math.max(0, (s.cylinderTotal || 0) - (s.cashReceived || 0) - (s.onlineReceived || 0));
+    const dueColor = due > 0 ? 'color:var(--warning);font-weight:600' : 'color:var(--success);font-weight:600';
+    const payBtn = due > 0 ? `<button class="btn btn-sm" style="background:rgba(247,185,79,0.15);color:var(--warning);border:1px solid rgba(247,185,79,0.4);margin-right:4px" onclick="openPayDueModal(${s.id}, ${due}, '${s.date}', '${s.cylinderType}')">💳 Pay Due</button>` : '';
+    return `<tr>
+    <td>${s.date || "-"}</td><td style="text-transform:capitalize">${s.cylinderType || "-"}</td><td>${s.cylinderQty}</td>
+    <td>₹ ${s.cylinderTotal}</td><td>₹ ${s.cashReceived}</td><td>₹ ${s.onlineReceived}</td>
+    <td><span style="${dueColor}">₹ ${due.toFixed(2)}</span></td>
+    <td style="white-space:nowrap">${payBtn}<button class="btn btn-sm btn-danger" onclick="deleteCylinderSale(${s.id})">🗑</button></td></tr>`;
+  }).join("");
+}
+
+async function deleteCylinderSale(id, fromPending = false) {
+  if (!confirm("Delete this sale?")) return;
+  await fetch(`${API}/sales/cylinder/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadCylinderSalesTable();
+  loadPendingDues();
+}
+
+// ── CSC SALES ──
+function calcCscTotal() {
+  const qty   = parseFloat(document.getElementById("cscQty")?.value)   || 0;
+  const price = parseFloat(document.getElementById("cscPrice")?.value) || 0;
+  const total = qty * price;
+  if (document.getElementById("cscTotal")) document.getElementById("cscTotal").value = total.toFixed(2);
+  const box = document.getElementById("cscTotalBox");
+  if (box) {
+    box.style.display = qty > 0 && price > 0 ? "block" : "none";
+    document.getElementById("cscTotalAmt").textContent = total.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  calcCscBalance();
+}
+
+function calcCscBalance() {
+  const qty    = parseFloat(document.getElementById("cscQty")?.value)   || 0;
+  const price  = parseFloat(document.getElementById("cscPrice")?.value) || 0;
+  const total  = qty * price;
+  const cash   = parseFloat(document.getElementById("cscCash")?.value)   || 0;
+  const online = parseFloat(document.getElementById("cscOnline")?.value) || 0;
+  const received = cash + online;
+  const balance  = total - received;
+  const box = document.getElementById("cscBalanceBox");
+  if (box) {
+    box.style.display = total > 0 ? "flex" : "none";
+    document.getElementById("cscTotalReceived").textContent =
+      received.toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    const balEl = document.getElementById("cscBalanceDue");
+    balEl.textContent = "₹ " + Math.abs(balance).toLocaleString("en-IN", {minimumFractionDigits:2, maximumFractionDigits:2});
+    balEl.style.color = balance <= 0 ? "var(--success)" : "var(--warning)";
+    balEl.closest("div").querySelector("div:first-child").textContent =
+      balance <= 0 ? "Overpaid / Settled ✓" : "Balance Due";
+  }
+}
+
+function calcEditCscTotal() {
+  const qty   = parseFloat(document.getElementById("editCscQty")?.value)   || 0;
+  const price = parseFloat(document.getElementById("editCscPrice")?.value) || 0;
+  if (document.getElementById("editCscTotal")) document.getElementById("editCscTotal").value = (qty * price).toFixed(2);
+}
+
+async function addCscSale() {
+  const data = {
+    date:           document.getElementById("cscDate").value,
+    cscCenterName:  document.getElementById("cscCenterName").value.trim(),
+    cylinderType:   document.getElementById("cscType").value,
+    cylinderQty:    parseInt(document.getElementById("cscQty").value)   || 0,
+    cylinderPrice:  parseFloat(document.getElementById("cscPrice").value) || 0,
+    cashReceived:   parseFloat(document.getElementById("cscCash").value)   || 0,
+    onlineReceived: parseFloat(document.getElementById("cscOnline").value) || 0
+  };
+  if (!data.date)          { showToast("Select a date", "error"); return; }
+  if (!data.cscCenterName) { showToast("Enter CSC Center name", "error"); return; }
+  if (!data.cylinderQty)   { showToast("Enter quantity", "error"); return; }
+  if (!data.cylinderPrice) { showToast("Enter unit price", "error"); return; }
+  await fetch(`${API}/sales/csc/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("CSC Sale added ✓", "success");
+  document.getElementById("cscQty").value    = 1;
+  document.getElementById("cscPrice").value  = "";
+  document.getElementById("cscTotal").value  = "";
+  document.getElementById("cscCash").value   = 0;
+  document.getElementById("cscOnline").value = 0;
+  document.getElementById("cscCenterName").value = "";
+  document.getElementById("cscTotalBox").style.display   = "none";
+  document.getElementById("cscBalanceBox").style.display = "none";
+  loadCscSalesTable();
+}
+
+async function loadCscSalesTable() {
+  const res  = await fetch(`${API}/sales/csc/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("cscSalesTable");
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:18px">No CSC sales records</td></tr>`;
+    populateCscPdfPeriods([]);
+    return;
+  }
+  populateCscPdfPeriods(data);
+  tbody.innerHTML = data.slice().reverse().map(s => {
+    const due = Math.max(0, (s.cylinderTotal || 0) - (s.cashReceived || 0) - (s.onlineReceived || 0));
+    const dueColor = due > 0 ? "color:var(--warning);font-weight:600" : "color:var(--success);font-weight:600";
+    return `<tr>
+      <td>${s.date || "-"}</td>
+      <td style="font-weight:600">${s.cscCenterName || "-"}</td>
+      <td style="text-transform:capitalize">${s.cylinderType || "-"}</td>
+      <td>${s.cylinderQty}</td>
+      <td>₹ ${(s.cylinderPrice||0).toFixed(2)}</td>
+      <td>₹ ${(s.cylinderTotal||0).toFixed(2)}</td>
+      <td>₹ ${(s.cashReceived||0).toFixed(2)}</td>
+      <td>₹ ${(s.onlineReceived||0).toFixed(2)}</td>
+      <td><span style="${dueColor}">₹ ${due.toFixed(2)}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm" style="background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.4);margin-right:4px" onclick="openEditCsc(${s.id})">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteCscSale(${s.id})">🗑</button>
+      </td></tr>`;
+  }).join("");
+}
+
+function populateCscPdfPeriods(data) {
+  const sel = document.getElementById("cscPdfPeriod");
+  if (!sel) return;
+  const periods = [...new Set(data.map(s => s.date ? s.date.substring(0,7) : null).filter(Boolean))].sort().reverse();
+  sel.innerHTML = `<option value="">Select Month/Year</option>` +
+    periods.map(p => `<option value="${p}">${p}</option>`).join("");
+}
+
+function downloadCscPdf() {
+  const period = document.getElementById("cscPdfPeriod").value;
+  if (!period) { showToast("Select a month/year first", "error"); return; }
+  window.open(`${API}/sales/csc/pdf/${period}`, "_blank");
+}
+
+async function openEditCsc(id) {
+  const data = await fetch(`${API}/sales/csc/all`).then(r => r.json());
+  const s = data.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById("editCscId").value          = s.id;
+  document.getElementById("editCscDate").value        = s.date || "";
+  document.getElementById("editCscCenterName").value  = s.cscCenterName || "";
+  document.getElementById("editCscType").value        = s.cylinderType || "domestic";
+  document.getElementById("editCscQty").value         = s.cylinderQty || 1;
+  document.getElementById("editCscPrice").value       = s.cylinderPrice || 0;
+  document.getElementById("editCscTotal").value       = (s.cylinderTotal || 0).toFixed(2);
+  document.getElementById("editCscCash").value        = s.cashReceived || 0;
+  document.getElementById("editCscOnline").value      = s.onlineReceived || 0;
+  document.getElementById("editCscModal").style.display = "flex";
+}
+
+async function submitEditCsc() {
+  const id = parseInt(document.getElementById("editCscId").value);
+  const data = {
+    date:           document.getElementById("editCscDate").value,
+    cscCenterName:  document.getElementById("editCscCenterName").value.trim(),
+    cylinderType:   document.getElementById("editCscType").value,
+    cylinderQty:    parseInt(document.getElementById("editCscQty").value)    || 0,
+    cylinderPrice:  parseFloat(document.getElementById("editCscPrice").value) || 0,
+    cashReceived:   parseFloat(document.getElementById("editCscCash").value)   || 0,
+    onlineReceived: parseFloat(document.getElementById("editCscOnline").value) || 0
+  };
+  await fetch(`${API}/sales/csc/update/${id}`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("CSC Sale updated ✓", "success");
+  document.getElementById("editCscModal").style.display = "none";
+  loadCscSalesTable();
+}
+
+async function deleteCscSale(id) {
+  if (!confirm("Delete this CSC sale?")) return;
+  await fetch(`${API}/sales/csc/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadCscSalesTable();
+}
+
+// ── PENDING DUES ──
+const DUE_API = API.replace("/sales", "") + "/due";
+
+async function addCustomerDue() {
+  const name   = document.getElementById("dueCustomerName").value.trim();
+  const date   = document.getElementById("dueDate").value;
+  const type   = document.getElementById("dueCylinderType").value;
+  const total  = parseFloat(document.getElementById("dueTotalAmount").value) || 0;
+  const paid   = parseFloat(document.getElementById("duePaidAmount").value)  || 0;
+  const remarks= document.getElementById("dueRemarks").value.trim();
+  if (!name)  { showToast("Enter customer name", "error"); return; }
+  if (!date)  { showToast("Select a date", "error"); return; }
+  if (total <= 0) { showToast("Enter total amount", "error"); return; }
+  if (paid > total) { showToast("Paid cannot exceed total", "error"); return; }
+  await fetch(`${DUE_API}/add`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ customerName: name, date, cylinderType: type, totalAmount: total, paidAmount: paid, remarks })
+  });
+  showToast("Due entry added ✓", "success");
+  ["dueCustomerName","dueDate","dueTotalAmount","dueRemarks"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("duePaidAmount").value = 0;
+  loadPendingDues();
+}
+
+async function loadPendingDues() {
+  const tbody = document.getElementById("pendingDuesTable");
+  if (!tbody) return;
+  try {
+    const data = await fetch(`${DUE_API}/all`).then(r => r.json());
+    const pending = data.filter(d => d.remainingAmount > 0.01);
+    const cleared = data.filter(d => d.remainingAmount <= 0.01);
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">No due entries yet</td></tr>`;
+      return;
+    }
+    const rows = [...pending, ...cleared].map(d => {
+      const remaining = d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount);
+      const isPending  = remaining > 0.01;
+      const remStyle   = isPending ? "color:var(--warning);font-weight:700" : "color:var(--success);font-weight:600";
+      return `<tr style="${isPending ? "" : "opacity:0.6"}">
+        <td>${d.date||"-"}</td>
+        <td style="font-weight:600">${d.customerName||"-"}</td>
+        <td style="text-transform:capitalize">${d.cylinderType||"-"}</td>
+        <td>₹ ${(d.totalAmount||0).toFixed(2)}</td>
+        <td>₹ ${(d.paidAmount||0).toFixed(2)}</td>
+        <td><span style="${remStyle}">₹ ${remaining.toFixed(2)}</span></td>
+        <td style="color:var(--muted);font-size:12px">${d.remarks||"-"}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-sm" style="background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.4);margin-right:4px" onclick="openEditDue(${d.id})">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteCustomerDue(${d.id})">🗑</button>
+        </td></tr>`;
+    }).join("");
+    tbody.innerHTML = rows;
+  } catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:var(--danger);text-align:center;padding:18px">Failed to load</td></tr>`; }
+}
+
+async function openEditDue(id) {
+  const data = await fetch(`${DUE_API}/all`).then(r => r.json());
+  const d = data.find(x => x.id === id);
+  if (!d) return;
+  document.getElementById("editDueId").value          = d.id;
+  document.getElementById("editDueCustomerName").value = d.customerName || "";
+  document.getElementById("editDueDate").value         = d.date || "";
+  document.getElementById("editDueCylinderType").value = d.cylinderType || "domestic";
+  document.getElementById("editDueTotalAmount").value  = d.totalAmount || 0;
+  document.getElementById("editDuePaidAmount").value   = d.paidAmount  || 0;
+  document.getElementById("editDueRemarks").value      = d.remarks     || "";
+  document.getElementById("editDueModal").style.display = "flex";
+}
+
+async function submitEditDue() {
+  const id = parseInt(document.getElementById("editDueId").value);
+  const total = parseFloat(document.getElementById("editDueTotalAmount").value) || 0;
+  const paid  = parseFloat(document.getElementById("editDuePaidAmount").value)  || 0;
+  if (paid > total) { showToast("Paid cannot exceed total", "error"); return; }
+  await fetch(`${DUE_API}/update/${id}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      customerName: document.getElementById("editDueCustomerName").value,
+      date:         document.getElementById("editDueDate").value,
+      cylinderType: document.getElementById("editDueCylinderType").value,
+      totalAmount:  total,
+      paidAmount:   paid,
+      remarks:      document.getElementById("editDueRemarks").value
+    })
+  });
+  showToast("Due updated ✓", "success");
+  document.getElementById("editDueModal").style.display = "none";
+  loadPendingDues();
+}
+
+async function deleteCustomerDue(id) {
+  if (!confirm("Delete this due entry?")) return;
+  await fetch(`${DUE_API}/delete/${id}`, { method: "DELETE" });
+  showToast("Deleted", "info");
+  loadPendingDues();
+}
+
+// ── PAY DUE ──
+let _payDueId = null, _payDueMax = 0, _payDueCurrentCash = 0, _payDueCurrentOnline = 0;
+
+function openPayDueModal(id, due, date, type) {
+  _payDueId = id;
+  _payDueMax = due;
+  fetch(`${API}/sales/cylinder/all`).then(r => r.json()).then(list => {
+    const rec = list.find(s => s.id === id);
+    _payDueCurrentCash   = rec ? rec.cashReceived   : 0;
+    _payDueCurrentOnline = rec ? rec.onlineReceived  : 0;
+  });
+  document.getElementById("payDueInfo").textContent = `${date}  ·  ${type}`;
+  document.getElementById("payDueRemaining").textContent = due.toFixed(2);
+  document.getElementById("payDueCash").value   = 0;
+  document.getElementById("payDueOnline").value = 0;
+  document.getElementById("payDueNewBalance").style.display = "none";
+  document.getElementById("payDueModal").style.display = "flex";
+}
+
+function closePayDueModal() {
+  document.getElementById("payDueModal").style.display = "none";
+  _payDueId = null; _payDueMax = 0;
+}
+
+function calcPayDueBalance() {
+  const cash   = parseFloat(document.getElementById("payDueCash").value)   || 0;
+  const online = parseFloat(document.getElementById("payDueOnline").value) || 0;
+  const paid   = cash + online;
+  const after  = Math.max(0, _payDueMax - paid);
+  document.getElementById("payDueAfter").textContent = after.toFixed(2);
+  document.getElementById("payDueNewBalance").style.display = "block";
+  document.getElementById("payDueAfter").style.color = after > 0 ? "var(--warning)" : "var(--success)";
+}
+
+async function submitPayDue() {
+  const addCash   = parseFloat(document.getElementById("payDueCash").value)   || 0;
+  const addOnline = parseFloat(document.getElementById("payDueOnline").value) || 0;
+  if (addCash + addOnline <= 0) { showToast("Enter payment amount", "error"); return; }
+  if (addCash + addOnline > _payDueMax + 0.01) { showToast("Payment exceeds due amount", "error"); return; }
+
+  // GET full record first, then PATCH cash+online
+  const res  = await fetch(`${API}/sales/cylinder/all`);
+  const list = await res.json();
+  const rec  = list.find(s => s.id === _payDueId);
+  if (!rec) { showToast("Record not found", "error"); return; }
+
+  rec.cashReceived   = (rec.cashReceived   || 0) + addCash;
+  rec.onlineReceived = (rec.onlineReceived || 0) + addOnline;
+
+  await fetch(`${API}/sales/cylinder/update/${_payDueId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(rec)
+  });
+  showToast("Due payment recorded ✓", "success");
+  closePayDueModal();
+  loadCylinderSalesTable();
+  loadPendingDues();
+}
+
+// ── MAINTENANCE ──
+function selectExpenseType(btn, type) {
+  document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const wrap = document.getElementById("otherExpenseInputWrap");
+  if (type === "Other") {
+    // Show free-text input; the actual saved value will come from that input
+    wrap.style.display = "block";
+    document.getElementById("otherExpenseText").focus();
+    document.getElementById("expenseType").value = "Other";          // placeholder until user types
+    document.getElementById("otherExpenseText").oninput = function() {
+      const custom = this.value.trim();
+      document.getElementById("expenseType").value = custom || "Other";
+    };
+  } else {
+    wrap.style.display = "none";
+    document.getElementById("otherExpenseText").value = "";
+    document.getElementById("expenseType").value = type;
+  }
+}
+
+async function addMaintenance() {
+  const date = document.getElementById("mdate").value;
+  if (!date) { showToast("Select a date", "error"); return; }
+  await fetch(`${API}/addMaintenance`, {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      date,
+      fuel: document.getElementById("fuel").value || 0,
+      otherExpense: document.getElementById("other").value || 0,
+      expenseType: document.getElementById("expenseType").value,
+      employeeName: document.getElementById("empName").value,
+      employeePayment: document.getElementById("empPay").value || 0,
+      bankDeposit: 0,
+      depositType: ""
+    })
+  });
+  showToast("Maintenance record added ✓", "success");
+  ["mdate","fuel","other","empPay"].forEach(id => document.getElementById(id).value = "");
+  // Reset expense type back to default
+  document.getElementById("expenseType").value = "Maintenance";
+  document.getElementById("otherExpenseText").value = "";
+  document.getElementById("otherExpenseInputWrap").style.display = "none";
+  document.querySelectorAll("#expenseTypeGroup .toggle-btn").forEach((b,i) => b.classList.toggle("active", i===0));
+  loadMaintenanceTable();
+}
+
+async function loadMaintenanceTable() {
+  const res = await fetch(`${API}/getMaintenance`);
+  const data = await res.json();
+  const tbody = document.getElementById("maintTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(m => `<tr>
+    <td>${m.date}</td><td>₹ ${m.fuel}</td><td>₹ ${m.otherExpense}</td>
+    <td>${m.expenseType || "—"}</td><td>${m.employeeName || "—"}</td><td>₹ ${m.employeePayment}</td></tr>`).join("");
+}
+
+// ── BANK DEPOSIT ──
+async function addBankDeposit() {
+  const date = document.getElementById("bdDate").value;
+  if (!date) { showToast("Select a date", "error"); return; }
+  const data = {
+    date,
+    onlineDeposit: parseFloat(document.getElementById("bdOnline").value) || 0,
+    cashDeposit: parseFloat(document.getElementById("bdCash").value) || 0,
+    remarks: document.getElementById("bdRemarks").value
+  };
+  await fetch(`${API}/bankdeposit/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+  showToast("Bank Deposit added ✓", "success");
+  ["bdDate","bdRemarks"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("bdOnline").value = 0;
+  document.getElementById("bdCash").value = 0;
+  loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+async function loadBankDeposits() {
+  const res = await fetch(`${API}/bankdeposit/all`);
+  const data = await res.json();
+  const tbody = document.getElementById("bdTable");
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(d => `<tr>
+    <td>${d.date}</td><td>₹ ${d.onlineDeposit}</td><td>₹ ${d.cashDeposit}</td>
+    <td style="font-weight:600;color:var(--success,#22c55e)">₹ ${d.totalDeposit}</td>
+    <td>${d.remarks || "—"}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteBankDeposit(${d.id})">🗑</button></td></tr>`).join("");
+  updateBankSummary();
+}
+
+async function deleteBankDeposit(id) {
+  if (!confirm("Delete this deposit?")) return;
+  await fetch(`${API}/bankdeposit/delete/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+// ── BANK WITHDRAWAL ──
+async function addBankWithdrawal() {
+  const date = document.getElementById("wdDate").value;
+  if (!date) { showToast("Select a date", "error"); return; }
+  const onlineWd = parseFloat(document.getElementById("wdOnline").value) || 0;
+  const cashWd   = parseFloat(document.getElementById("wdCash").value)   || 0;
+  if (onlineWd + cashWd <= 0) { showToast("Enter a withdrawal amount", "error"); return; }
+  const data = {
+    date,
+    onlineWithdrawal: onlineWd,
+    cashWithdrawal:   cashWd,
+    totalWithdrawal:  onlineWd + cashWd,
+    remarks: document.getElementById("wdRemarks").value
+  };
+  // Try dedicated withdrawal endpoint; fall back to storing in bankdeposit with negative amounts
+  try {
+    const res = await fetch(`${API}/bankwithdrawal/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+    if (!res.ok) throw new Error("no endpoint");
+  } catch {
+    // Fallback: store as negative deposit so existing backend works
+    const fallback = {
+      date,
+      onlineDeposit: -onlineWd,
+      cashDeposit:   -cashWd,
+      remarks: `[WITHDRAWAL] ${data.remarks}`
+    };
+    await fetch(`${API}/bankdeposit/add`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(fallback) });
+  }
+  showToast("Withdrawal recorded ✓", "success");
+  ["wdDate","wdRemarks"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("wdOnline").value = 0;
+  document.getElementById("wdCash").value = 0;
+  loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+async function loadBankWithdrawals() {
+  try {
+    const res = await fetch(`${API}/bankwithdrawal/all`);
+    if (!res.ok) throw new Error("no endpoint");
+    const data = await res.json();
+    const tbody = document.getElementById("wdTable");
+    if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No withdrawal records</td></tr>`; updateBankSummary(); return; }
+    tbody.innerHTML = data.reverse().map(d => `<tr>
+      <td>${d.date}</td><td>₹ ${d.onlineWithdrawal}</td><td>₹ ${d.cashWithdrawal}</td>
+      <td style="font-weight:600;color:#ef4444">₹ ${d.totalWithdrawal}</td>
+      <td>${d.remarks || "—"}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteBankWithdrawal(${d.id})">🗑</button></td></tr>`).join("");
+  } catch {
+    // Fallback: read withdrawal entries stored as negative deposits
+    const res2 = await fetch(`${API}/bankdeposit/all`);
+    const all = await res2.json();
+    const wds = all.filter(d => d.remarks && d.remarks.startsWith("[WITHDRAWAL]"));
+    const tbody = document.getElementById("wdTable");
+    if (!wds.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No withdrawal records</td></tr>`; updateBankSummary(); return; }
+    tbody.innerHTML = wds.reverse().map(d => {
+      const onlineW = Math.abs(d.onlineDeposit); const cashW = Math.abs(d.cashDeposit);
+      return `<tr>
+        <td>${d.date}</td><td>₹ ${onlineW}</td><td>₹ ${cashW}</td>
+        <td style="font-weight:600;color:#ef4444">₹ ${onlineW+cashW}</td>
+        <td>${(d.remarks||"").replace("[WITHDRAWAL]","").trim() || "—"}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteBankDeposit(${d.id})">🗑</button></td></tr>`;
+    }).join("");
+  }
+  updateBankSummary();
+}
+
+async function deleteBankWithdrawal(id) {
+  if (!confirm("Delete this withdrawal?")) return;
+  try {
+    await fetch(`${API}/bankwithdrawal/delete/${id}`, { method:"DELETE" });
+  } catch {
+    await fetch(`${API}/bankdeposit/delete/${id}`, { method:"DELETE" });
+  }
+  showToast("Deleted", "info");
+  loadBankDeposits();
+  loadBankWithdrawals();
+}
+
+async function updateBankSummary() {
+  try {
+    // Sum deposits (exclude [WITHDRAWAL] fallback entries)
+    const depRes = await fetch(`${API}/bankdeposit/all`);
+    const depData = await depRes.json();
+    const realDeps = depData.filter(d => !(d.remarks && d.remarks.startsWith("[WITHDRAWAL]")));
+    const totalDep = realDeps.reduce((s, d) => s + (d.totalDeposit || 0), 0);
+
+    // Sum withdrawals
+    let totalWd = 0;
+    try {
+      const wdRes = await fetch(`${API}/bankwithdrawal/all`);
+      if (wdRes.ok) {
+        const wdData = await wdRes.json();
+        totalWd = wdData.reduce((s, d) => s + (d.totalWithdrawal || 0), 0);
+      } else throw new Error();
+    } catch {
+      const wdEntries = depData.filter(d => d.remarks && d.remarks.startsWith("[WITHDRAWAL]"));
+      totalWd = wdEntries.reduce((s, d) => s + Math.abs(d.onlineDeposit || 0) + Math.abs(d.cashDeposit || 0), 0);
+    }
+
+    const balance = totalDep - totalWd;
+    document.getElementById("bdSummaryDeposit").textContent   = `₹ ${totalDep.toLocaleString("en-IN")}`;
+    document.getElementById("bdSummaryWithdrawal").textContent = `₹ ${totalWd.toLocaleString("en-IN")}`;
+    const balEl = document.getElementById("bdSummaryBalance");
+    balEl.textContent = `₹ ${balance.toLocaleString("en-IN")}`;
+    balEl.style.color = balance >= 0 ? "var(--primary,#6366f1)" : "#ef4444";
+  } catch(e) { console.warn("Summary error", e); }
+}
+
+// ── INIT ──
+document.addEventListener("DOMContentLoaded", () => {
+  showSection("sales", document.querySelector("nav a[onclick*=\"'sales'\"]"));
+  loadProducts();
+  loadCylinderPrices();
+  loadEmployees();
+});
+</script>
+
+<!-- =================== EDIT CONNECTION MODAL =================== -->
+<div id="editConnModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 28px 22px;width:min(500px,94vw);max-height:90vh;overflow-y:auto">
+    <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">✏️ Edit New Connection</div>
+    <input type="hidden" id="editConnId">
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="editConnDate"></div>
+      <div class="form-group">
+        <label>Connection Type</label>
+        <select id="editConnType">
+          <option value="NC">1. NC (New Connection)</option>
+          <option value="DBC">2. DBC (Double Burner Connection)</option>
+          <option value="Re-connection">3. Re-connection</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer Name</label><input type="text" id="editConnCustomer"></div>
+      <div class="form-group"><label>Phone Number</label><input type="text" id="editConnPhone"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cylinder Qty</label><input type="number" id="editConnCylQty" min="0"></div>
+      <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="editConnPrice" oninput="recalcEditConnDue()"></div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 8px;text-transform:uppercase;letter-spacing:.5px">Payment</div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash (₹)</label><input type="number" id="editConnCash" value="0" oninput="recalcEditConnDue()"></div>
+      <div class="form-group"><label>Online (₹)</label><input type="number" id="editConnOnline" value="0" oninput="recalcEditConnDue()"></div>
+      <div class="form-group"><label>Due (₹)</label><input type="number" id="editConnDue" style="background:#fff3f3;border-color:#e57373;font-weight:700;color:#c62828"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-primary" style="flex:1" onclick="submitEditConn()">💾 Save Changes</button>
+      <button class="btn" style="flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border)" onclick="document.getElementById('editConnModal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
