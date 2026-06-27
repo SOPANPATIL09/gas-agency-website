@@ -251,7 +251,7 @@ tbody tr:last-child td { border-bottom: none; }
     <div class="viewer-controls">
       <input type="date"  id="viewerDate"  style="display:block" onchange="runViewer()">
       <input type="month" id="viewerMonth" style="display:none"  onchange="runViewer()">
-      <div id="viewerRangeWrap" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;display:none">
+      <div id="viewerRangeWrap" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
         <input type="date" id="viewerRangeFrom" placeholder="From">
         <span style="color:rgba(255,255,255,0.5);font-size:12px">to</span>
         <input type="date" id="viewerRangeTo" placeholder="To">
@@ -849,6 +849,11 @@ function setViewerMode(mode, btn) {
   document.getElementById("viewerSummary").style.display  = "none";
   document.getElementById("viewerTypeTabs").style.display = "none";
   ["cylinder","product","csc","conn"].forEach(t => document.getElementById("viewer_"+t).style.display = "none");
+  // Auto-run if input already has a value
+  if (mode !== "range") {
+    const inputId = mode === "daily" ? "viewerDate" : "viewerMonth";
+    if (document.getElementById(inputId).value) runViewer();
+  }
 }
 
 function setViewerType(type, btn) {
@@ -860,24 +865,23 @@ function setViewerType(type, btn) {
   );
 }
 
-async function runViewer() {
+function runViewer() {
   let prefix = null, fromDate = null, toDate = null;
   if (viewerMode === "daily")   prefix   = document.getElementById("viewerDate").value;
   if (viewerMode === "monthly") prefix   = document.getElementById("viewerMonth").value;
   if (viewerMode === "range") {
     fromDate = document.getElementById("viewerRangeFrom").value;
     toDate   = document.getElementById("viewerRangeTo").value;
-    if (!fromDate || !toDate) return;
+    if (!fromDate || !toDate) { showToast("Please select both From and To dates", "#e53935"); return; }
   } else {
     if (!prefix) return;
   }
 
-  const [cylRes, prodRes, cscRes, connRes] = await Promise.all([
-    fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()),
-    fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()),
-    fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()),
-    fetch(`${BASE_URL}/getConnection`).then(r=>r.json()),
-  ]);
+  // Use already-loaded allData — no re-fetch needed
+  const cylRes  = (allData.cyl  || []).slice().reverse();   // allData is stored reversed; un-reverse for filtering
+  const prodRes = (allData.prod || []).slice().reverse();
+  const cscRes  = (allData.csc  || []).slice().reverse();
+  const connRes = (allData.conn || []).slice().reverse();
 
   function inRange(date) {
     if (!date) return false;
