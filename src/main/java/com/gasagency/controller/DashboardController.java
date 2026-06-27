@@ -22,6 +22,7 @@ public class DashboardController {
     @Autowired EmployeeRepository employeeRepo;
     @Autowired ProductPurchaseRepository productPurchaseRepo;
     @Autowired CylinderPurchaseRepository cylinderPurchaseRepo;
+    @Autowired NewConnectionRepository newConnectionRepo;
 
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getSummary() {
@@ -98,7 +99,18 @@ public class DashboardController {
         summary.put("cylinderPurchaseTotal", cylinderPurchaseTotal);
         summary.put("cylinderPurchaseCount", cylinderPurchaseCount);
         summary.put("employeeCount", employeeCount);
-        summary.put("totalSales", cylSalesTotal + prodSalesTotal + legacyCylTotal + legacyProdTotal + cscSalesTotal);
+        // New Connection totals
+        double newConnTotal = newConnectionRepo.findAll().stream().mapToDouble(c -> c.getConnectionPrice()).sum();
+        double newConnCash = newConnectionRepo.findAll().stream().mapToDouble(c -> c.getCashAmount()).sum();
+        double newConnOnline = newConnectionRepo.findAll().stream().mapToDouble(c -> c.getOnlineAmount()).sum();
+        double newConnDue = newConnectionRepo.findAll().stream().mapToDouble(c -> c.getDueAmount()).sum();
+        long newConnCount = newConnectionRepo.count();
+        summary.put("newConnectionTotal", newConnTotal);
+        summary.put("newConnectionCash", newConnCash);
+        summary.put("newConnectionOnline", newConnOnline);
+        summary.put("newConnectionDue", newConnDue);
+        summary.put("newConnectionCount", newConnCount);
+        summary.put("totalSales", cylSalesTotal + prodSalesTotal + legacyCylTotal + legacyProdTotal + cscSalesTotal + newConnTotal);
 
         return ResponseEntity.ok(summary);
     }

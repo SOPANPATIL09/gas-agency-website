@@ -105,7 +105,6 @@ tbody tr:hover td { background: var(--surface2); }
   <nav>
     <div class="nav-section">Inventory</div>
     <a href="#" onclick="showSection('product',this)"><span class="nav-icon">🛒</span> Products</a>
-    <a href="#" onclick="showSection('connection',this)"><span class="nav-icon">🔗</span> New Connection</a>
     <a href="#" onclick="showSection('cylinder',this)"><span class="nav-icon">🛢️</span> Cylinder</a>
     <a href="#" onclick="showSection('employee',this)"><span class="nav-icon">👤</span> Employee</a>
 
@@ -117,6 +116,7 @@ tbody tr:hover td { background: var(--surface2); }
     <a href="#" onclick="showSection('sales',this)" class="active"><span class="nav-icon">📊</span> Product Sales</a>
     <a href="#" onclick="showSection('cylinderSales',this)"><span class="nav-icon">🔵</span> Cylinder Sales</a>
     <a href="#" onclick="showSection('cscSales',this)"><span class="nav-icon">🏪</span> CSC Sales</a>
+    <a href="#" onclick="showSection('connection',this)"><span class="nav-icon">🔗</span> New Connection</a>
     <a href="#" onclick="showSection('pendingDues',this)"><span class="nav-icon">🔴</span> Pending Dues</a>
 
     <div class="nav-section">Operations</div>
@@ -163,11 +163,54 @@ tbody tr:hover td { background: var(--surface2); }
 
   <!-- ===================== CONNECTION ===================== -->
   <div class="card" id="connection">
-    <div class="card-title">🔗 New Connection <span class="badge">Customer</span></div>
-    <div class="form-group"><label>Customer Name</label><input type="text" id="customerName"></div>
-    <div class="form-group"><label>Phone Number</label><input type="text" id="phoneNumber"></div>
-    <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="connectionPrice"></div>
+    <div class="card-title">🔗 New Connection <span class="badge">Sales</span></div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="connDate"></div>
+      <div class="form-group">
+        <label>Connection Type</label>
+        <select id="connType">
+          <option value="NC">1. NC (New Connection)</option>
+          <option value="DBC">2. DBC (Double Burner Connection)</option>
+          <option value="Re-connection">3. Re-connection</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer Name</label><input type="text" id="customerName" placeholder="Enter customer name"></div>
+      <div class="form-group"><label>Phone Number</label><input type="text" id="phoneNumber" placeholder="Enter phone number"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cylinder Qty</label><input type="number" id="connCylQty" placeholder="0" min="0" value="1"></div>
+      <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="connectionPrice" placeholder="0" oninput="updateConnPaymentTotal()"></div>
+    </div>
+    <div class="section-sub" style="margin:10px 0 8px">Payment</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cash (₹)</label>
+        <input type="number" id="connCash" placeholder="0" value="0" oninput="updateConnDue()">
+      </div>
+      <div class="form-group">
+        <label>Online (₹)</label>
+        <input type="number" id="connOnline" placeholder="0" value="0" oninput="updateConnDue()">
+      </div>
+      <div class="form-group">
+        <label>Due (₹)</label>
+        <input type="number" id="connDue" placeholder="0" value="0" style="background:#fff3f3;border-color:#e57373">
+      </div>
+    </div>
     <button class="btn btn-primary" onclick="addConnection()">+ Add Connection</button>
+    <hr class="divider">
+    <div class="section-sub">Connection Records</div>
+    <table class="table">
+      <thead><tr><th>Date</th><th>Type</th><th>Customer</th><th>Phone</th><th>Cyl Qty</th><th>Price</th><th>Cash</th><th>Online</th><th>Due</th><th>Action</th></tr></thead>
+      <tbody id="connTable"><tr><td colspan="10" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+    </table>
+    <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+      <span class="ss-pill total" id="connTotalAmount">Total: ₹ —</span>
+      <span class="ss-pill cash" id="connTotalCash">💵 Cash: ₹ —</span>
+      <span class="ss-pill online" id="connTotalOnline">📱 Online: ₹ —</span>
+      <span class="ss-pill due" id="connTotalDue" style="background:#fff3f3;color:#c62828">⚠️ Due: ₹ —</span>
+    </div>
   </div>
 
   <!-- ===================== CYLINDER ===================== -->
@@ -707,7 +750,7 @@ function toggleSidebar() {
 
 const SECTION_TITLES = {
   product: ["Products", "Manage product inventory"],
-  connection: ["New Connection", "Register new customer connections"],
+  connection: ["New Connection", "Record and manage new customer connections — NC, DBC, Re-connection"],
   cylinder: ["Cylinder", "Manage cylinders and pricing"],
   employee: ["Employee", "Manage employee records"],
   productPurchase: ["Product Purchase", "Record product purchases"],
@@ -737,6 +780,7 @@ function showSection(id, link) {
   if (id === "sales") loadProductSales();
   if (id === "cylinderSales") loadCylinderSalesTable();
   if (id === "cscSales") loadCscSalesTable();
+  if (id === "connection") loadConnectionTable();
   if (id === "pendingDues") loadPendingDues();
   if (id === "maintenance") { loadEmployeeDropdown(); loadMaintenanceTable(); }
   if (id === "bankdeposit") { loadBankDeposits(); loadBankWithdrawals(); }
@@ -765,12 +809,125 @@ async function loadProducts() {
 }
 
 // ── CONNECTION ──
+function updateConnDue() {
+  const price = parseFloat(document.getElementById("connectionPrice").value) || 0;
+  const cash = parseFloat(document.getElementById("connCash").value) || 0;
+  const online = parseFloat(document.getElementById("connOnline").value) || 0;
+  const due = price - cash - online;
+  document.getElementById("connDue").value = due > 0 ? due.toFixed(2) : 0;
+}
+
 async function addConnection() {
-  const data = { customerName: document.getElementById("customerName").value, phoneNumber: document.getElementById("phoneNumber").value, connectionPrice: document.getElementById("connectionPrice").value };
-  if (!data.customerName) { showToast("Enter customer name", "error"); return; }
+  const date = document.getElementById("connDate").value;
+  const customerName = document.getElementById("customerName").value;
+  const phoneNumber = document.getElementById("phoneNumber").value;
+  const connectionType = document.getElementById("connType").value;
+  const connectionPrice = parseFloat(document.getElementById("connectionPrice").value) || 0;
+  const cylinderQty = parseInt(document.getElementById("connCylQty").value) || 0;
+  const cashAmount = parseFloat(document.getElementById("connCash").value) || 0;
+  const onlineAmount = parseFloat(document.getElementById("connOnline").value) || 0;
+  const dueAmount = parseFloat(document.getElementById("connDue").value) || 0;
+  if (!customerName) { showToast("Enter customer name", "error"); return; }
+  if (!date) { showToast("Select date", "error"); return; }
+  const data = { customerName, phoneNumber, connectionPrice, connectionType, cylinderQty, cashAmount, onlineAmount, dueAmount, date };
   await fetch(`${API}/addConnection`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
   showToast("Connection added ✓", "success");
-  ["customerName","phoneNumber","connectionPrice"].forEach(id => document.getElementById(id).value = "");
+  ["customerName","phoneNumber","connectionPrice","connCash","connOnline","connDue"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("connCylQty").value = "1";
+  loadConnectionTable();
+}
+
+function recalcEditConnDue() {
+  const price = parseFloat(document.getElementById("editConnPrice").value) || 0;
+  const cash  = parseFloat(document.getElementById("editConnCash").value)  || 0;
+  const online= parseFloat(document.getElementById("editConnOnline").value)|| 0;
+  const due   = Math.max(0, price - cash - online);
+  document.getElementById("editConnDue").value = due.toFixed(2);
+}
+
+async function openEditConn(id) {
+  const data = await fetch(`${API}/getConnection`).then(r => r.json());
+  const c = data.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById("editConnId").value       = c.id;
+  document.getElementById("editConnDate").value     = c.date || "";
+  document.getElementById("editConnType").value     = c.connectionType || "NC";
+  document.getElementById("editConnCustomer").value = c.customerName || "";
+  document.getElementById("editConnPhone").value    = c.phoneNumber || "";
+  document.getElementById("editConnCylQty").value   = c.cylinderQty || 0;
+  document.getElementById("editConnPrice").value    = c.connectionPrice || 0;
+  document.getElementById("editConnCash").value     = c.cashAmount || 0;
+  document.getElementById("editConnOnline").value   = c.onlineAmount || 0;
+  document.getElementById("editConnDue").value      = c.dueAmount || 0;
+  document.getElementById("editConnModal").style.display = "flex";
+}
+
+async function submitEditConn() {
+  const id = parseInt(document.getElementById("editConnId").value);
+  const price  = parseFloat(document.getElementById("editConnPrice").value)  || 0;
+  const cash   = parseFloat(document.getElementById("editConnCash").value)   || 0;
+  const online = parseFloat(document.getElementById("editConnOnline").value) || 0;
+  const due    = parseFloat(document.getElementById("editConnDue").value)    || 0;
+  const data = {
+    date:            document.getElementById("editConnDate").value,
+    connectionType:  document.getElementById("editConnType").value,
+    customerName:    document.getElementById("editConnCustomer").value.trim(),
+    phoneNumber:     document.getElementById("editConnPhone").value.trim(),
+    cylinderQty:     parseInt(document.getElementById("editConnCylQty").value) || 0,
+    connectionPrice: price,
+    cashAmount:      cash,
+    onlineAmount:    online,
+    dueAmount:       due
+  };
+  await fetch(`${API}/updateConnection/${id}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
+  });
+  showToast("Connection updated ✓", "success");
+  document.getElementById("editConnModal").style.display = "none";
+  loadConnectionTable();
+}
+
+async function deleteConn(id) {
+  if (!confirm("Delete this connection record?")) return;
+  await fetch(`${API}/deleteConnection/${id}`, { method: "DELETE" });
+  showToast("Deleted", "info");
+  loadConnectionTable();
+}
+
+async function loadConnectionTable() {
+  const tbody = document.getElementById("connTable");
+  if (!tbody) return;
+  const res = await fetch(`${API}/getConnection`);
+  const data = await res.json();
+  let totalAmt = 0, totalCash = 0, totalOnline = 0, totalDue = 0;
+  tbody.innerHTML = data.length === 0
+    ? `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`
+    : data.map(c => {
+        totalAmt += c.connectionPrice || 0;
+        totalCash += c.cashAmount || 0;
+        totalOnline += c.onlineAmount || 0;
+        totalDue += c.dueAmount || 0;
+        return `<tr>
+          <td>${c.date || "—"}</td>
+          <td><span class="badge">${c.connectionType || "—"}</span></td>
+          <td style="font-weight:600">${c.customerName || "—"}</td>
+          <td>${c.phoneNumber || "—"}</td>
+          <td style="text-align:center">${c.cylinderQty || 0}</td>
+          <td style="color:var(--accent);font-weight:600">₹ ${fmt(c.connectionPrice)}</td>
+          <td>₹ ${fmt(c.cashAmount)}</td>
+          <td>₹ ${fmt(c.onlineAmount)}</td>
+          <td><span style="${c.dueAmount > 0 ? 'color:#c62828;font-weight:700' : 'color:#2e7d32;font-weight:600'}">₹ ${fmt(c.dueAmount)}</span></td>
+          <td style="white-space:nowrap">
+            <button class="btn btn-sm" style="background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.4);margin-right:4px;padding:3px 8px" onclick="openEditConn(${c.id})">✏️</button>
+            <button class="btn btn-sm btn-danger" style="padding:3px 8px" onclick="deleteConn(${c.id})">🗑</button>
+          </td>
+        </tr>`;
+      }).join("");
+  const fmtV = v => "₹ " + fmt(v);
+  document.getElementById("connTotalAmount").textContent = "Total: " + fmtV(totalAmt);
+  document.getElementById("connTotalCash").textContent = "💵 Cash: " + fmtV(totalCash);
+  document.getElementById("connTotalOnline").textContent = "📱 Online: " + fmtV(totalOnline);
+  document.getElementById("connTotalDue").textContent = "⚠️ Due: " + fmtV(totalDue);
 }
 
 // ── CYLINDER ──
@@ -1625,5 +1782,43 @@ document.addEventListener("DOMContentLoaded", () => {
   loadEmployees();
 });
 </script>
+
+<!-- =================== EDIT CONNECTION MODAL =================== -->
+<div id="editConnModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 28px 22px;width:min(500px,94vw);max-height:90vh;overflow-y:auto">
+    <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px">✏️ Edit New Connection</div>
+    <input type="hidden" id="editConnId">
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input type="date" id="editConnDate"></div>
+      <div class="form-group">
+        <label>Connection Type</label>
+        <select id="editConnType">
+          <option value="NC">1. NC (New Connection)</option>
+          <option value="DBC">2. DBC (Double Burner Connection)</option>
+          <option value="Re-connection">3. Re-connection</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Customer Name</label><input type="text" id="editConnCustomer"></div>
+      <div class="form-group"><label>Phone Number</label><input type="text" id="editConnPhone"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cylinder Qty</label><input type="number" id="editConnCylQty" min="0"></div>
+      <div class="form-group"><label>Connection Price (₹)</label><input type="number" id="editConnPrice" oninput="recalcEditConnDue()"></div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 8px;text-transform:uppercase;letter-spacing:.5px">Payment</div>
+    <div class="form-row">
+      <div class="form-group"><label>Cash (₹)</label><input type="number" id="editConnCash" value="0" oninput="recalcEditConnDue()"></div>
+      <div class="form-group"><label>Online (₹)</label><input type="number" id="editConnOnline" value="0" oninput="recalcEditConnDue()"></div>
+      <div class="form-group"><label>Due (₹)</label><input type="number" id="editConnDue" style="background:#fff3f3;border-color:#e57373;font-weight:700;color:#c62828"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-primary" style="flex:1" onclick="submitEditConn()">💾 Save Changes</button>
+      <button class="btn" style="flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border)" onclick="document.getElementById('editConnModal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -4,10 +4,12 @@ import com.gasagency.model.CylinderSales;
 import com.gasagency.model.ProductSales;
 import com.gasagency.model.Cylinder;
 import com.gasagency.model.Product;
+import com.gasagency.model.BankDeposit;
 import com.gasagency.repository.CylinderSalesRepository;
 import com.gasagency.repository.ProductSalesRepository;
 import com.gasagency.repository.CylinderRepository;
 import com.gasagency.repository.ProductRepository;
+import com.gasagency.repository.BankDepositRepository;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -44,6 +46,18 @@ public class SalesController {
     @Autowired ProductSalesRepository productSalesRepo;
     @Autowired CylinderRepository cylinderRepo;
     @Autowired ProductRepository productRepo;
+    @Autowired BankDepositRepository bankDepositRepo;
+
+    private void autoDepositOnline(double onlineAmount, String date, String remarks) {
+        if (onlineAmount <= 0) return;
+        BankDeposit deposit = new BankDeposit();
+        deposit.setDate(date);
+        deposit.setOnlineDeposit(onlineAmount);
+        deposit.setCashDeposit(0);
+        deposit.setTotalDeposit(onlineAmount);
+        deposit.setRemarks(remarks);
+        bankDepositRepo.save(deposit);
+    }
 
     // ==================== CYLINDER SALES ====================
 
@@ -55,7 +69,13 @@ public class SalesController {
             s.setCylinderTotal(s.getCylinderQty() * cyl.getPrice());
         }
         s.setTotalAmount(s.getCylinderTotal());
-        return ResponseEntity.ok(cylinderSalesRepo.save(s));
+        CylinderSales saved = cylinderSalesRepo.save(s);
+        if (s.getOnlineReceived() > 0) {
+            String remark = "Cylinder Sale - " + s.getCylinderQty() + " " + s.getCylinderType()
+                          + " (Online) [Sale ID: " + saved.getId() + "]";
+            autoDepositOnline(s.getOnlineReceived(), s.getDate(), remark);
+        }
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/cylinder/all")
@@ -98,7 +118,13 @@ public class SalesController {
             s.setProductTotal(s.getProductQty() * prod.getPrice());
         }
         s.setTotalAmount(s.getProductTotal());
-        return ResponseEntity.ok(productSalesRepo.save(s));
+        ProductSales savedP = productSalesRepo.save(s);
+        if (s.getOnlineReceived() > 0) {
+            String remark = "Product Sale - " + s.getProductQty() + "x " + s.getProductName()
+                          + " (Online) [Sale ID: " + savedP.getId() + "]";
+            autoDepositOnline(s.getOnlineReceived(), s.getDate(), remark);
+        }
+        return ResponseEntity.ok(savedP);
     }
 
     @GetMapping("/product/all")

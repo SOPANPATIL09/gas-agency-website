@@ -164,10 +164,18 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="sub" id="sc_cscSalesCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
       <div class="sub" id="sc_cscSalesOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
     </div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#6a1b9a,#4a148c)">
+      <div class="label">🔗 New Connection</div>
+      <div class="value" id="sc_newConn">₹ —</div>
+      <div class="sub" id="sc_newConnCount">— records</div>
+      <div class="sub" id="sc_newConnCash" style="margin-top:4px;color:rgba(255,255,255,0.75)">💵 Cash: ₹ —</div>
+      <div class="sub" id="sc_newConnOnline" style="color:rgba(255,255,255,0.75)">📱 Online: ₹ —</div>
+      <div class="sub" id="sc_newConnDue" style="color:#ffb3b3">⚠️ Due: ₹ —</div>
+    </div>
     <div class="stat-card teal">
       <div class="label">💰 Total Sales</div>
       <div class="value" id="sc_totalSales">₹ —</div>
-      <div class="sub">Cylinder + Product + CSC</div>
+      <div class="sub">Cylinder + Product + CSC + New Conn</div>
     </div>
   </div>
 
@@ -269,6 +277,14 @@ tbody tr:last-child td { border-bottom: none; }
         <div style="font-size:11px;color:#f7b94f"                 id="vsm_cscdue">⏳ ₹0</div>
       </div>
       <div class="vs-card">
+        <div class="vs-label">🔗 New Connection</div>
+        <div class="vs-val" id="vsm_conn" style="color:#ce93d8">₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="vsm_connq">0 connections</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_conncash">💵 ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                 id="vsm_connonline">📱 ₹0</div>
+        <div style="font-size:11px;color:#ef9a9a"                 id="vsm_conndue">⚠️ ₹0</div>
+      </div>
+      <div class="vs-card">
         <div class="vs-label">💰 Combined Total</div>
         <div class="vs-val" id="vsm_total" style="color:#ffd54f">₹0</div>
         <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_allcash">💵 Cash: ₹0</div>
@@ -282,6 +298,7 @@ tbody tr:last-child td { border-bottom: none; }
       <button class="vtab active" onclick="setViewerType('cylinder', this)">🔵 Cylinder Sales</button>
       <button class="vtab"        onclick="setViewerType('product',  this)">🛒 Product Sales</button>
       <button class="vtab"        onclick="setViewerType('csc',      this)">🏪 CSC Sales</button>
+      <button class="vtab"        onclick="setViewerType('conn',     this)">🔗 New Connection</button>
     </div>
 
     <!-- Cylinder table -->
@@ -334,6 +351,25 @@ tbody tr:last-child td { border-bottom: none; }
               <td style="font-weight:700;color:#a5d6a7;padding:9px 12px;text-align:center"   id="vt_csc_fcash">—</td>
               <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center"   id="vt_csc_fonline">—</td>
               <td style="font-weight:700;color:#f7b94f;padding:9px 12px;text-align:center"   id="vt_csc_fdue">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- New Connection table -->
+    <div id="viewer_conn" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Customer</th><th>Phone</th><th>Cyl Qty</th><th>Price (₹)</th><th>Cash (₹)</th><th>Online (₹)</th><th>Due (₹)</th></tr></thead>
+          <tbody id="vt_conn"><tr><td colspan="9" class="no-data">—</td></tr></tbody>
+          <tfoot id="vt_conn_foot" style="display:none">
+            <tr style="background:rgba(106,27,154,0.25);border-top:1px solid rgba(206,147,216,0.3)">
+              <td colspan="5" style="text-align:right;font-weight:700;color:#ce93d8;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"      id="vt_conn_ftotal">—</td>
+              <td style="font-weight:700;color:#a5d6a7;padding:9px 12px;text-align:center"   id="vt_conn_fcash">—</td>
+              <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center"   id="vt_conn_fonline">—</td>
+              <td style="font-weight:700;color:#ef9a9a;padding:9px 12px;text-align:center"   id="vt_conn_fdue">—</td>
             </tr>
           </tfoot>
         </table>
@@ -435,6 +471,31 @@ tbody tr:last-child td { border-bottom: none; }
         <button onclick="paginate('csc',-1)">← Prev</button>
         <button onclick="paginate('csc',1)">Next →</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ── NEW CONNECTION SALES ── -->
+  <div class="section" style="margin-bottom:14px">
+    <div class="section-title">🔗 New Connection Sales</div>
+    <div class="section-stats">
+      <span class="ss-pill total"  id="connSalesTotal">Total: ₹ —</span>
+      <span class="ss-pill qty"    id="connSalesQtyPill">— cylinders</span>
+      <span class="ss-pill cash"   id="connSalesCashPill">💵 Cash: ₹ —</span>
+      <span class="ss-pill online" id="connSalesOnlinePill">📱 Online: ₹ —</span>
+      <span class="ss-pill due"    id="connSalesDuePill" style="background:rgba(239,83,80,0.15);border-color:rgba(239,83,80,0.35);color:#ef9a9a">⚠️ Due: ₹ —</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Type</th><th>Customer</th><th>Phone</th>
+          <th>Cyl Qty</th><th>Amount (₹)</th><th>Cash</th><th>Online</th><th>Due</th>
+        </tr></thead>
+        <tbody id="connSalesTable"><tr><td colspan="9" class="no-data">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button onclick="paginate('conn',-1)">← Prev</button>
+      <button onclick="paginate('conn',1)">Next →</button>
     </div>
   </div>
 
@@ -598,7 +659,7 @@ function showToast(msg, color = "#43a047") {
 function fmt(v) { return Number(v || 0).toLocaleString('en-IN'); }
 
 // ── PAGINATED STATE ──
-const pages   = { cyl:1, prod:1, csc:1, pp:1, cp:1, maint:1, bank:1, wd:1, due:1 };
+const pages   = { cyl:1, prod:1, csc:1, conn:1, pp:1, cp:1, maint:1, bank:1, wd:1, due:1 };
 const allData = {};
 
 function paginate(key, dir) {
@@ -611,6 +672,7 @@ function renderPage(key) {
   const start = (pages[key]-1)*ROWS;
   const slice = data.slice(start, start+ROWS);
   const renders = { cyl: renderCylSales, prod: renderProdSales, csc: renderCscSales,
+                    conn: renderConnSales,
                     pp: renderProdPurch, cp: renderCylPurch, maint: renderMaint,
                     bank: renderBank, wd: renderWithdrawal, due: renderPendingDues };
   renders[key](slice);
@@ -652,6 +714,25 @@ function renderCscSales(slice) {
     <td>${s.cylinderQty||0}</td><td>₹ ${fmt(s.cylinderTotal)}</td>
     <td>₹ ${fmt(s.cashReceived)}</td><td>₹ ${fmt(s.onlineReceived)}</td>
     <td><span style="${ds}">₹ ${due.toFixed(2)}</span></td></tr>`;
+  }).join("");
+}
+
+function renderConnSales(slice) {
+  const tbody = document.getElementById("connSalesTable");
+  if (!slice.length) { tbody.innerHTML = `<tr><td colspan="9" class="no-data">No records</td></tr>`; return; }
+  tbody.innerHTML = slice.map(c => {
+    const dueStyle = (c.dueAmount > 0) ? "color:#f7b94f;font-weight:600" : "color:#3ecf8e;font-weight:600";
+    return `<tr>
+      <td>${c.date||"—"}</td>
+      <td><span style="background:rgba(186,104,200,0.2);color:#ce93d8;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700">${c.connectionType||"—"}</span></td>
+      <td style="font-weight:600">${c.customerName||"—"}</td>
+      <td>${c.phoneNumber||"—"}</td>
+      <td style="text-align:center;font-weight:600">${c.cylinderQty||0}</td>
+      <td style="color:#ce93d8;font-weight:700">₹ ${fmt(c.connectionPrice)}</td>
+      <td>₹ ${fmt(c.cashAmount)}</td>
+      <td>₹ ${fmt(c.onlineAmount)}</td>
+      <td><span style="${dueStyle}">₹ ${fmt(c.dueAmount)}</span></td>
+    </tr>`;
   }).join("");
 }
 
@@ -743,7 +824,7 @@ async function deleteProdSale(id) {
 // ══════════════════════════════════════════════
 let viewerMode = "daily";    // "daily" | "monthly" | "range"
 let viewerType = "cylinder";
-let viewerCylData = [], viewerProdData = [], viewerCscData = [];
+let viewerCylData = [], viewerProdData = [], viewerCscData = [], viewerConnData = [];
 
 function setViewerMode(mode, btn) {
   viewerMode = mode;
@@ -759,14 +840,14 @@ function setViewerMode(mode, btn) {
   document.getElementById("viewerHint").textContent = hints[mode];
   document.getElementById("viewerSummary").style.display  = "none";
   document.getElementById("viewerTypeTabs").style.display = "none";
-  ["cylinder","product","csc"].forEach(t => document.getElementById("viewer_"+t).style.display = "none");
+  ["cylinder","product","csc","conn"].forEach(t => document.getElementById("viewer_"+t).style.display = "none");
 }
 
 function setViewerType(type, btn) {
   viewerType = type;
   document.querySelectorAll("#viewerTypeTabs .vtab").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  ["cylinder","product","csc"].forEach(t =>
+  ["cylinder","product","csc","conn"].forEach(t =>
     document.getElementById("viewer_"+t).style.display = t === type ? "block" : "none"
   );
 }
@@ -783,10 +864,11 @@ async function runViewer() {
     if (!prefix) return;
   }
 
-  const [cylRes, prodRes, cscRes] = await Promise.all([
+  const [cylRes, prodRes, cscRes, connRes] = await Promise.all([
     fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()),
     fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()),
     fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()),
+    fetch(`${BASE_URL}/getConnection`).then(r=>r.json()),
   ]);
 
   function inRange(date) {
@@ -798,10 +880,12 @@ async function runViewer() {
     viewerCylData  = cylRes.filter(s  => inRange(s.date));
     viewerProdData = prodRes.filter(s => inRange(s.date));
     viewerCscData  = cscRes.filter(s  => inRange(s.date));
+    viewerConnData = connRes.filter(s => inRange(s.date));
   } else {
     viewerCylData  = cylRes.filter(s  => s.date && s.date.startsWith(prefix));
     viewerProdData = prodRes.filter(s => s.date && s.date.startsWith(prefix));
     viewerCscData  = cscRes.filter(s  => s.date && s.date.startsWith(prefix));
+    viewerConnData = connRes.filter(s => s.date && s.date.startsWith(prefix));
   }
 
   // ── Summary cards with cash / online / due ──
@@ -821,9 +905,15 @@ async function runViewer() {
   const cscDue     = viewerCscData.reduce((a,s)  => a + Math.max(0,(s.cylinderTotal||0)-(s.cashReceived||0)-(s.onlineReceived||0)), 0);
   const cscQty     = viewerCscData.reduce((a,s)  => a + Number(s.cylinderQty||0),   0);
 
-  const allCash    = cylCash   + prodCash   + cscCash;
-  const allOnline  = cylOnline + prodOnline + cscOnline;
-  const allDue     = cylDue    + cscDue;
+  const connTotal  = viewerConnData.reduce((a,s) => a + Number(s.connectionPrice||0), 0);
+  const connCash   = viewerConnData.reduce((a,s) => a + Number(s.cashAmount||0),      0);
+  const connOnline = viewerConnData.reduce((a,s) => a + Number(s.onlineAmount||0),    0);
+  const connDue    = viewerConnData.reduce((a,s) => a + Number(s.dueAmount||0),       0);
+  const connQty    = viewerConnData.length;
+
+  const allCash    = cylCash   + prodCash   + cscCash   + connCash;
+  const allOnline  = cylOnline + prodOnline + cscOnline + connOnline;
+  const allDue     = cylDue    + cscDue     + connDue;
 
   document.getElementById("vsm_cyl").textContent      = "₹" + fmt(cylTotal);
   document.getElementById("vsm_cylq").textContent     = cylQty + " cylinders";
@@ -841,7 +931,13 @@ async function runViewer() {
   document.getElementById("vsm_csconline").textContent= "📱 ₹" + fmt(cscOnline);
   document.getElementById("vsm_cscdue").textContent   = "⏳ ₹" + fmt(cscDue);
 
-  document.getElementById("vsm_total").textContent    = "₹" + fmt(cylTotal + prodTotal + cscTotal);
+  document.getElementById("vsm_conn").textContent      = "₹" + fmt(connTotal);
+  document.getElementById("vsm_connq").textContent     = connQty + " connections";
+  document.getElementById("vsm_conncash").textContent  = "💵 ₹" + fmt(connCash);
+  document.getElementById("vsm_connonline").textContent= "📱 ₹" + fmt(connOnline);
+  document.getElementById("vsm_conndue").textContent   = "⚠️ ₹" + fmt(connDue);
+
+  document.getElementById("vsm_total").textContent    = "₹" + fmt(cylTotal + prodTotal + cscTotal + connTotal);
   document.getElementById("vsm_allcash").textContent  = "💵 Cash: ₹"   + fmt(allCash);
   document.getElementById("vsm_allonline").textContent= "📱 Online: ₹" + fmt(allOnline);
   document.getElementById("vsm_alldue").textContent   = "⏳ Due: ₹"    + fmt(allDue);
@@ -923,8 +1019,39 @@ function renderViewerTable() {
     document.getElementById("vt_csc_foot").style.display  = "";
   }
 
+  // ── New Connection ──
+  const vt_conn = document.getElementById("vt_conn");
+  if (!viewerConnData.length) {
+    vt_conn.innerHTML = `<tr><td colspan="9" class="no-data">No new connections for this period</td></tr>`;
+    document.getElementById("vt_conn_foot").style.display = "none";
+  } else {
+    vt_conn.innerHTML = viewerConnData.map(c => {
+      const dueStyle = c.dueAmount > 0 ? "color:#ef9a9a;font-weight:600" : "color:#3ecf8e;font-weight:600";
+      return `<tr>
+        <td>${c.date||"—"}</td>
+        <td><span style="background:rgba(186,104,200,0.2);color:#ce93d8;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700">${c.connectionType||"—"}</span></td>
+        <td style="font-weight:600">${c.customerName||"—"}</td>
+        <td>${c.phoneNumber||"—"}</td>
+        <td style="text-align:center;font-weight:600">${c.cylinderQty||0}</td>
+        <td style="color:#ce93d8;font-weight:700">₹ ${fmt(c.connectionPrice)}</td>
+        <td>₹ ${fmt(c.cashAmount)}</td>
+        <td>₹ ${fmt(c.onlineAmount)}</td>
+        <td><span style="${dueStyle}">₹ ${fmt(c.dueAmount)}</span></td>
+      </tr>`;
+    }).join("");
+    const t = viewerConnData.reduce((a,s)=>a+Number(s.connectionPrice||0),0);
+    const c = viewerConnData.reduce((a,s)=>a+Number(s.cashAmount||0),0);
+    const o = viewerConnData.reduce((a,s)=>a+Number(s.onlineAmount||0),0);
+    const d = viewerConnData.reduce((a,s)=>a+Number(s.dueAmount||0),0);
+    document.getElementById("vt_conn_ftotal").textContent  = "₹ " + fmt(t);
+    document.getElementById("vt_conn_fcash").textContent   = "₹ " + fmt(c);
+    document.getElementById("vt_conn_fonline").textContent = "₹ " + fmt(o);
+    document.getElementById("vt_conn_fdue").textContent    = "₹ " + fmt(d);
+    document.getElementById("vt_conn_foot").style.display  = "";
+  }
+
   // Show active type
-  ["cylinder","product","csc"].forEach(t =>
+  ["cylinder","product","csc","conn"].forEach(t =>
     document.getElementById("viewer_"+t).style.display = t === viewerType ? "block" : "none"
   );
 }
@@ -944,6 +1071,11 @@ async function loadSummary() {
     if (d.productSalesCash   != null) document.getElementById("sc_prodSalesCash").textContent   = "💵 Cash: ₹ " + fmt(d.productSalesCash);
     if (d.productSalesOnline != null) document.getElementById("sc_prodSalesOnline").textContent = "📱 Online: ₹ " + fmt(d.productSalesOnline);
     document.getElementById("sc_cscSales").textContent       = "₹ " + fmt(d.cscSalesTotal);
+        document.getElementById("sc_newConn").textContent        = "₹ " + fmt(d.newConnectionTotal);
+        document.getElementById("sc_newConnCount").textContent   = (d.newConnectionCount||0) + " records";
+        document.getElementById("sc_newConnCash").textContent    = "💵 Cash: ₹ " + fmt(d.newConnectionCash);
+        document.getElementById("sc_newConnOnline").textContent  = "📱 Online: ₹ " + fmt(d.newConnectionOnline);
+        document.getElementById("sc_newConnDue").textContent     = "⚠️ Due: ₹ " + fmt(d.newConnectionDue);
     document.getElementById("sc_cscSalesCount").textContent  = (d.cscSalesCount||0) + " records";
     document.getElementById("sc_cscSalesQty").textContent    = (d.cscSalesQty||0) + " cylinders";
     if (d.cscSalesCash   != null) document.getElementById("sc_cscSalesCash").textContent   = "💵 Cash: ₹ " + fmt(d.cscSalesCash);
@@ -1019,6 +1151,22 @@ async function loadAllTables() {
     document.getElementById("sc_cscSalesCash").textContent   = "💵 Cash: ₹ " + fmt(cash);
     document.getElementById("sc_cscSalesOnline").textContent = "📱 Online: ₹ " + fmt(online);
     renderPage("csc");
+  }).catch(()=>{});
+
+  // New Connection Sales
+  fetch(`${BASE_URL}/getConnection`).then(r=>r.json()).then(data => {
+    allData.conn = data.slice().reverse();
+    const total  = data.reduce((s,r) => s + Number(r.connectionPrice||0), 0);
+    const qty    = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+    const cash   = data.reduce((s,r) => s + Number(r.cashAmount||0), 0);
+    const online = data.reduce((s,r) => s + Number(r.onlineAmount||0), 0);
+    const due    = data.reduce((s,r) => s + Number(r.dueAmount||0), 0);
+    document.getElementById("connSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
+    document.getElementById("connSalesQtyPill").textContent    = `${qty} cylinders`;
+    document.getElementById("connSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
+    document.getElementById("connSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
+    document.getElementById("connSalesDuePill").textContent    = `⚠️ Due: ₹ ${fmt(due)}`;
+    renderPage("conn");
   }).catch(()=>{});
 
   // Pending Dues

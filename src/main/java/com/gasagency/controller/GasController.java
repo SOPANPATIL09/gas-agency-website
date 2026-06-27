@@ -39,8 +39,10 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.gasagency.model.Product;
 import com.gasagency.model.NewConnection;
+import com.gasagency.model.BankDeposit;
 import com.gasagency.repository.ProductRepository;
 import com.gasagency.repository.NewConnectionRepository;
+import com.gasagency.repository.BankDepositRepository;
 @RestController
 @CrossOrigin(origins = "*")
 public class GasController {
@@ -48,6 +50,7 @@ public class GasController {
 	
 	@Autowired ProductRepository productRepo;
 	@Autowired NewConnectionRepository newConnectionRepo;
+	@Autowired BankDepositRepository bankDepositRepo;
     @Autowired CylinderRepository    cylinderRepo;
     @Autowired EmployeeRepository    employeeRepo;
     @Autowired SalesRepository       salesRepo;
@@ -81,13 +84,48 @@ public class GasController {
 
     @PostMapping("/addConnection")
     public NewConnection addConnection(@RequestBody NewConnection n) {
-        return newConnectionRepo.save(n);
+        NewConnection saved = newConnectionRepo.save(n);
+        if (n.getOnlineAmount() > 0) {
+            BankDeposit deposit = new BankDeposit();
+            deposit.setDate(n.getDate());
+            deposit.setOnlineDeposit(n.getOnlineAmount());
+            deposit.setCashDeposit(0);
+            deposit.setTotalDeposit(n.getOnlineAmount());
+            deposit.setRemarks("New Connection - " + n.getCustomerName()
+                + " | " + (n.getConnectionType() != null ? n.getConnectionType() : "NC")
+                + " (Online) [ID: " + saved.getId() + "]");
+            bankDepositRepo.save(deposit);
+        }
+        return saved;
     }
 
     @GetMapping("/getConnection")
     public List<NewConnection> getConnection() {
         return newConnectionRepo.findAll();
     }
+
+    @PutMapping("/updateConnection/{id}")
+    public ResponseEntity<NewConnection> updateConnection(@PathVariable int id, @RequestBody NewConnection updated) {
+        return newConnectionRepo.findById(id).map(existing -> {
+            existing.setCustomerName(updated.getCustomerName());
+            existing.setPhoneNumber(updated.getPhoneNumber());
+            existing.setConnectionType(updated.getConnectionType());
+            existing.setConnectionPrice(updated.getConnectionPrice());
+            existing.setCylinderQty(updated.getCylinderQty());
+            existing.setCashAmount(updated.getCashAmount());
+            existing.setOnlineAmount(updated.getOnlineAmount());
+            existing.setDueAmount(updated.getDueAmount());
+            existing.setDate(updated.getDate());
+            return ResponseEntity.ok(newConnectionRepo.save(existing));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/deleteConnection/{id}")
+    public ResponseEntity<String> deleteConnection(@PathVariable int id) {
+        newConnectionRepo.deleteById(id);
+        return ResponseEntity.ok("Deleted");
+    }
+
     // ==================== CYLINDER ====================
     @PostMapping("/addCylinder")
     public Cylinder addCylinder(@RequestBody Cylinder c) {

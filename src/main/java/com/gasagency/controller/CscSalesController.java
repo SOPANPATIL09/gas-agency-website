@@ -1,7 +1,9 @@
 package com.gasagency.controller;
 
 import com.gasagency.model.CscSales;
+import com.gasagency.model.BankDeposit;
 import com.gasagency.repository.CscSalesRepository;
+import com.gasagency.repository.BankDepositRepository;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -36,6 +38,19 @@ public class CscSalesController {
 
     @Autowired
     CscSalesRepository cscSalesRepo;
+    @Autowired
+    BankDepositRepository bankDepositRepo;
+
+    private void autoDepositOnline(double amount, String date, String remarks) {
+        if (amount <= 0) return;
+        BankDeposit d = new BankDeposit();
+        d.setDate(date);
+        d.setOnlineDeposit(amount);
+        d.setCashDeposit(0);
+        d.setTotalDeposit(amount);
+        d.setRemarks(remarks);
+        bankDepositRepo.save(d);
+    }
 
     // ── ADD ──
     @PostMapping("/add")
@@ -43,7 +58,14 @@ public class CscSalesController {
         // Price is entered manually — just auto-calculate total
         s.setCylinderTotal(s.getCylinderQty() * s.getCylinderPrice());
         s.setTotalAmount(s.getCylinderTotal());
-        return ResponseEntity.ok(cscSalesRepo.save(s));
+        CscSales saved = cscSalesRepo.save(s);
+        if (s.getOnlineReceived() > 0) {
+            String remark = "CSC Sale - " + s.getCscCenterName() + " | "
+                          + s.getCylinderQty() + " " + s.getCylinderType()
+                          + " (Online) [Sale ID: " + saved.getId() + "]";
+            autoDepositOnline(s.getOnlineReceived(), s.getDate(), remark);
+        }
+        return ResponseEntity.ok(saved);
     }
 
     // ── GET ALL ──
