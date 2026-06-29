@@ -385,10 +385,167 @@ tbody tr:last-child td { border-bottom: none; }
     </div>
   </div>
 
+  <!-- ══════════════════════════════════════════════════
+       MAINTENANCE VIEWER — Daily / Monthly / Range
+  ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">🔧 Maintenance Viewer — Daily, Monthly &amp; Range</div>
+
+    <div class="viewer-tabs" id="maintViewerModeTabs">
+      <button class="vtab active" onclick="setMaintViewerMode('daily',   this)">📅 Daily</button>
+      <button class="vtab"        onclick="setMaintViewerMode('monthly', this)">📆 Monthly</button>
+      <button class="vtab"        onclick="setMaintViewerMode('range',   this)">📆 Date Range</button>
+    </div>
+
+    <div class="viewer-controls">
+      <input type="date"  id="maintViewerDate"  style="display:block" onchange="runMaintViewer()">
+      <input type="month" id="maintViewerMonth" style="display:none"  onchange="runMaintViewer()">
+      <div id="maintViewerRangeWrap" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="date" id="maintViewerRangeFrom" placeholder="From">
+        <span style="color:rgba(255,255,255,0.5);font-size:12px">to</span>
+        <input type="date" id="maintViewerRangeTo" placeholder="To">
+        <button class="btn btn-view" onclick="runMaintViewer()" style="padding:7px 16px;font-size:12px">Search</button>
+      </div>
+      <span style="color:rgba(255,255,255,0.4);font-size:12px" id="maintViewerHint">Pick a date to see maintenance for that day</span>
+    </div>
+
+    <div class="viewer-summary" id="maintViewerSummary" style="display:none">
+      <div class="vs-card">
+        <div class="vs-label">⛽ Fuel</div>
+        <div class="vs-val" id="mvsm_fuel" style="color:#ef9a9a">₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">🔩 Other Expense</div>
+        <div class="vs-val" id="mvsm_other" style="color:#ffcc80">₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">👤 Employee Payment</div>
+        <div class="vs-val" id="mvsm_emp" style="color:#ce93d8">₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">💰 Total Maintenance</div>
+        <div class="vs-val" id="mvsm_total" style="color:#ffd54f">₹0</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px" id="mvsm_count">0 records</div>
+      </div>
+    </div>
+
+    <div id="maint_viewer_table" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Fuel (₹)</th><th>Other (₹)</th><th>Expense Type</th><th>Employee</th><th>Payment (₹)</th><th>Total (₹)</th></tr></thead>
+          <tbody id="mvt_maint"><tr><td colspan="7" class="no-data">—</td></tr></tbody>
+          <tfoot id="mvt_maint_foot" style="display:none">
+            <tr style="background:rgba(183,28,28,0.2);border-top:1px solid rgba(239,154,154,0.3)">
+              <td colspan="4" style="text-align:right;font-weight:700;color:#ef9a9a;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#ce93d8;padding:9px 12px;text-align:center" id="mvt_maint_femp">—</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"    id="mvt_maint_fpay">—</td>
+              <td style="font-weight:700;color:#ffd54f;padding:9px 12px;text-align:center" id="mvt_maint_ftotal">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       BANK VIEWER — Daily / Monthly / Range
+  ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">🏦 Bank Deposit &amp; Withdrawal Viewer — Daily, Monthly &amp; Range</div>
+
+    <div class="viewer-tabs" id="bankViewerModeTabs">
+      <button class="vtab active" onclick="setBankViewerMode('daily',   this)">📅 Daily</button>
+      <button class="vtab"        onclick="setBankViewerMode('monthly', this)">📆 Monthly</button>
+      <button class="vtab"        onclick="setBankViewerMode('range',   this)">📆 Date Range</button>
+    </div>
+
+    <div class="viewer-controls">
+      <input type="date"  id="bankViewerDate"  style="display:block" onchange="runBankViewer()">
+      <input type="month" id="bankViewerMonth" style="display:none"  onchange="runBankViewer()">
+      <div id="bankViewerRangeWrap" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="date" id="bankViewerRangeFrom" placeholder="From">
+        <span style="color:rgba(255,255,255,0.5);font-size:12px">to</span>
+        <input type="date" id="bankViewerRangeTo" placeholder="To">
+        <button class="btn btn-view" onclick="runBankViewer()" style="padding:7px 16px;font-size:12px">Search</button>
+      </div>
+      <span style="color:rgba(255,255,255,0.4);font-size:12px" id="bankViewerHint">Pick a date to see bank transactions for that day</span>
+    </div>
+
+    <div class="viewer-summary" id="bankViewerSummary" style="display:none">
+      <div class="vs-card">
+        <div class="vs-label">➕ Deposits</div>
+        <div class="vs-val" id="bvsm_dep" style="color:#a5d6a7">₹0</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="bvsm_dep_cash">💵 Cash: ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                id="bvsm_dep_online">📱 Online: ₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="bvsm_dep_count">0 records</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">➖ Withdrawals</div>
+        <div class="vs-val" id="bvsm_wd" style="color:#ef9a9a">₹0</div>
+        <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="bvsm_wd_cash">💵 Cash: ₹0</div>
+        <div style="font-size:11px;color:#81d4fa"                id="bvsm_wd_online">📱 Online: ₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="bvsm_wd_count">0 records</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">🏦 Net Balance</div>
+        <div class="vs-val" id="bvsm_net" style="color:#90caf9">₹0</div>
+      </div>
+    </div>
+
+    <div class="viewer-tabs" id="bankViewerTypeTabs" style="display:none">
+      <button class="vtab active" onclick="setBankViewerType('deposit',    this)">➕ Deposits</button>
+      <button class="vtab"        onclick="setBankViewerType('withdrawal', this)">➖ Withdrawals</button>
+    </div>
+
+    <div id="bviewer_deposit" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
+          <tbody id="bvt_dep"><tr><td colspan="5" class="no-data">—</td></tr></tbody>
+          <tfoot id="bvt_dep_foot" style="display:none">
+            <tr style="background:rgba(46,125,50,0.2);border-top:1px solid rgba(165,214,167,0.3)">
+              <td style="text-align:right;font-weight:700;color:#a5d6a7;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center" id="bvt_dep_fonline">—</td>
+              <td style="font-weight:700;color:#a5d6a7;padding:9px 12px;text-align:center" id="bvt_dep_fcash">—</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"    id="bvt_dep_ftotal">—</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div id="bviewer_withdrawal" style="display:none">
+      <div class="table-wrap">
+        <table>
+          <thead class="wd-thead"><tr><th>Date</th><th>Online (₹)</th><th>Cash (₹)</th><th>Total (₹)</th><th>Remarks</th></tr></thead>
+          <tbody id="bvt_wd"><tr><td colspan="5" class="no-data">—</td></tr></tbody>
+          <tfoot id="bvt_wd_foot" style="display:none">
+            <tr style="background:rgba(183,28,28,0.2);border-top:1px solid rgba(239,154,154,0.3)">
+              <td style="text-align:right;font-weight:700;color:#ef9a9a;padding:9px 12px;font-size:12px;text-transform:uppercase">Total</td>
+              <td style="font-weight:700;color:#81d4fa;padding:9px 12px;text-align:center" id="bvt_wd_fonline">—</td>
+              <td style="font-weight:700;color:#ef9a9a;padding:9px 12px;text-align:center" id="bvt_wd_fcash">—</td>
+              <td style="font-weight:700;color:#fff;padding:9px 12px;text-align:center"    id="bvt_wd_ftotal">—</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- ── REPORTS DOWNLOAD ── -->
   <div class="section">
     <div class="section-title">📥 Download Reports</div>
     <div class="report-grid">
+      <div class="report-box" style="border:2px solid rgba(255,213,79,0.5);background:rgba(255,213,79,0.07)">
+        <h3 style="color:#ffd54f">📋 Full Monthly Report PDF</h3>
+        <p style="font-size:11px;color:rgba(255,255,255,0.55);margin:-6px 0 10px">All sales, bank, maintenance &amp; purchases in one PDF</p>
+        <div class="report-row">
+          <input type="month" id="rFullReportMonth">
+          <button class="btn btn-pdf" style="background:linear-gradient(135deg,#f9a825,#e65100)" onclick="downloadFullMonthlyPDF()">📥 Full PDF</button>
+        </div>
+      </div>
       <div class="report-box">
         <h3>📊 Product Sales PDF</h3>
         <div class="report-row">
@@ -1334,6 +1491,543 @@ function buildChart(cylData) {
       }
     }
   });
+}
+
+// ══════════════════════════════════════════════
+// MAINTENANCE VIEWER
+// ══════════════════════════════════════════════
+let maintViewerMode = "daily";
+
+function setMaintViewerMode(mode, btn) {
+  maintViewerMode = mode;
+  document.querySelectorAll("#maintViewerModeTabs .vtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("maintViewerDate").style.display      = mode === "daily"   ? "block" : "none";
+  document.getElementById("maintViewerMonth").style.display     = mode === "monthly" ? "block" : "none";
+  const rw = document.getElementById("maintViewerRangeWrap");
+  rw.style.display = mode === "range" ? "flex" : "none";
+  const hints = { daily:"Pick a date to see maintenance for that day",
+                  monthly:"Pick a month to see maintenance for that month",
+                  range:"Pick a from–to date range" };
+  document.getElementById("maintViewerHint").textContent = hints[mode];
+  document.getElementById("maintViewerSummary").style.display = "none";
+  document.getElementById("maint_viewer_table").style.display = "none";
+  if (mode !== "range") {
+    const inputId = mode === "daily" ? "maintViewerDate" : "maintViewerMonth";
+    if (document.getElementById(inputId).value) runMaintViewer();
+  }
+}
+
+function runMaintViewer() {
+  let prefix = null, fromDate = null, toDate = null;
+  if (maintViewerMode === "daily")   prefix   = document.getElementById("maintViewerDate").value;
+  if (maintViewerMode === "monthly") prefix   = document.getElementById("maintViewerMonth").value;
+  if (maintViewerMode === "range") {
+    fromDate = document.getElementById("maintViewerRangeFrom").value;
+    toDate   = document.getElementById("maintViewerRangeTo").value;
+    if (!fromDate || !toDate) { showToast("Please select both From and To dates", "#e53935"); return; }
+  } else {
+    if (!prefix) return;
+  }
+
+  const data = (allData.maint || []).slice().reverse();
+  let filtered;
+  if (maintViewerMode === "range") {
+    filtered = data.filter(r => r.date && r.date >= fromDate && r.date <= toDate);
+  } else {
+    filtered = data.filter(r => r.date && r.date.startsWith(prefix));
+  }
+
+  const totalFuel  = filtered.reduce((a,r) => a + Number(r.fuel||0), 0);
+  const totalOther = filtered.reduce((a,r) => a + Number(r.otherExpense||0), 0);
+  const totalEmp   = filtered.reduce((a,r) => a + Number(r.employeePayment||0), 0);
+  const total      = totalFuel + totalOther + totalEmp;
+
+  document.getElementById("mvsm_fuel").textContent  = "₹" + fmt(totalFuel);
+  document.getElementById("mvsm_other").textContent = "₹" + fmt(totalOther);
+  document.getElementById("mvsm_emp").textContent   = "₹" + fmt(totalEmp);
+  document.getElementById("mvsm_total").textContent = "₹" + fmt(total);
+  document.getElementById("mvsm_count").textContent = filtered.length + " records";
+
+  document.getElementById("maintViewerSummary").style.display = "flex";
+
+  const tbody = document.getElementById("mvt_maint");
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="no-data">No maintenance records for this period</td></tr>`;
+    document.getElementById("mvt_maint_foot").style.display = "none";
+  } else {
+    tbody.innerHTML = filtered.map(r => {
+      const rowTotal = Number(r.fuel||0) + Number(r.otherExpense||0) + Number(r.employeePayment||0);
+      return `<tr>
+        <td>${r.date||"—"}</td>
+        <td>₹ ${fmt(r.fuel)}</td>
+        <td>₹ ${fmt(r.otherExpense)}</td>
+        <td>${r.expenseType||"—"}</td>
+        <td style="font-weight:600;color:#ce93d8">${r.employee||r.employeeName||"—"}</td>
+        <td>₹ ${fmt(r.employeePayment)}</td>
+        <td style="font-weight:700;color:#ffd54f">₹ ${fmt(rowTotal)}</td>
+      </tr>`;
+    }).join("");
+    document.getElementById("mvt_maint_femp").textContent   = "—";
+    document.getElementById("mvt_maint_fpay").textContent   = "₹ " + fmt(totalEmp);
+    document.getElementById("mvt_maint_ftotal").textContent = "₹ " + fmt(total);
+    document.getElementById("mvt_maint_foot").style.display = "";
+  }
+  document.getElementById("maint_viewer_table").style.display = "block";
+}
+
+// ══════════════════════════════════════════════
+// BANK VIEWER
+// ══════════════════════════════════════════════
+let bankViewerMode = "daily";
+let bankViewerType = "deposit";
+
+function setBankViewerMode(mode, btn) {
+  bankViewerMode = mode;
+  document.querySelectorAll("#bankViewerModeTabs .vtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("bankViewerDate").style.display      = mode === "daily"   ? "block" : "none";
+  document.getElementById("bankViewerMonth").style.display     = mode === "monthly" ? "block" : "none";
+  const rw = document.getElementById("bankViewerRangeWrap");
+  rw.style.display = mode === "range" ? "flex" : "none";
+  const hints = { daily:"Pick a date to see bank transactions for that day",
+                  monthly:"Pick a month to see bank transactions for that month",
+                  range:"Pick a from–to date range" };
+  document.getElementById("bankViewerHint").textContent = hints[mode];
+  document.getElementById("bankViewerSummary").style.display = "none";
+  document.getElementById("bankViewerTypeTabs").style.display = "none";
+  ["deposit","withdrawal"].forEach(t => document.getElementById("bviewer_"+t).style.display = "none");
+  if (mode !== "range") {
+    const inputId = mode === "daily" ? "bankViewerDate" : "bankViewerMonth";
+    if (document.getElementById(inputId).value) runBankViewer();
+  }
+}
+
+function setBankViewerType(type, btn) {
+  bankViewerType = type;
+  document.querySelectorAll("#bankViewerTypeTabs .vtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  ["deposit","withdrawal"].forEach(t =>
+    document.getElementById("bviewer_"+t).style.display = t === type ? "block" : "none"
+  );
+}
+
+function runBankViewer() {
+  let prefix = null, fromDate = null, toDate = null;
+  if (bankViewerMode === "daily")   prefix   = document.getElementById("bankViewerDate").value;
+  if (bankViewerMode === "monthly") prefix   = document.getElementById("bankViewerMonth").value;
+  if (bankViewerMode === "range") {
+    fromDate = document.getElementById("bankViewerRangeFrom").value;
+    toDate   = document.getElementById("bankViewerRangeTo").value;
+    if (!fromDate || !toDate) { showToast("Please select both From and To dates", "#e53935"); return; }
+  } else {
+    if (!prefix) return;
+  }
+
+  function inR(date) { return date && date >= fromDate && date <= toDate; }
+
+  const depData = (allData.bank || []).slice().reverse();
+  const wdData  = (allData.wd   || []).slice().reverse();
+
+  let filteredDep, filteredWd;
+  if (bankViewerMode === "range") {
+    filteredDep = depData.filter(r => inR(r.date));
+    filteredWd  = wdData.filter(r => inR(r.date));
+  } else {
+    filteredDep = depData.filter(r => r.date && r.date.startsWith(prefix));
+    filteredWd  = wdData.filter(r => r.date && r.date.startsWith(prefix));
+  }
+
+  const depTotal  = filteredDep.reduce((a,r) => a + Number(r.totalDeposit||0), 0);
+  const depCash   = filteredDep.reduce((a,r) => a + Number(r.cashDeposit||0), 0);
+  const depOnline = filteredDep.reduce((a,r) => a + Number(r.onlineDeposit||0), 0);
+
+  const wdTotal   = filteredWd.reduce((a,r) => a + Number(r.totalWithdrawal||0), 0);
+  const wdCash    = filteredWd.reduce((a,r) => a + Number(r.cashWithdrawal||0), 0);
+  const wdOnline  = filteredWd.reduce((a,r) => a + Number(r.onlineWithdrawal||0), 0);
+
+  const net = depTotal - wdTotal;
+
+  document.getElementById("bvsm_dep").textContent        = "₹" + fmt(depTotal);
+  document.getElementById("bvsm_dep_cash").textContent   = "💵 Cash: ₹" + fmt(depCash);
+  document.getElementById("bvsm_dep_online").textContent = "📱 Online: ₹" + fmt(depOnline);
+  document.getElementById("bvsm_dep_count").textContent  = filteredDep.length + " records";
+
+  document.getElementById("bvsm_wd").textContent         = "₹" + fmt(wdTotal);
+  document.getElementById("bvsm_wd_cash").textContent    = "💵 Cash: ₹" + fmt(wdCash);
+  document.getElementById("bvsm_wd_online").textContent  = "📱 Online: ₹" + fmt(wdOnline);
+  document.getElementById("bvsm_wd_count").textContent   = filteredWd.length + " records";
+
+  const netEl = document.getElementById("bvsm_net");
+  netEl.textContent = "₹" + fmt(Math.abs(net));
+  netEl.style.color = net >= 0 ? "#a5d6a7" : "#ef9a9a";
+
+  document.getElementById("bankViewerSummary").style.display = "flex";
+  document.getElementById("bankViewerTypeTabs").style.display = "flex";
+
+  // Deposit table
+  const depTbody = document.getElementById("bvt_dep");
+  if (!filteredDep.length) {
+    depTbody.innerHTML = `<tr><td colspan="5" class="no-data">No deposits for this period</td></tr>`;
+    document.getElementById("bvt_dep_foot").style.display = "none";
+  } else {
+    depTbody.innerHTML = filteredDep.map(r => `<tr>
+      <td>${r.date||"—"}</td>
+      <td>₹ ${fmt(r.onlineDeposit)}</td>
+      <td>₹ ${fmt(r.cashDeposit)}</td>
+      <td style="font-weight:700;color:#a5d6a7">₹ ${fmt(r.totalDeposit)}</td>
+      <td style="color:rgba(255,255,255,0.6);font-size:12px">${r.remarks||"—"}</td>
+    </tr>`).join("");
+    document.getElementById("bvt_dep_fonline").textContent = "₹ " + fmt(depOnline);
+    document.getElementById("bvt_dep_fcash").textContent   = "₹ " + fmt(depCash);
+    document.getElementById("bvt_dep_ftotal").textContent  = "₹ " + fmt(depTotal);
+    document.getElementById("bvt_dep_foot").style.display  = "";
+  }
+
+  // Withdrawal table
+  const wdTbody = document.getElementById("bvt_wd");
+  if (!filteredWd.length) {
+    wdTbody.innerHTML = `<tr><td colspan="5" class="no-data">No withdrawals for this period</td></tr>`;
+    document.getElementById("bvt_wd_foot").style.display = "none";
+  } else {
+    wdTbody.innerHTML = filteredWd.map(r => `<tr>
+      <td>${r.date||"—"}</td>
+      <td>₹ ${fmt(r.onlineWithdrawal)}</td>
+      <td>₹ ${fmt(r.cashWithdrawal)}</td>
+      <td style="font-weight:700;color:#ef9a9a">₹ ${fmt(r.totalWithdrawal)}</td>
+      <td style="color:rgba(255,255,255,0.6);font-size:12px">${r.remarks||"—"}</td>
+    </tr>`).join("");
+    document.getElementById("bvt_wd_fonline").textContent = "₹ " + fmt(wdOnline);
+    document.getElementById("bvt_wd_fcash").textContent   = "₹ " + fmt(wdCash);
+    document.getElementById("bvt_wd_ftotal").textContent  = "₹ " + fmt(wdTotal);
+    document.getElementById("bvt_wd_foot").style.display  = "";
+  }
+
+  // Show active type tab
+  ["deposit","withdrawal"].forEach(t =>
+    document.getElementById("bviewer_"+t).style.display = t === bankViewerType ? "block" : "none"
+  );
+}
+
+// ══════════════════════════════════════════════
+// FULL MONTHLY PDF (client-side, jsPDF)
+// ══════════════════════════════════════════════
+async function downloadFullMonthlyPDF() {
+  const m = document.getElementById("rFullReportMonth").value;
+  if (!m) { showToast("Select a month first", "#e53935"); return; }
+
+  // Dynamic load jsPDF + AutoTable
+  if (!window.jspdf) {
+    await new Promise((res,rej) => {
+      const s1 = document.createElement("script");
+      s1.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+      s1.onload = () => {
+        const s2 = document.createElement("script");
+        s2.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js";
+        s2.onload = res; s2.onerror = rej;
+        document.head.appendChild(s2);
+      };
+      s1.onerror = rej;
+      document.head.appendChild(s1);
+    });
+  }
+
+  showToast("⏳ Generating PDF...", "#1565c0");
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const [yr, mo] = m.split("-");
+  const monthLabel = new Date(yr, mo-1, 1).toLocaleString("default", {month:"long", year:"numeric"});
+
+  // ── helpers ──
+  let y = 15;
+  const PW = 190; // page width usable
+
+  function addHeader(title, bgColor) {
+    if (y > 250) { doc.addPage(); y = 15; }
+    doc.setFillColor(...bgColor);
+    doc.roundedRect(10, y, PW, 8, 2, 2, "F");
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(10);
+    doc.setFont("helvetica","bold");
+    doc.text(title, 14, y + 5.5);
+    doc.setTextColor(0,0,0);
+    y += 11;
+  }
+
+  function addSummaryRow(labels, values, colors) {
+    const colW = PW / labels.length;
+    labels.forEach((lbl, i) => {
+      const x = 10 + i * colW;
+      doc.setFillColor(240,242,245);
+      doc.roundedRect(x+1, y, colW-2, 13, 1.5, 1.5, "F");
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica","normal");
+      doc.setTextColor(100,100,100);
+      doc.text(lbl, x + colW/2, y + 4.5, {align:"center"});
+      doc.setFontSize(9);
+      doc.setFont("helvetica","bold");
+      const [r,g,b] = colors[i] || [30,30,30];
+      doc.setTextColor(r,g,b);
+      doc.text(values[i], x + colW/2, y + 10, {align:"center"});
+    });
+    doc.setTextColor(0,0,0);
+    y += 17;
+  }
+
+  function buildTable(head, body, footRow, colStyles) {
+    if (y > 260) { doc.addPage(); y = 15; }
+    doc.autoTable({
+      startY: y,
+      head: [head],
+      body: body.length ? body : [Array(head.length).fill("—")],
+      foot: footRow ? [footRow] : [],
+      styles: { fontSize: 8, cellPadding: 2.5, textColor:[30,30,30] },
+      headStyles: { fillColor:[52,73,94], textColor:[255,255,255], fontStyle:"bold" },
+      footStyles: { fillColor:[230,230,230], textColor:[30,30,30], fontStyle:"bold" },
+      columnStyles: colStyles || {},
+      margin: { left:10, right:10 },
+      tableWidth: PW,
+      didDrawPage: (d) => { y = d.cursor.y + 4; }
+    });
+    y = doc.lastAutoTable.finalY + 6;
+  }
+
+  // ══ Cover ══
+  doc.setFillColor(14,30,58);
+  doc.rect(0, 0, 210, 297, "F");
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(22); doc.setFont("helvetica","bold");
+  doc.text("Sudip HP Gas Agency", 105, 100, {align:"center"});
+  doc.setFontSize(14); doc.setFont("helvetica","normal");
+  doc.text("Monthly Full Report", 105, 115, {align:"center"});
+  doc.setFontSize(18); doc.setFont("helvetica","bold");
+  doc.setTextColor(255,213,79);
+  doc.text(monthLabel, 105, 135, {align:"center"});
+  doc.setTextColor(180,200,220);
+  doc.setFontSize(9); doc.setFont("helvetica","normal");
+  doc.text("Generated on: " + new Date().toLocaleString("en-IN"), 105, 150, {align:"center"});
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(8);
+  doc.text("Contents: Cylinder Sales · Product Sales · CSC Sales · New Connections", 105, 175, {align:"center"});
+  doc.text("Bank Deposits & Withdrawals · Maintenance · Purchases", 105, 182, {align:"center"});
+
+  doc.addPage();
+  y = 15;
+  doc.setTextColor(0,0,0);
+
+  // Filter helper
+  function filt(arr) { return (arr||[]).slice().reverse().filter(r => r.date && r.date.startsWith(m)); }
+
+  // ══ 1. CYLINDER SALES ══
+  const cylData = filt(allData.cyl);
+  const cylTotal   = cylData.reduce((a,r) => a + Number(r.cylinderTotal||0), 0);
+  const cylCash    = cylData.reduce((a,r) => a + Number(r.cashReceived||0), 0);
+  const cylOnline  = cylData.reduce((a,r) => a + Number(r.onlineReceived||0), 0);
+  const cylDue     = cylData.reduce((a,r) => a + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+  const cylQty     = cylData.reduce((a,r) => a + Number(r.cylinderQty||0), 0);
+  addHeader("🔵 Cylinder Sales — " + monthLabel, [21,101,192]);
+  addSummaryRow(
+    ["Total","Qty","Cash","Online","Due"],
+    ["₹"+fmt(cylTotal), cylQty+" cyl", "₹"+fmt(cylCash), "₹"+fmt(cylOnline), "₹"+fmt(cylDue)],
+    [[21,101,192],[80,80,200],[46,125,50],[2,136,209],[230,81,0]]
+  );
+  buildTable(
+    ["Date","Type","Qty","Price (₹)","Total (₹)","Cash (₹)","Online (₹)","Due (₹)"],
+    cylData.map(r => {
+      const d = Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0));
+      return [r.date||"—",(r.cylinderType||"—").toUpperCase(),r.cylinderQty||0,fmt(r.cylinderPrice),fmt(r.cylinderTotal),fmt(r.cashReceived),fmt(r.onlineReceived),fmt(d)];
+    }),
+    ["","","","Total",fmt(cylTotal),fmt(cylCash),fmt(cylOnline),fmt(cylDue)],
+    {2:{halign:"center"},3:{halign:"right"},4:{halign:"right"},5:{halign:"right"},6:{halign:"right"},7:{halign:"right"}}
+  );
+
+  // ══ 2. PRODUCT SALES ══
+  const prodData = filt(allData.prod);
+  const prodTotal  = prodData.reduce((a,r) => a + Number(r.productTotal||0), 0);
+  const prodCash   = prodData.reduce((a,r) => a + Number(r.cashReceived||0), 0);
+  const prodOnline = prodData.reduce((a,r) => a + Number(r.onlineReceived||0), 0);
+  addHeader("🛒 Product Sales — " + monthLabel, [230,81,0]);
+  addSummaryRow(
+    ["Total","Cash","Online"],
+    ["₹"+fmt(prodTotal),"₹"+fmt(prodCash),"₹"+fmt(prodOnline)],
+    [[230,81,0],[46,125,50],[2,136,209]]
+  );
+  buildTable(
+    ["Date","Product","Qty","Price (₹)","Total (₹)","Cash (₹)","Online (₹)"],
+    prodData.map(r => [r.date||"—",r.productName||"—",r.productQty||0,fmt(r.productPrice),fmt(r.productTotal),fmt(r.cashReceived),fmt(r.onlineReceived)]),
+    ["","","","","Total: "+fmt(prodTotal),fmt(prodCash),fmt(prodOnline)],
+    {2:{halign:"center"},3:{halign:"right"},4:{halign:"right"},5:{halign:"right"},6:{halign:"right"}}
+  );
+
+  // ══ 3. CSC SALES ══
+  const cscData = filt(allData.csc);
+  const cscTotal  = cscData.reduce((a,r) => a + Number(r.cylinderTotal||0), 0);
+  const cscCash   = cscData.reduce((a,r) => a + Number(r.cashReceived||0), 0);
+  const cscOnline = cscData.reduce((a,r) => a + Number(r.onlineReceived||0), 0);
+  const cscDue    = cscData.reduce((a,r) => a + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+  const cscQty    = cscData.reduce((a,r) => a + Number(r.cylinderQty||0), 0);
+  addHeader("🏪 CSC Sales — " + monthLabel, [0,105,92]);
+  addSummaryRow(
+    ["Total","Qty","Cash","Online","Due"],
+    ["₹"+fmt(cscTotal), cscQty+" cyl","₹"+fmt(cscCash),"₹"+fmt(cscOnline),"₹"+fmt(cscDue)],
+    [[0,105,92],[80,80,200],[46,125,50],[2,136,209],[230,81,0]]
+  );
+  buildTable(
+    ["Date","CSC Center","Type","Qty","Price (₹)","Total (₹)","Cash (₹)","Online (₹)","Due (₹)"],
+    cscData.map(r => {
+      const d = Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0));
+      return [r.date||"—",r.cscCenterName||"—",(r.cylinderType||"—").toUpperCase(),r.cylinderQty||0,fmt(r.cylinderPrice),fmt(r.cylinderTotal),fmt(r.cashReceived),fmt(r.onlineReceived),fmt(d)];
+    }),
+    ["","","","","","Total: "+fmt(cscTotal),fmt(cscCash),fmt(cscOnline),fmt(cscDue)],
+    {3:{halign:"center"},4:{halign:"right"},5:{halign:"right"},6:{halign:"right"},7:{halign:"right"},8:{halign:"right"}}
+  );
+
+  // ══ 4. NEW CONNECTIONS ══
+  const connData = filt(allData.conn);
+  const connTotal  = connData.reduce((a,r) => a + Number(r.connectionPrice||0), 0);
+  const connCash   = connData.reduce((a,r) => a + Number(r.cashAmount||0), 0);
+  const connOnline = connData.reduce((a,r) => a + Number(r.onlineAmount||0), 0);
+  const connDue    = connData.reduce((a,r) => a + Number(r.dueAmount||0), 0);
+  addHeader("🔗 New Connections — " + monthLabel, [106,27,154]);
+  addSummaryRow(
+    ["Total","Records","Cash","Online","Due"],
+    ["₹"+fmt(connTotal), connData.length+" conn","₹"+fmt(connCash),"₹"+fmt(connOnline),"₹"+fmt(connDue)],
+    [[106,27,154],[80,80,200],[46,125,50],[2,136,209],[230,81,0]]
+  );
+  buildTable(
+    ["Date","Type","Customer","Phone","Qty","Price (₹)","Cash (₹)","Online (₹)","Due (₹)"],
+    connData.map(r => [r.date||"—",r.connectionType||"—",r.customerName||"—",r.phoneNumber||"—",r.cylinderQty||0,fmt(r.connectionPrice),fmt(r.cashAmount),fmt(r.onlineAmount),fmt(r.dueAmount)]),
+    ["","","","","","Total: "+fmt(connTotal),fmt(connCash),fmt(connOnline),fmt(connDue)],
+    {4:{halign:"center"},5:{halign:"right"},6:{halign:"right"},7:{halign:"right"},8:{halign:"right"}}
+  );
+
+  // ══ 5. BANK DEPOSITS ══
+  const bankData = filt(allData.bank);
+  const bankTotal  = bankData.reduce((a,r) => a + Number(r.totalDeposit||0), 0);
+  const bankCash   = bankData.reduce((a,r) => a + Number(r.cashDeposit||0), 0);
+  const bankOnline = bankData.reduce((a,r) => a + Number(r.onlineDeposit||0), 0);
+  addHeader("🏦 Bank Deposits — " + monthLabel, [46,125,50]);
+  addSummaryRow(
+    ["Total Deposited","Cash","Online","Records"],
+    ["₹"+fmt(bankTotal),"₹"+fmt(bankCash),"₹"+fmt(bankOnline), bankData.length+" records"],
+    [[46,125,50],[46,125,50],[2,136,209],[80,80,80]]
+  );
+  buildTable(
+    ["Date","Online (₹)","Cash (₹)","Total (₹)","Remarks"],
+    bankData.map(r => [r.date||"—",fmt(r.onlineDeposit),fmt(r.cashDeposit),fmt(r.totalDeposit),r.remarks||"—"]),
+    ["","Total Online: "+fmt(bankOnline),"Total Cash: "+fmt(bankCash),"Grand: "+fmt(bankTotal),""],
+    {1:{halign:"right"},2:{halign:"right"},3:{halign:"right"}}
+  );
+
+  // ══ 6. BANK WITHDRAWALS ══
+  const wdData = filt(allData.wd);
+  const wdTotal  = wdData.reduce((a,r) => a + Number(r.totalWithdrawal||0), 0);
+  const wdCash   = wdData.reduce((a,r) => a + Number(r.cashWithdrawal||0), 0);
+  const wdOnline = wdData.reduce((a,r) => a + Number(r.onlineWithdrawal||0), 0);
+  const netBank  = bankTotal - wdTotal;
+  addHeader("💸 Bank Withdrawals — " + monthLabel, [183,28,28]);
+  addSummaryRow(
+    ["Total Withdrawn","Cash","Online","Net Bank Balance"],
+    ["₹"+fmt(wdTotal),"₹"+fmt(wdCash),"₹"+fmt(wdOnline),"₹"+fmt(netBank)],
+    [[183,28,28],[183,28,28],[2,136,209], netBank>=0?[46,125,50]:[183,28,28]]
+  );
+  buildTable(
+    ["Date","Online (₹)","Cash (₹)","Total (₹)","Remarks"],
+    wdData.map(r => [r.date||"—",fmt(r.onlineWithdrawal),fmt(r.cashWithdrawal),fmt(r.totalWithdrawal),r.remarks||"—"]),
+    ["","Total Online: "+fmt(wdOnline),"Total Cash: "+fmt(wdCash),"Grand: "+fmt(wdTotal),""],
+    {1:{halign:"right"},2:{halign:"right"},3:{halign:"right"}}
+  );
+
+  // ══ 7. MAINTENANCE ══
+  const maintData = filt(allData.maint);
+  const maintFuel  = maintData.reduce((a,r) => a + Number(r.fuel||0), 0);
+  const maintOther = maintData.reduce((a,r) => a + Number(r.otherExpense||0), 0);
+  const maintEmp   = maintData.reduce((a,r) => a + Number(r.employeePayment||0), 0);
+  const maintTotal = maintFuel + maintOther + maintEmp;
+  addHeader("🔧 Maintenance — " + monthLabel, [62,39,35]);
+  addSummaryRow(
+    ["Fuel","Other Expense","Employee Payment","Total Maintenance"],
+    ["₹"+fmt(maintFuel),"₹"+fmt(maintOther),"₹"+fmt(maintEmp),"₹"+fmt(maintTotal)],
+    [[183,28,28],[230,81,0],[106,27,154],[150,30,30]]
+  );
+  buildTable(
+    ["Date","Fuel (₹)","Other (₹)","Expense Type","Employee","Payment (₹)","Total (₹)"],
+    maintData.map(r => {
+      const rt = Number(r.fuel||0)+Number(r.otherExpense||0)+Number(r.employeePayment||0);
+      return [r.date||"—",fmt(r.fuel),fmt(r.otherExpense),r.expenseType||"—",r.employee||r.employeeName||"—",fmt(r.employeePayment),fmt(rt)];
+    }),
+    ["","Total: "+fmt(maintFuel),"Total: "+fmt(maintOther),"","","Total: "+fmt(maintEmp),"Grand: "+fmt(maintTotal)],
+    {1:{halign:"right"},2:{halign:"right"},5:{halign:"right"},6:{halign:"right"}}
+  );
+
+  // ══ 8. PURCHASES ══
+  const ppData = filt(allData.pp);
+  const ppTotal = ppData.reduce((a,r) => a + Number(r.totalAmount||0), 0);
+  addHeader("📦 Product Purchases — " + monthLabel, [74,20,140]);
+  buildTable(
+    ["Date","Product","Qty","Price/Unit (₹)","Total (₹)"],
+    ppData.map(r => [r.date||"—",r.productName||"—",r.quantity||r.qty||0,fmt(r.pricePerUnit||r.unitPrice),fmt(r.totalAmount)]),
+    ["","","","Grand Total:",fmt(ppTotal)],
+    {2:{halign:"center"},3:{halign:"right"},4:{halign:"right"}}
+  );
+
+  const cpData = filt(allData.cp);
+  const cpTotal = cpData.reduce((a,r) => a + Number(r.totalAmount||0), 0);
+  addHeader("🛢️ Cylinder Purchases — " + monthLabel, [13,71,161]);
+  buildTable(
+    ["Date","Type","Qty","Price/Unit (₹)","Total (₹)"],
+    cpData.map(r => [r.date||"—",(r.type||r.cylinderType||"—").toUpperCase(),r.quantity||r.qty||0,fmt(r.pricePerUnit||r.unitPrice),fmt(r.totalAmount)]),
+    ["","","","Grand Total:",fmt(cpTotal)],
+    {2:{halign:"center"},3:{halign:"right"},4:{halign:"right"}}
+  );
+
+  // ══ Final Summary Page ══
+  doc.addPage();
+  y = 15;
+  doc.setFillColor(14,30,58);
+  doc.rect(0,0,210,297,"F");
+  doc.setTextColor(255,213,79);
+  doc.setFontSize(14); doc.setFont("helvetica","bold");
+  doc.text("Monthly Summary — " + monthLabel, 105, 20, {align:"center"});
+  doc.setFontSize(9); doc.setFont("helvetica","normal");
+  doc.setTextColor(180,200,220);
+  doc.text("All figures in Indian Rupees (₹)", 105, 28, {align:"center"});
+
+  const totalSalesAll = cylTotal + prodTotal + cscTotal + connTotal;
+  const summRows = [
+    ["🔵 Cylinder Sales", fmt(cylTotal), cylQty+" cylinders"],
+    ["🛒 Product Sales",  fmt(prodTotal), ""],
+    ["🏪 CSC Sales",      fmt(cscTotal),  cscQty+" cylinders"],
+    ["🔗 New Connections",fmt(connTotal), connData.length+" connections"],
+    ["💰 TOTAL SALES",    fmt(totalSalesAll), ""],
+    ["","",""],
+    ["➕ Bank Deposits",  fmt(bankTotal), bankData.length+" records"],
+    ["➖ Bank Withdrawals",fmt(wdTotal), wdData.length+" records"],
+    ["🏦 Net Bank",       fmt(netBank),  netBank>=0?"Surplus":"Deficit"],
+    ["","",""],
+    ["🔧 Total Maintenance",fmt(maintTotal), maintData.length+" records"],
+    ["📦 Product Purchases",fmt(ppTotal),   ppData.length+" records"],
+    ["🛢️ Cylinder Purchases",fmt(cpTotal),  cpData.length+" records"],
+    ["","",""],
+    ["📊 Net Position (Sales - Maint.)", fmt(totalSalesAll - maintTotal), ""],
+  ];
+  doc.setTextColor(255,255,255);
+  doc.autoTable({
+    startY: 35,
+    head: [["Category","Amount (₹)","Notes"]],
+    body: summRows,
+    styles: { fontSize: 9, cellPadding: 3, textColor:[220,230,240], fillColor:[20,40,70] },
+    headStyles: { fillColor:[255,213,79], textColor:[14,30,58], fontStyle:"bold" },
+    alternateRowStyles: { fillColor:[25,50,85] },
+    columnStyles: {0:{fontStyle:"bold"}, 1:{halign:"right",fontStyle:"bold"}, 2:{textColor:[150,180,210]}},
+    margin: {left:15,right:15},
+    tableWidth: 180
+  });
+
+  // ── Save ──
+  doc.save(`GasAgency_FullReport_${m}.pdf`);
+  showToast("✅ Full monthly PDF downloaded!", "#2e7d32");
 }
 
 // ── PDF DOWNLOADS ──
