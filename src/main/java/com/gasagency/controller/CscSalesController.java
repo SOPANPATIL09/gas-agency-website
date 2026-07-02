@@ -60,9 +60,15 @@ public class CscSalesController {
         s.setTotalAmount(s.getCylinderTotal());
         CscSales saved = cscSalesRepo.save(s);
         if (s.getOnlineReceived() > 0) {
+            double price = s.getCylinderPrice();
+            long onlineQty = price > 0 ? Math.round(s.getOnlineReceived() / price) : 0;
+            boolean mixedPayment = s.getCashReceived() > 0;
             String remark = "CSC Sale - " + s.getCscCenterName() + " | "
-                          + s.getCylinderQty() + " " + s.getCylinderType()
-                          + " (Online) [Sale ID: " + saved.getId() + "]";
+                          + onlineQty + " " + s.getCylinderType()
+                          + (mixedPayment
+                              ? " (Online, of " + s.getCylinderQty() + " total)"
+                              : " (Online)")
+                          + " [Sale ID: " + saved.getId() + "]";
             autoDepositOnline(s.getOnlineReceived(), s.getDate(), remark);
         }
         return ResponseEntity.ok(saved);
@@ -89,9 +95,15 @@ public class CscSalesController {
             s.setOnlineReceived(updated.getOnlineReceived());
             CscSales saved = cscSalesRepo.save(s);
             if (updated.getOnlineReceived() > 0) {
+                double price = updated.getCylinderPrice();
+                long onlineQty = price > 0 ? Math.round(updated.getOnlineReceived() / price) : 0;
+                boolean mixedPayment = updated.getCashReceived() > 0;
                 String remark = "CSC Sale (Edit) - " + updated.getCscCenterName()
-                    + " | " + updated.getCylinderQty() + " " + updated.getCylinderType()
-                    + " (Online) [Sale ID: " + id + "]";
+                    + " | " + onlineQty + " " + updated.getCylinderType()
+                    + (mixedPayment
+                        ? " (Online, of " + updated.getCylinderQty() + " total)"
+                        : " (Online)")
+                    + " [Sale ID: " + id + "]";
                 autoDepositOnline(updated.getOnlineReceived(), updated.getDate(), remark);
             }
             return ResponseEntity.ok(saved);

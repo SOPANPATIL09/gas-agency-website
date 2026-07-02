@@ -71,8 +71,14 @@ public class SalesController {
         s.setTotalAmount(s.getCylinderTotal());
         CylinderSales saved = cylinderSalesRepo.save(s);
         if (s.getOnlineReceived() > 0) {
-            String remark = "Cylinder Sale - " + s.getCylinderQty() + " " + s.getCylinderType()
-                          + " (Online) [Sale ID: " + saved.getId() + "]";
+            double price = s.getCylinderPrice();
+            long onlineQty = price > 0 ? Math.round(s.getOnlineReceived() / price) : 0;
+            boolean mixedPayment = s.getCashReceived() > 0;
+            String remark = "Cylinder Sale - " + onlineQty + " " + s.getCylinderType()
+                          + (mixedPayment
+                              ? " (Online, of " + s.getCylinderQty() + " total)"
+                              : " (Online)")
+                          + " [Sale ID: " + saved.getId() + "]";
             autoDepositOnline(s.getOnlineReceived(), s.getDate(), remark);
         }
         return ResponseEntity.ok(saved);
@@ -100,9 +106,15 @@ public class SalesController {
             }
             CylinderSales saved = cylinderSalesRepo.save(s);
             if (updated.getOnlineReceived() > 0) {
-                String remark = "Cylinder Sale (Edit) - " + updated.getCylinderQty()
+                double price = s.getCylinderPrice();
+                long onlineQty = price > 0 ? Math.round(updated.getOnlineReceived() / price) : 0;
+                boolean mixedPayment = updated.getCashReceived() > 0;
+                String remark = "Cylinder Sale (Edit) - " + onlineQty
                     + " " + updated.getCylinderType()
-                    + " (Online) [Sale ID: " + id + "]";
+                    + (mixedPayment
+                        ? " (Online, of " + updated.getCylinderQty() + " total)"
+                        : " (Online)")
+                    + " [Sale ID: " + id + "]";
                 autoDepositOnline(updated.getOnlineReceived(), updated.getDate(), remark);
             }
             return ResponseEntity.ok(saved);
