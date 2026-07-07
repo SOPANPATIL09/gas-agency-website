@@ -293,6 +293,11 @@ tbody tr:last-child td { border-bottom: none; }
         <div style="font-size:11px;color:#ef9a9a"                 id="vsm_conndue">⚠️ ₹0</div>
       </div>
       <div class="vs-card">
+        <div class="vs-label">📦 Total Cylinders</div>
+        <div class="vs-val" id="vsm_totalcylq" style="color:#4fc3f7">0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Cylinder + CSC + New Conn.</div>
+      </div>
+      <div class="vs-card">
         <div class="vs-label">💰 Combined Total</div>
         <div class="vs-val" id="vsm_total" style="color:#ffd54f">₹0</div>
         <div style="font-size:11px;color:#a5d6a7;margin-top:4px" id="vsm_allcash">💵 Cash: ₹0</div>
@@ -488,6 +493,57 @@ tbody tr:last-child td { border-bottom: none; }
           <tbody id="bvt_wd"><tr><td colspan="5" class="no-data">—</td></tr></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       PROFIT & LOSS VIEWER — Monthly / Range
+  ══════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">💹 Profit &amp; Loss — Monthly &amp; Date Range</div>
+
+    <div class="viewer-tabs" id="plViewerModeTabs">
+      <button class="vtab active" onclick="setPLViewerMode('monthly', this)">📆 Monthly</button>
+      <button class="vtab"        onclick="setPLViewerMode('range',   this)">📆 Date Range</button>
+    </div>
+
+    <div class="viewer-controls">
+      <input type="month" id="plViewerMonth" style="display:block" onchange="runPLViewer()">
+      <div id="plViewerRangeWrap" style="display:none;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="date" id="plViewerRangeFrom" placeholder="From">
+        <span style="color:rgba(255,255,255,0.5);font-size:12px">to</span>
+        <input type="date" id="plViewerRangeTo" placeholder="To">
+        <button class="btn btn-view" onclick="runPLViewer()" style="padding:7px 16px;font-size:12px">Search</button>
+      </div>
+      <span style="color:rgba(255,255,255,0.4);font-size:12px" id="plViewerHint">Pick a month to see Profit &amp; Loss for that month</span>
+      <button class="btn btn-pdf" onclick="downloadPLPDF()" style="margin-left:auto">📄 Download P&amp;L PDF</button>
+    </div>
+
+    <div class="viewer-summary" id="plViewerSummary" style="display:none">
+      <div class="vs-card">
+        <div class="vs-label">🧾 Total Sales</div>
+        <div class="vs-val" id="pl_sales" style="color:#90caf9">₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">🔧 Total Maintenance</div>
+        <div class="vs-val" id="pl_maint" style="color:#ffcc80">₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">🏦 Bank Deposits</div>
+        <div class="vs-val" id="pl_bank" style="color:#80cbc4">₹0</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-label">💰 Net Profit / Loss</div>
+        <div class="vs-val" id="pl_net" style="color:#a5d6a7">₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Bank Deposit + Maintenance − Sales</div>
+      </div>
+    </div>
+
+    <div class="table-wrap" id="plTableWrap" style="display:none">
+      <table>
+        <thead><tr><th>Category</th><th>Amount (₹)</th><th>Notes</th></tr></thead>
+        <tbody id="pl_body"></tbody>
+      </table>
     </div>
   </div>
 
@@ -1054,6 +1110,8 @@ function runViewer() {
   const connOnline = viewerConnData.reduce((a,s) => a + Number(s.onlineAmount||0),    0);
   const connDue    = viewerConnData.reduce((a,s) => a + Number(s.dueAmount||0),       0);
   const connQty    = viewerConnData.length;
+  const connCylQty = viewerConnData.reduce((a,s) => a + Number(s.cylinderQty||0), 0);
+  const totalCylQty = cylQty + cscQty + connCylQty;
 
   const allCash    = cylCash   + prodCash   + cscCash   + connCash;
   const allOnline  = cylOnline + prodOnline + cscOnline + connOnline;
@@ -1080,6 +1138,8 @@ function runViewer() {
   document.getElementById("vsm_conncash").textContent  = "💵 ₹" + fmt(connCash);
   document.getElementById("vsm_connonline").textContent= "📱 ₹" + fmt(connOnline);
   document.getElementById("vsm_conndue").textContent   = "⚠️ ₹" + fmt(connDue);
+
+  document.getElementById("vsm_totalcylq").textContent = fmt(totalCylQty);
 
   document.getElementById("vsm_total").textContent    = "₹" + fmt(cylTotal + prodTotal + cscTotal + connTotal);
   document.getElementById("vsm_allcash").textContent  = "💵 Cash: ₹"   + fmt(allCash);
@@ -1665,6 +1725,130 @@ function buildChart(cylData) {
       }
     }
   });
+}
+
+// ══════════════════════════════════════════════
+// PROFIT & LOSS VIEWER
+// ══════════════════════════════════════════════
+let plViewerMode = "monthly";
+let plLast = null; // cache of last computed P&L figures, used by the PDF export
+
+function setPLViewerMode(mode, btn) {
+  plViewerMode = mode;
+  document.querySelectorAll("#plViewerModeTabs .vtab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("plViewerMonth").style.display     = mode === "monthly" ? "block" : "none";
+  document.getElementById("plViewerRangeWrap").style.display = mode === "range"   ? "flex"  : "none";
+  document.getElementById("plViewerHint").textContent = mode === "monthly"
+    ? "Pick a month to see Profit & Loss for that month"
+    : "Pick a from–to date range";
+  document.getElementById("plViewerSummary").style.display = "none";
+  document.getElementById("plTableWrap").style.display     = "none";
+  if (mode === "monthly" && document.getElementById("plViewerMonth").value) runPLViewer();
+}
+
+function runPLViewer() {
+  let prefix = null, fromDate = null, toDate = null;
+  if (plViewerMode === "monthly") prefix = document.getElementById("plViewerMonth").value;
+  if (plViewerMode === "range") {
+    fromDate = document.getElementById("plViewerRangeFrom").value;
+    toDate   = document.getElementById("plViewerRangeTo").value;
+    if (!fromDate || !toDate) { showToast("Please select both From and To dates", "#e53935"); return; }
+  } else {
+    if (!prefix) return;
+  }
+
+  function inRange(date) { return date && date >= fromDate && date <= toDate; }
+  function filterData(arr) {
+    arr = (arr || []).slice().reverse();
+    return plViewerMode === "range" ? arr.filter(s => inRange(s.date)) : arr.filter(s => s.date && s.date.startsWith(prefix));
+  }
+
+  const cyl  = filterData(allData.cyl);
+  const prod = filterData(allData.prod);
+  const csc  = filterData(allData.csc);
+  const conn = filterData(allData.conn);
+  const maint= filterData(allData.maint);
+  const bank = filterData(allData.bank);
+
+  const cylTotal  = cyl.reduce((a,s)  => a + Number(s.cylinderTotal||0), 0);
+  const prodTotal = prod.reduce((a,s) => a + Number(s.productTotal||0),  0);
+  const cscTotal  = csc.reduce((a,s)  => a + Number(s.cylinderTotal||0), 0);
+  const connTotal = conn.reduce((a,s) => a + Number(s.connectionPrice||0), 0);
+  const totalSales = cylTotal + prodTotal + cscTotal + connTotal;
+
+  const fuel  = maint.reduce((a,m) => a + Number(m.fuel||0), 0);
+  const other = maint.reduce((a,m) => a + Number(m.otherExpense||0), 0);
+  const emp   = maint.reduce((a,m) => a + Number(m.employeePayment||0), 0);
+  const totalMaint = fuel + other + emp;
+
+  const bankTotal = bank.reduce((a,d) => a + Number(d.totalDeposit||0), 0);
+
+  const netPL = bankTotal + totalMaint - totalSales;
+
+  document.getElementById("pl_sales").textContent = "₹" + fmt(totalSales);
+  document.getElementById("pl_maint").textContent  = "₹" + fmt(totalMaint);
+  document.getElementById("pl_bank").textContent   = "₹" + fmt(bankTotal);
+  document.getElementById("pl_net").textContent    = (netPL < 0 ? "-₹" : "₹") + fmt(Math.abs(netPL));
+  document.getElementById("pl_net").style.color    = netPL < 0 ? "#ef9a9a" : "#a5d6a7";
+  document.getElementById("plViewerSummary").style.display = "flex";
+
+  const period = plViewerMode === "monthly" ? prefix : `${fromDate} to ${toDate}`;
+  plLast = { period, totalSales, totalMaint, bankTotal, netPL,
+             cylTotal, prodTotal, cscTotal, connTotal, fuel, other, emp };
+
+  document.getElementById("pl_body").innerHTML = `
+    <tr><td>Total Sales</td><td>₹ ${fmt(totalSales)}</td><td>Cylinder + Product + CSC + New Connection</td></tr>
+    <tr><td>Total Maintenance</td><td>₹ ${fmt(totalMaint)}</td><td>Fuel + Other expenses + Employee payment</td></tr>
+    <tr><td>Bank Deposits (Total)</td><td>₹ ${fmt(bankTotal)}</td><td>All bank deposits in period</td></tr>
+    <tr style="background:rgba(21,101,192,0.2)"><td style="font-weight:700">Net Profit / (Loss)</td>
+        <td style="font-weight:700;color:${netPL < 0 ? "#ef9a9a" : "#a5d6a7"}">₹ ${fmt(netPL)}</td>
+        <td>Bank Deposit + Maintenance − Sales</td></tr>`;
+  document.getElementById("plTableWrap").style.display = "block";
+}
+
+function downloadPLPDF() {
+  if (!plLast) { showToast("Pick a month or date range first", "#e53935"); return; }
+  const p = plLast;
+  const genTime = new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const win = window.open("", "_blank");
+  win.document.write(`
+    <html><head><title>Profit & Loss Report</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;margin:32px;color:#222}
+      .hdr{background:#0a2e6e;color:#fff;border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+      .hdr h1{margin:0;font-size:18px}
+      .hdr .sub{color:#90caf9;font-size:11px;margin-top:2px}
+      .hdr .right{text-align:right}
+      .hdr .rtype{font-size:14px;font-weight:bold}
+      .hdr .period{color:#ffd54f;font-weight:bold;font-size:12px}
+      .info{display:flex;justify-content:space-between;background:#f5f7fa;color:#546e7a;font-size:11px;padding:8px 12px;margin:10px 0 18px;border-radius:6px}
+      table{width:100%;border-collapse:collapse;font-size:13px}
+      th{background:#0d47a1;color:#fff;padding:10px;text-align:left}
+      td{padding:10px;border-bottom:1px solid #e0e7ef}
+      tr.net td{font-weight:bold;background:#e3f0ff}
+      .neg{color:#c62828}
+      .pos{color:#2e7d32}
+    </style></head><body>
+      <div class="hdr">
+        <div><h1>SUDIP HP GAS AGENCY</h1><div class="sub">Authorized HP Gas Distributor · Kurha, Maharashtra</div></div>
+        <div class="right"><div class="rtype">PROFIT &amp; LOSS REPORT</div><div class="period">${p.period}</div></div>
+      </div>
+      <div class="info"><span>Location: Kurha, Maharashtra</span><span>Phone: +91 9579916599</span><span>Generated: ${genTime}</span></div>
+      <table>
+        <thead><tr><th>Category</th><th>Amount (₹)</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Total Sales</td><td>${fmt(p.totalSales)}</td><td>Cylinder + Product + CSC + New Connection</td></tr>
+          <tr><td>Total Maintenance</td><td>${fmt(p.totalMaint)}</td><td>Fuel + Other expenses + Employee payment</td></tr>
+          <tr><td>Bank Deposits (Total)</td><td>${fmt(p.bankTotal)}</td><td>All bank deposits in period</td></tr>
+          <tr class="net"><td>Net Profit / (Loss)</td><td class="${p.netPL < 0 ? 'neg' : 'pos'}">${fmt(p.netPL)}</td><td>Bank Deposit + Maintenance − Sales</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:10px;color:#777;margin-top:16px">Formula: Net Profit/(Loss) = Bank Deposit + Total Maintenance − Total Sales.</p>
+    </body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 300);
 }
 
 // ── PDF DOWNLOADS ──
