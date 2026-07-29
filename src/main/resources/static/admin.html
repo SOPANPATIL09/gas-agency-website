@@ -359,8 +359,8 @@ tbody tr:hover td { background: var(--surface2); }
     <div class="section-sub">Sales Records</div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Actions</th></tr></thead>
-        <tbody id="psSalesTable"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+        <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total (₹)</th><th>Cash</th><th>Online</th><th>Due</th><th>Actions</th></tr></thead>
+        <tbody id="psSalesTable"><tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -654,8 +654,8 @@ tbody tr:hover td { background: var(--surface2); }
     <div class="section-sub">Maintenance Records</div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Date</th><th>Fuel</th><th>Other</th><th>Type</th><th>Employee</th><th>Payment</th></tr></thead>
-        <tbody id="maintTable"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
+        <thead><tr><th>Date</th><th>Fuel</th><th>Other</th><th>Type</th><th>Employee</th><th>Payment</th><th>Actions</th></tr></thead>
+        <tbody id="maintTable"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">Loading...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -1192,11 +1192,17 @@ async function loadProductSales() {
   const res = await fetch(`${API}/sales/product/all`);
   const data = await res.json();
   const tbody = document.getElementById("psSalesTable");
-  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
-  tbody.innerHTML = data.reverse().map(s => `<tr>
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  tbody.innerHTML = data.reverse().map(s => {
+    const due = Math.max(0, (s.productTotal || 0) - (s.cashReceived || 0) - (s.onlineReceived || 0));
+    const dueColor = due > 0 ? 'color:var(--warning);font-weight:600' : 'color:var(--success);font-weight:600';
+    const payBtn = due > 0 ? `<button class="btn btn-sm" style="background:rgba(247,185,79,0.15);color:var(--warning);border:1px solid rgba(247,185,79,0.4);margin-right:4px" onclick="openPayDueModal(${s.id}, ${due}, '${s.date}', '${s.productName}', 'product')">💳 Pay Due</button>` : '';
+    return `<tr>
     <td>${s.date || "-"}</td><td>${s.productName || "-"}</td><td>${s.productQty}</td>
     <td>₹ ${s.productTotal}</td><td>₹ ${s.cashReceived}</td><td>₹ ${s.onlineReceived}</td>
-    <td><button class="btn btn-sm btn-danger" onclick="deleteProductSale(${s.id})">🗑</button></td></tr>`).join("");
+    <td><span style="${dueColor}">₹ ${due.toFixed(2)}</span></td>
+    <td style="white-space:nowrap">${payBtn}<button class="btn btn-sm btn-danger" onclick="deleteProductSale(${s.id})">🗑</button></td></tr>`;
+  }).join("");
 }
 
 async function deleteProductSale(id) {
@@ -1522,17 +1528,19 @@ async function deleteCustomerDue(id) {
 }
 
 // ── PAY DUE ──
-let _payDueId = null, _payDueMax = 0, _payDueCurrentCash = 0, _payDueCurrentOnline = 0;
+let _payDueId = null, _payDueMax = 0, _payDueCurrentCash = 0, _payDueCurrentOnline = 0, _payDueSaleType = 'cylinder';
 
-function openPayDueModal(id, due, date, type) {
+function openPayDueModal(id, due, date, label, saleType = 'cylinder') {
   _payDueId = id;
   _payDueMax = due;
-  fetch(`${API}/sales/cylinder/all`).then(r => r.json()).then(list => {
+  _payDueSaleType = saleType;
+  const endpoint = saleType === 'product' ? `${API}/sales/product/all` : `${API}/sales/cylinder/all`;
+  fetch(endpoint).then(r => r.json()).then(list => {
     const rec = list.find(s => s.id === id);
     _payDueCurrentCash   = rec ? rec.cashReceived   : 0;
     _payDueCurrentOnline = rec ? rec.onlineReceived  : 0;
   });
-  document.getElementById("payDueInfo").textContent = `${date}  ·  ${type}`;
+  document.getElementById("payDueInfo").textContent = `${date}  ·  ${label}`;
   document.getElementById("payDueRemaining").textContent = due.toFixed(2);
   document.getElementById("payDueCash").value   = 0;
   document.getElementById("payDueOnline").value = 0;
@@ -1542,7 +1550,7 @@ function openPayDueModal(id, due, date, type) {
 
 function closePayDueModal() {
   document.getElementById("payDueModal").style.display = "none";
-  _payDueId = null; _payDueMax = 0;
+  _payDueId = null; _payDueMax = 0; _payDueSaleType = 'cylinder';
 }
 
 function calcPayDueBalance() {
@@ -1561,8 +1569,12 @@ async function submitPayDue() {
   if (addCash + addOnline <= 0) { showToast("Enter payment amount", "error"); return; }
   if (addCash + addOnline > _payDueMax + 0.01) { showToast("Payment exceeds due amount", "error"); return; }
 
+  const isProduct  = _payDueSaleType === 'product';
+  const allEndpoint    = isProduct ? `${API}/sales/product/all`    : `${API}/sales/cylinder/all`;
+  const updateEndpoint = isProduct ? `${API}/sales/product/update` : `${API}/sales/cylinder/update`;
+
   // GET full record first, then PATCH cash+online
-  const res  = await fetch(`${API}/sales/cylinder/all`);
+  const res  = await fetch(allEndpoint);
   const list = await res.json();
   const rec  = list.find(s => s.id === _payDueId);
   if (!rec) { showToast("Record not found", "error"); return; }
@@ -1570,15 +1582,19 @@ async function submitPayDue() {
   rec.cashReceived   = (rec.cashReceived   || 0) + addCash;
   rec.onlineReceived = (rec.onlineReceived || 0) + addOnline;
 
-  await fetch(`${API}/sales/cylinder/update/${_payDueId}`, {
+  await fetch(`${updateEndpoint}/${_payDueId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(rec)
   });
   showToast("Due payment recorded ✓", "success");
   closePayDueModal();
-  loadCylinderSalesTable();
-  loadPendingDues();
+  if (isProduct) {
+    loadProductSales();
+  } else {
+    loadCylinderSalesTable();
+    loadPendingDues();
+  }
 }
 
 // ── MAINTENANCE ──
@@ -1633,10 +1649,18 @@ async function loadMaintenanceTable() {
   const res = await fetch(`${API}/getMaintenance`);
   const data = await res.json();
   const tbody = document.getElementById("maintTable");
-  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:18px">No records</td></tr>`; return; }
   tbody.innerHTML = data.reverse().map(m => `<tr>
     <td>${m.date}</td><td>₹ ${m.fuel}</td><td>₹ ${m.otherExpense}</td>
-    <td>${m.expenseType || "—"}</td><td>${m.employeeName || "—"}</td><td>₹ ${m.employeePayment}</td></tr>`).join("");
+    <td>${m.expenseType || "—"}</td><td>${m.employeeName || "—"}</td><td>₹ ${m.employeePayment}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteMaintenance(${m.id})">🗑</button></td></tr>`).join("");
+}
+
+async function deleteMaintenance(id) {
+  if (!confirm("Delete this maintenance record?")) return;
+  await fetch(`${API}/deleteMaintenance/${id}`, { method:"DELETE" });
+  showToast("Deleted", "info");
+  loadMaintenanceTable();
 }
 
 // ── BANK DEPOSIT ──

@@ -286,6 +286,12 @@ public class GasController {
         return maintenanceRepo.findAll();
     }
 
+    @DeleteMapping("/deleteMaintenance/{id}")
+    public ResponseEntity<String> deleteMaintenance(@PathVariable int id) {
+        maintenanceRepo.deleteById(id);
+        return ResponseEntity.ok("Deleted");
+    }
+
     // ==================== DATE-WISE TOTAL ====================
     @GetMapping("/total/{date}")
     public Map<String, Object> getTotal(
