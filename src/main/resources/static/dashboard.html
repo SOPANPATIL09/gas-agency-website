@@ -1423,21 +1423,29 @@ function resetDashboardFilter() {
 
 // Re-applies the current month/year/sort selection to every already
 // loaded dataset — no re-fetch needed, so switching months is instant.
+// Runs one category's compute step in isolation — if a section ever throws
+// (bad data, a missing element, etc.) it is logged but does NOT stop the
+// remaining sections from updating. This is what previously went wrong:
+// one uncaught error used to abort every card update queued after it.
+function _safeCompute(label, fn) {
+  try { fn(); } catch (e) { console.error(`Dashboard filter: ${label} failed`, e); }
+}
+
 function applyDashboardFilter() {
   dashFilterMonth = document.getElementById("dashFilterMonth").value;
   dashFilterYear  = document.getElementById("dashFilterYear").value;
   dashSortOrder   = document.getElementById("dashSortOrder").value;
 
-  computeCylSales(dashFilterAndSort(rawData.cyl,   "date"));
-  computeProdSales(dashFilterAndSort(rawData.prod, "date"));
-  computeCscSales(dashFilterAndSort(rawData.csc,   "date"));
-  computeConnSales(dashFilterAndSort(rawData.conn, "date"));
-  computePendingDues(dashFilterAndSort(rawData.due, "date"));
-  computeProdPurch(dashFilterAndSort(rawData.pp,   "purchaseDate"));
-  computeCylPurch(dashFilterAndSort(rawData.cp,    "purchaseDate"));
-  computeMaint(dashFilterAndSort(rawData.maint,    "date"));
-  computeBankDeposits(dashFilterAndSort(rawData.bank, "date"));
-  computeBankWithdrawals(dashFilterAndSort(rawData.wd, "date"));
+  _safeCompute("Cylinder Sales",     () => computeCylSales(dashFilterAndSort(rawData.cyl,   "date")));
+  _safeCompute("Product Sales",      () => computeProdSales(dashFilterAndSort(rawData.prod, "date")));
+  _safeCompute("CSC Sales",          () => computeCscSales(dashFilterAndSort(rawData.csc,   "date")));
+  _safeCompute("New Connection",     () => computeConnSales(dashFilterAndSort(rawData.conn, "date")));
+  _safeCompute("Pending Dues",       () => computePendingDues(dashFilterAndSort(rawData.due, "date")));
+  _safeCompute("Product Purchases",  () => computeProdPurch(dashFilterAndSort(rawData.pp,   "purchaseDate")));
+  _safeCompute("Cylinder Purchases", () => computeCylPurch(dashFilterAndSort(rawData.cp,    "purchaseDate")));
+  _safeCompute("Maintenance",        () => computeMaint(dashFilterAndSort(rawData.maint,    "date")));
+  _safeCompute("Bank Deposits",      () => computeBankDeposits(dashFilterAndSort(rawData.bank, "date")));
+  _safeCompute("Bank Withdrawals",   () => computeBankWithdrawals(dashFilterAndSort(rawData.wd, "date")));
 
   updateDashFilterHint();
 }
@@ -1899,10 +1907,18 @@ function showEmployeeMonthlyTotal() {
   resultBox.style.display = "block";
 }
 
+let salesChartInstance = null; // must be destroyed before Chart.js can reuse the <canvas>
 function buildChart(cylData) {
   const labels    = cylData.slice(0,12).map(s => s.date);
   const cylTotals = cylData.slice(0,12).map(s => Number(s.cylinderTotal||0));
-  new Chart(document.getElementById("salesChart"), {
+  // Filtering by month/year re-runs this every time the selection changes.
+  // Without destroying the previous chart, Chart.js throws "Canvas is
+  // already in use" on the 2nd call — and since nothing caught that error,
+  // it silently aborted every stat card update that was still queued after
+  // Cylinder Sales (Product/CSC/Conn Sales, Purchases, Maintenance, Bank
+  // Deposits...), which is why only the Cylinder Sales card was refreshing.
+  if (salesChartInstance) { salesChartInstance.destroy(); }
+  salesChartInstance = new Chart(document.getElementById("salesChart"), {
     type: "bar",
     data: { labels, datasets: [{ label: "Cylinder Sales", data: cylTotals, backgroundColor: "rgba(30,136,229,0.8)", borderRadius: 4 }] },
     options: {
