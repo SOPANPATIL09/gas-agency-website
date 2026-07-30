@@ -948,26 +948,40 @@ async function loadConnectionTable() {
 async function addCylinder() {
   const date = document.getElementById("cdate").value, type = document.getElementById("ctype").value, price = document.getElementById("cprice").value;
   if (!date || !price) { showToast("Fill all fields", "error"); return; }
-  await fetch(`${API}/addCylinder`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ date, type, price }) });
+  const res = await fetch(`${API}/addCylinder`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ date, type, price }) });
+  if (!res.ok) { showToast("Failed to add cylinder price", "error"); return; }
   showToast("Cylinder added ✓", "success");
   document.getElementById("cprice").value = "";
-  loadCylinderPrices();
+  await loadCylinderPrices();
 }
 
 async function updatePrice() {
   const type = document.getElementById("utype").value, price = document.getElementById("uprice").value;
   if (!type || !price) { showToast("Select type and enter price", "error"); return; }
-  await fetch(`${API}/updatePrice`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ type, price }) });
+  const res = await fetch(`${API}/updatePrice`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ type, price }) });
+  if (!res.ok) { showToast("Failed to update price", "error"); return; }
   showToast("Price updated ✓", "success");
-  loadCylinderPrices();
+  await loadCylinderPrices();
   document.getElementById("uprice").value = "";
 }
 
+// Keeps, per cylinder type, only the price from whichever record has the
+// most recent date — matches what /updatePrice now guarantees on the
+// backend. Previously this just overwrote cylinderPrices[type] with
+// whatever row happened to come last in the array (usually the row with
+// the highest ID, i.e. the originally "added" entry), so an updated price
+// could be silently ignored here even when the backend update succeeded.
 let cylinderPrices = {};
 async function loadCylinderPrices() {
   const res = await fetch(`${API}/getCylinder`);
   const data = await res.json();
-  data.forEach(c => cylinderPrices[c.type] = c.price);
+  const latestByType = {};
+  data.forEach(c => {
+    const prev = latestByType[c.type];
+    if (!prev || (c.date || "") >= (prev.date || "")) latestByType[c.type] = c;
+  });
+  cylinderPrices = {};
+  Object.keys(latestByType).forEach(t => { cylinderPrices[t] = latestByType[t].price; });
   onCylinderTypeChange();
 }
 
@@ -977,6 +991,7 @@ function onCylinderTypeChange() {
   if (document.getElementById("csPrice")) document.getElementById("csPrice").value = price;
   calcCylTotal();
 }
+
 
 function calcCylTotal() {
   const qty   = parseFloat(document.getElementById("csQty")?.value)   || 0;

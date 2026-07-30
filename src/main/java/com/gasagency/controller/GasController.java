@@ -152,10 +152,28 @@ public class GasController {
     }
 
     @PutMapping("/updatePrice")
-    public void updatePrice(@RequestBody Cylinder c) {
+    public ResponseEntity<?> updatePrice(@RequestBody Cylinder c) {
+        if (c.getType() == null || c.getType().isBlank()) {
+            return ResponseEntity.badRequest().body("Cylinder type is required");
+        }
         Cylinder existing = cylinderRepo.findTopByTypeOrderByDateDesc(c.getType());
+        if (existing == null) {
+            // No price entry exists yet for this type — create one instead of
+            // failing silently (previously this caused a NullPointerException
+            // and the frontend still showed "Price updated" regardless).
+            Cylinder created = new Cylinder();
+            created.setType(c.getType());
+            created.setPrice(c.getPrice());
+            created.setDate(java.time.LocalDate.now().toString());
+            return ResponseEntity.ok(cylinderRepo.save(created));
+        }
         existing.setPrice(c.getPrice());
-        cylinderRepo.save(existing);
+        // Bump the date to today so this row is unambiguously the latest price
+        // for the type — otherwise a later "Add Cylinder" entry with an older
+        // backdated date could keep being picked as "latest" instead of this
+        // freshly updated one, making the update look like it didn't take effect.
+        existing.setDate(java.time.LocalDate.now().toString());
+        return ResponseEntity.ok(cylinderRepo.save(existing));
     }
 
     // ==================== EMPLOYEE ====================

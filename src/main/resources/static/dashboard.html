@@ -141,6 +141,40 @@ tbody tr:last-child td { border-bottom: none; }
 
 <div class="content">
 
+  <!-- ══════════════════════════════════════════════════
+       DASHBOARD PERIOD FILTER — Month / Year / Sort
+       Filters every stat card above AND the data tables below.
+  ══════════════════════════════════════════════════ -->
+  <div class="section" style="margin-bottom:14px">
+    <div class="section-title">📅 Filter Dashboard By Month / Year</div>
+    <div class="viewer-controls">
+      <select id="dashFilterMonth" onchange="applyDashboardFilter()" style="padding:8px 12px;border-radius:8px;background:#132038;border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:12px">
+        <option value="">All Months</option>
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+      <select id="dashFilterYear" onchange="applyDashboardFilter()" style="padding:8px 12px;border-radius:8px;background:#132038;border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:12px">
+        <option value="">All Years</option>
+      </select>
+      <select id="dashSortOrder" onchange="applyDashboardFilter()" style="padding:8px 12px;border-radius:8px;background:#132038;border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:12px">
+        <option value="desc">Newest → Oldest</option>
+        <option value="asc">Oldest → Newest</option>
+      </select>
+      <button class="btn btn-view" onclick="resetDashboardFilter()">🔄 Reset</button>
+      <span style="color:rgba(255,255,255,0.5);font-size:12px" id="dashFilterHint">Showing: All records (all time) · Sort: Newest → Oldest</span>
+    </div>
+  </div>
+
   <!-- ── STAT CARDS ROW 1: Sales ── -->
   <div class="stats-grid">
     <div class="stat-card blue">
@@ -1066,10 +1100,10 @@ function runViewer() {
   }
 
   // Use already-loaded allData — no re-fetch needed
-  const cylRes  = (allData.cyl  || []).slice().reverse();   // allData is stored reversed; un-reverse for filtering
-  const prodRes = (allData.prod || []).slice().reverse();
-  const cscRes  = (allData.csc  || []).slice().reverse();
-  const connRes = (allData.conn || []).slice().reverse();
+  const cylRes  = (allData.cyl  || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));   // always chronological for this viewer
+  const prodRes = (allData.prod || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  const cscRes  = (allData.csc  || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  const connRes = (allData.conn || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
 
   function inRange(date) {
     if (!date) return false;
@@ -1312,187 +1346,171 @@ function _updateNetPosition() {
   document.getElementById("sc_net").textContent        = "₹ " + fmt(net);
 }
 
+// ── DASHBOARD PERIOD FILTER (Month / Year / Sort) ──
+// rawData holds the untouched data fetched from the server for every
+// category. allData (declared earlier) always holds the filtered +
+// sorted view that is currently on screen / in the tables.
+const rawData = {};
+let dashFilterMonth = "";     // "01".."12" or "" for all months
+let dashFilterYear  = "";     // e.g. "2026", or "" for all years
+let dashSortOrder   = "desc"; // "desc" = newest first, "asc" = oldest first
+
+function dashRecordMatches(dateStr) {
+  if (!dateStr) return false;
+  if (dashFilterYear  && dateStr.slice(0, 4) !== dashFilterYear)  return false;
+  if (dashFilterMonth && dateStr.slice(5, 7) !== dashFilterMonth) return false;
+  return true;
+}
+
+// Filters (if a month/year is selected) and ALWAYS sorts by date, so the
+// table order is never "random" — it is driven by the real date field,
+// ascending or descending, exactly as chosen in the Sort dropdown.
+function dashFilterAndSort(arr, dateField) {
+  const hasFilter = !!(dashFilterYear || dashFilterMonth);
+  let out = (arr || []).slice();
+  if (hasFilter) out = out.filter(r => dashRecordMatches(r[dateField]));
+  out.sort((a, b) => {
+    const da = a[dateField] || "";
+    const db = b[dateField] || "";
+    if (da === db) return 0;
+    if (dashSortOrder === "asc") return da < db ? -1 : 1;
+    return da > db ? -1 : 1;
+  });
+  return out;
+}
+
+const DASH_MONTH_NAMES = { "01":"January","02":"February","03":"March","04":"April","05":"May","06":"June",
+                            "07":"July","08":"August","09":"September","10":"October","11":"November","12":"December" };
+
+function updateDashFilterHint() {
+  let label = "All records (all time)";
+  if (dashFilterYear && dashFilterMonth)      label = `${DASH_MONTH_NAMES[dashFilterMonth]} ${dashFilterYear}`;
+  else if (dashFilterYear)                    label = `Year ${dashFilterYear}`;
+  else if (dashFilterMonth)                   label = `${DASH_MONTH_NAMES[dashFilterMonth]} (all years)`;
+  const sortLabel = dashSortOrder === "asc" ? "Oldest → Newest" : "Newest → Oldest";
+  const el = document.getElementById("dashFilterHint");
+  if (el) el.textContent = `Showing: ${label} · Sort: ${sortLabel}`;
+}
+
+// Builds the Year dropdown from whatever data has been loaded so far.
+function populateDashYearOptions() {
+  const years = new Set();
+  const collect = (arr, field) => (arr || []).forEach(r => { if (r[field]) years.add(r[field].slice(0, 4)); });
+  collect(rawData.cyl,   "date");
+  collect(rawData.prod,  "date");
+  collect(rawData.csc,   "date");
+  collect(rawData.conn,  "date");
+  collect(rawData.maint, "date");
+  collect(rawData.bank,  "date");
+  collect(rawData.wd,    "date");
+  collect(rawData.pp,    "purchaseDate");
+  collect(rawData.cp,    "purchaseDate");
+  collect(rawData.due,   "date");
+  const sel = document.getElementById("dashFilterYear");
+  if (!sel) return;
+  const current = sel.value;
+  const sorted  = Array.from(years).sort((a, b) => b.localeCompare(a));
+  sel.innerHTML = `<option value="">All Years</option>` + sorted.map(y => `<option value="${y}">${y}</option>`).join("");
+  sel.value = current;
+}
+
+function resetDashboardFilter() {
+  document.getElementById("dashFilterMonth").value = "";
+  document.getElementById("dashFilterYear").value  = "";
+  document.getElementById("dashSortOrder").value   = "desc";
+  applyDashboardFilter();
+}
+
+// Re-applies the current month/year/sort selection to every already
+// loaded dataset — no re-fetch needed, so switching months is instant.
+function applyDashboardFilter() {
+  dashFilterMonth = document.getElementById("dashFilterMonth").value;
+  dashFilterYear  = document.getElementById("dashFilterYear").value;
+  dashSortOrder   = document.getElementById("dashSortOrder").value;
+
+  computeCylSales(dashFilterAndSort(rawData.cyl,   "date"));
+  computeProdSales(dashFilterAndSort(rawData.prod, "date"));
+  computeCscSales(dashFilterAndSort(rawData.csc,   "date"));
+  computeConnSales(dashFilterAndSort(rawData.conn, "date"));
+  computePendingDues(dashFilterAndSort(rawData.due, "date"));
+  computeProdPurch(dashFilterAndSort(rawData.pp,   "purchaseDate"));
+  computeCylPurch(dashFilterAndSort(rawData.cp,    "purchaseDate"));
+  computeMaint(dashFilterAndSort(rawData.maint,    "date"));
+  computeBankDeposits(dashFilterAndSort(rawData.bank, "date"));
+  computeBankWithdrawals(dashFilterAndSort(rawData.wd, "date"));
+
+  updateDashFilterHint();
+}
+
 async function loadAllTables() {
   // Cylinder Sales
   fetch(`${BASE_URL}/sales/cylinder/all`).then(r=>r.json()).then(data => {
-    allData.cyl = data.slice().reverse();
-    const total   = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
-    const qty     = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
-    const cash    = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
-    const online  = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
-    const due     = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
-    // section pills
-    document.getElementById("cylSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
-    document.getElementById("cylSalesQtyPill").textContent    = `${qty} cylinders`;
-    document.getElementById("cylSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
-    document.getElementById("cylSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
-    document.getElementById("cylSalesDuePill").textContent    = `⏳ Due: ₹ ${fmt(due)}`;
-    // ✅ FIX: stat card — all fields from raw data
-    document.getElementById("sc_cylSales").textContent        = "₹ " + fmt(total);
-    document.getElementById("sc_cylSalesCount").textContent   = data.length + " records";
-    document.getElementById("sc_cylSalesQty").textContent     = qty + " cylinders";
-    document.getElementById("sc_cylSalesCash").textContent    = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_cylSalesOnline").textContent  = "📱 Online: ₹ " + fmt(online);
-    _totals.cyl = total; _updateNetPosition();
-    renderPage("cyl");
-    buildChart(data);
+    rawData.cyl = data;
+    populateDashYearOptions();
+    computeCylSales(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // Product Sales
   fetch(`${BASE_URL}/sales/product/all`).then(r=>r.json()).then(data => {
-    allData.prod = data.slice().reverse();
-    const total  = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
-    const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
-    const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
-    // section pills
-    document.getElementById("prodSalesTotal").textContent      = "Total: ₹ " + fmt(total);
-    document.getElementById("prodSalesCashPill").textContent   = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("prodSalesOnlinePill").textContent = "📱 Online: ₹ " + fmt(online);
-    // ✅ FIX: stat card — all fields from raw data
-    document.getElementById("sc_prodSales").textContent        = "₹ " + fmt(total);
-    document.getElementById("sc_prodSalesCount").textContent   = data.length + " records";
-    document.getElementById("sc_prodSalesCash").textContent    = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_prodSalesOnline").textContent  = "📱 Online: ₹ " + fmt(online);
-    _totals.prod = total; _updateNetPosition();
-    renderPage("prod");
+    rawData.prod = data;
+    populateDashYearOptions();
+    computeProdSales(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // CSC Sales
   fetch(`${BASE_URL}/sales/csc/all`).then(r=>r.json()).then(data => {
-    allData.csc = data.slice().reverse();
-    const total  = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
-    const qty    = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
-    const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
-    const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
-    const due    = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
-    // section pills
-    document.getElementById("cscSalesTotal").textContent       = `Total: ₹ ${fmt(total)}`;
-    document.getElementById("cscSalesQtyPill").textContent     = `${qty} cylinders`;
-    document.getElementById("cscSalesCashPill").textContent    = `💵 Cash: ₹ ${fmt(cash)}`;
-    document.getElementById("cscSalesOnlinePill").textContent  = `📱 Online: ₹ ${fmt(online)}`;
-    document.getElementById("cscSalesDuePill").textContent     = `⏳ Due: ₹ ${fmt(due)}`;
-    // ✅ FIX: stat card — all fields from raw data
-    document.getElementById("sc_cscSales").textContent         = "₹ " + fmt(total);
-    document.getElementById("sc_cscSalesCount").textContent    = data.length + " records";
-    document.getElementById("sc_cscSalesQty").textContent      = qty + " cylinders";
-    document.getElementById("sc_cscSalesCash").textContent     = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_cscSalesOnline").textContent   = "📱 Online: ₹ " + fmt(online);
-    _totals.csc = total; _updateNetPosition();
-    renderPage("csc");
+    rawData.csc = data;
+    populateDashYearOptions();
+    computeCscSales(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // New Connection Sales
   fetch(`${BASE_URL}/getConnection`).then(r=>r.json()).then(data => {
-    allData.conn = data.slice().reverse();
-    const total  = data.reduce((s,r) => s + Number(r.connectionPrice||0), 0);
-    const qty    = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
-    const cash   = data.reduce((s,r) => s + Number(r.cashAmount||0), 0);
-    const online = data.reduce((s,r) => s + Number(r.onlineAmount||0), 0);
-    const due    = data.reduce((s,r) => s + Number(r.dueAmount||0), 0);
-    // section pills
-    document.getElementById("connSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
-    document.getElementById("connSalesQtyPill").textContent    = `${qty} cylinders`;
-    document.getElementById("connSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
-    document.getElementById("connSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
-    document.getElementById("connSalesDuePill").textContent    = `⚠️ Due: ₹ ${fmt(due)}`;
-    // ✅ FIX: stat card — all fields from raw data
-    document.getElementById("sc_newConn").textContent          = "₹ " + fmt(total);
-    document.getElementById("sc_newConnCount").textContent     = data.length + " records";
-    document.getElementById("sc_newConnCash").textContent      = "💵 Cash: ₹ " + fmt(cash);
-    document.getElementById("sc_newConnOnline").textContent    = "📱 Online: ₹ " + fmt(online);
-    document.getElementById("sc_newConnDue").textContent       = "⚠️ Due: ₹ " + fmt(due);
-    _totals.conn = total; _updateNetPosition();
-    renderPage("conn");
+    rawData.conn = data;
+    populateDashYearOptions();
+    computeConnSales(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // Pending Dues
   fetch(`${BASE_URL}/due/all`).then(r=>r.json()).then(data => {
-    const pending = data.filter(d => (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)) > 0.01);
-    pending.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-    allData.due = pending;
-    const totalDue  = pending.reduce((s,d) => s + (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)), 0);
-    const totalAmt  = pending.reduce((s,d) => s + Number(d.totalAmount||0), 0);
-    const totalPaid = pending.reduce((s,d) => s + Number(d.paidAmount||0), 0);
-    // pills — always visible
-    document.getElementById("pendingDuesCount").textContent  = pending.length ? `${pending.length} pending` : "✅ All clear";
-    document.getElementById("pendingDuesAmount").textContent = `💰 Total: ₹ ${fmt(totalAmt)}`;
-    document.getElementById("pendingDuesPill").textContent   = `⏳ Due: ₹ ${fmt(totalDue)}`;
-    // dashboard summary cards
-    document.getElementById("sc_pendingDueCount").textContent = pending.length ? pending.length : "0";
-    document.getElementById("sc_pendingDueTotal").textContent = `⏳ Due: ₹ ${fmt(totalDue)}`;
-    document.getElementById("sc_pendingDueAmt").textContent   = `💰 Total billed: ₹ ${fmt(totalAmt)}`;
-    if (!pending.length) {
-      document.getElementById("dashPendingDuesTable").innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
-      document.getElementById("pendingDuesTfoot").style.display = "none";
-      return;
-    }
-    // grand-total footer row (shows across all pages)
-    document.getElementById("dueFootTotal").textContent = "₹ " + fmt(totalAmt);
-    document.getElementById("dueFootPaid").textContent  = "₹ " + fmt(totalPaid);
-    document.getElementById("dueFootDue").textContent   = "₹ " + fmt(totalDue);
-    document.getElementById("pendingDuesTfoot").style.display = "";
-    renderPage("due");
+    rawData.due = data.filter(d => (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)) > 0.01);
+    populateDashYearOptions();
+    computePendingDues(dashFilterAndSort(rawData.due, "date"));
   }).catch(e => console.error("Pending dues error:", e));
 
   // Product Purchase
   fetch(`${BASE_URL}/purchase/product/all`).then(r=>r.json()).then(data => {
-    allData.pp = data.slice().reverse();
-    const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
-    document.getElementById("prodPurchTotal").textContent = "Total: ₹ " + fmt(total);
-    // FIX: stat card from raw data
-    document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(total);
-    document.getElementById("sc_prodPurchaseCount").textContent = data.length + " records";
-    renderPage("pp");
+    rawData.pp = data;
+    populateDashYearOptions();
+    computeProdPurch(dashFilterAndSort(data, "purchaseDate"));
   }).catch(()=>{});
 
   // Cylinder Purchase
   fetch(`${BASE_URL}/purchase/cylinder/all`).then(r=>r.json()).then(data => {
-    allData.cp = data.slice().reverse();
-    const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
-    document.getElementById("cylPurchTotal").textContent = "Total: ₹ " + fmt(total);
-    // FIX: stat card from raw data
-    document.getElementById("sc_cylPurchase").textContent      = "₹ " + fmt(total);
-    document.getElementById("sc_cylPurchaseCount").textContent = data.length + " records";
-    renderPage("cp");
+    rawData.cp = data;
+    populateDashYearOptions();
+    computeCylPurch(dashFilterAndSort(data, "purchaseDate"));
   }).catch(()=>{});
 
   // Maintenance
   fetch(`${BASE_URL}/getMaintenance`).then(r=>r.json()).then(data => {
-    allData.maint = data.slice().reverse();
-    const total = data.reduce((s,m) => s + Number(m.fuel||0) + Number(m.otherExpense||0) + Number(m.employeePayment||0), 0);
-    document.getElementById("maintTotal").textContent = "Total: ₹ " + fmt(total);
-    // FIX: stat card from raw data
-    document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(total);
-    document.getElementById("sc_maintenanceCount").textContent = data.length + " records";
-    _totals.maint = total; _updateNetPosition();
-    renderPage("maint");
+    rawData.maint = data;
+    populateDashYearOptions();
+    computeMaint(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // Bank Deposits
   fetch(`${BASE_URL}/bankdeposit/all`).then(r=>r.json()).then(data => {
-    allData.bank = data.slice().reverse();
-    _depTotal = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
-    const depCash   = data.reduce((s,d) => s + Number(d.cashDeposit||0), 0);
-    const depOnline = data.reduce((s,d) => s + Number(d.onlineDeposit||0), 0);
-    document.getElementById("bankTotal").textContent              = "Total: ₹ " + fmt(_depTotal);
-    document.getElementById("bankDepositCashPill").textContent    = "💵 Cash: ₹ " + fmt(depCash);
-    document.getElementById("bankDepositOnlinePill").textContent  = "📱 Online: ₹ " + fmt(depOnline);
-    // FIX: stat card total/count from raw data
-    document.getElementById("sc_bankDeposit").textContent        = "₹ " + fmt(_depTotal);
-    document.getElementById("sc_bankDepositCount").textContent   = data.length + " records";
-    document.getElementById("sc_bankDepositCash").textContent    = "💵 Cash: ₹ " + fmt(depCash);
-    document.getElementById("sc_bankDepositOnline").textContent  = "📱 Online: ₹ " + fmt(depOnline);
-    renderPage("bank");
-    updateBankSummaryCards(_depTotal, _wdTotal);
+    rawData.bank = data;
+    populateDashYearOptions();
+    computeBankDeposits(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // Bank Withdrawals
   fetch(`${BASE_URL}/bankwithdrawal/all`).then(r=>r.json()).then(data => {
-    allData.wd = data.slice().reverse();
-    _wdTotal = data.reduce((s,w) => s + Number(w.totalWithdrawal||0), 0);
-    document.getElementById("wdTotal").textContent = "Total: ₹ " + fmt(_wdTotal);
-    renderPage("wd");
-    updateBankSummaryCards(_depTotal, _wdTotal);
+    rawData.wd = data;
+    populateDashYearOptions();
+    computeBankWithdrawals(dashFilterAndSort(data, "date"));
   }).catch(()=>{});
 
   // Cylinders
@@ -1516,6 +1534,177 @@ async function loadAllTables() {
         data.map(e => `<option value="${e.name}">${e.name}</option>`).join("");
     }
   }).catch(()=>{});
+}
+
+// ── COMPUTE + RENDER FUNCTIONS ──
+// Each takes an already filtered & sorted array for its category and
+// updates the stat card, the section pills, and the paginated table
+// together, so the top cards and the tables below always agree with
+// the current month/year/sort selection.
+
+function computeCylSales(data) {
+  allData.cyl = data;
+  const total   = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
+  const qty     = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+  const cash    = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
+  const online  = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
+  const due     = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+  document.getElementById("cylSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
+  document.getElementById("cylSalesQtyPill").textContent    = `${qty} cylinders`;
+  document.getElementById("cylSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
+  document.getElementById("cylSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
+  document.getElementById("cylSalesDuePill").textContent    = `⏳ Due: ₹ ${fmt(due)}`;
+  document.getElementById("sc_cylSales").textContent        = "₹ " + fmt(total);
+  document.getElementById("sc_cylSalesCount").textContent   = data.length + " records";
+  document.getElementById("sc_cylSalesQty").textContent     = qty + " cylinders";
+  document.getElementById("sc_cylSalesCash").textContent    = "💵 Cash: ₹ " + fmt(cash);
+  document.getElementById("sc_cylSalesOnline").textContent  = "📱 Online: ₹ " + fmt(online);
+  _totals.cyl = total; _updateNetPosition();
+  pages.cyl = 1;
+  renderPage("cyl");
+  buildChart(data);
+}
+
+function computeProdSales(data) {
+  allData.prod = data;
+  const total  = data.reduce((s,r) => s + Number(r.productTotal||0), 0);
+  const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
+  const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
+  document.getElementById("prodSalesTotal").textContent      = "Total: ₹ " + fmt(total);
+  document.getElementById("prodSalesCashPill").textContent   = "💵 Cash: ₹ " + fmt(cash);
+  document.getElementById("prodSalesOnlinePill").textContent = "📱 Online: ₹ " + fmt(online);
+  document.getElementById("sc_prodSales").textContent        = "₹ " + fmt(total);
+  document.getElementById("sc_prodSalesCount").textContent   = data.length + " records";
+  document.getElementById("sc_prodSalesCash").textContent    = "💵 Cash: ₹ " + fmt(cash);
+  document.getElementById("sc_prodSalesOnline").textContent  = "📱 Online: ₹ " + fmt(online);
+  _totals.prod = total; _updateNetPosition();
+  pages.prod = 1;
+  renderPage("prod");
+}
+
+function computeCscSales(data) {
+  allData.csc = data;
+  const total  = data.reduce((s,r) => s + Number(r.cylinderTotal||0), 0);
+  const qty    = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+  const cash   = data.reduce((s,r) => s + Number(r.cashReceived||0), 0);
+  const online = data.reduce((s,r) => s + Number(r.onlineReceived||0), 0);
+  const due    = data.reduce((s,r) => s + Math.max(0,(r.cylinderTotal||0)-(r.cashReceived||0)-(r.onlineReceived||0)), 0);
+  document.getElementById("cscSalesTotal").textContent       = `Total: ₹ ${fmt(total)}`;
+  document.getElementById("cscSalesQtyPill").textContent     = `${qty} cylinders`;
+  document.getElementById("cscSalesCashPill").textContent    = `💵 Cash: ₹ ${fmt(cash)}`;
+  document.getElementById("cscSalesOnlinePill").textContent  = `📱 Online: ₹ ${fmt(online)}`;
+  document.getElementById("cscSalesDuePill").textContent     = `⏳ Due: ₹ ${fmt(due)}`;
+  document.getElementById("sc_cscSales").textContent         = "₹ " + fmt(total);
+  document.getElementById("sc_cscSalesCount").textContent    = data.length + " records";
+  document.getElementById("sc_cscSalesQty").textContent      = qty + " cylinders";
+  document.getElementById("sc_cscSalesCash").textContent     = "💵 Cash: ₹ " + fmt(cash);
+  document.getElementById("sc_cscSalesOnline").textContent   = "📱 Online: ₹ " + fmt(online);
+  _totals.csc = total; _updateNetPosition();
+  pages.csc = 1;
+  renderPage("csc");
+}
+
+function computeConnSales(data) {
+  allData.conn = data;
+  const total  = data.reduce((s,r) => s + Number(r.connectionPrice||0), 0);
+  const qty    = data.reduce((s,r) => s + Number(r.cylinderQty||0), 0);
+  const cash   = data.reduce((s,r) => s + Number(r.cashAmount||0), 0);
+  const online = data.reduce((s,r) => s + Number(r.onlineAmount||0), 0);
+  const due    = data.reduce((s,r) => s + Number(r.dueAmount||0), 0);
+  document.getElementById("connSalesTotal").textContent      = `Total: ₹ ${fmt(total)}`;
+  document.getElementById("connSalesQtyPill").textContent    = `${qty} cylinders`;
+  document.getElementById("connSalesCashPill").textContent   = `💵 Cash: ₹ ${fmt(cash)}`;
+  document.getElementById("connSalesOnlinePill").textContent = `📱 Online: ₹ ${fmt(online)}`;
+  document.getElementById("connSalesDuePill").textContent    = `⚠️ Due: ₹ ${fmt(due)}`;
+  document.getElementById("sc_newConn").textContent          = "₹ " + fmt(total);
+  document.getElementById("sc_newConnCount").textContent     = data.length + " records";
+  document.getElementById("sc_newConnCash").textContent      = "💵 Cash: ₹ " + fmt(cash);
+  document.getElementById("sc_newConnOnline").textContent    = "📱 Online: ₹ " + fmt(online);
+  document.getElementById("sc_newConnDue").textContent       = "⚠️ Due: ₹ " + fmt(due);
+  _totals.conn = total; _updateNetPosition();
+  pages.conn = 1;
+  renderPage("conn");
+}
+
+function computePendingDues(pending) {
+  allData.due = pending;
+  const totalDue  = pending.reduce((s,d) => s + (d.remainingAmount ?? Math.max(0, d.totalAmount - d.paidAmount)), 0);
+  const totalAmt  = pending.reduce((s,d) => s + Number(d.totalAmount||0), 0);
+  const totalPaid = pending.reduce((s,d) => s + Number(d.paidAmount||0), 0);
+  document.getElementById("pendingDuesCount").textContent  = pending.length ? `${pending.length} pending` : "✅ All clear";
+  document.getElementById("pendingDuesAmount").textContent = `💰 Total: ₹ ${fmt(totalAmt)}`;
+  document.getElementById("pendingDuesPill").textContent   = `⏳ Due: ₹ ${fmt(totalDue)}`;
+  document.getElementById("sc_pendingDueCount").textContent = pending.length ? pending.length : "0";
+  document.getElementById("sc_pendingDueTotal").textContent = `⏳ Due: ₹ ${fmt(totalDue)}`;
+  document.getElementById("sc_pendingDueAmt").textContent   = `💰 Total billed: ₹ ${fmt(totalAmt)}`;
+  pages.due = 1;
+  if (!pending.length) {
+    document.getElementById("dashPendingDuesTable").innerHTML = `<tr><td colspan="6" class="no-data" style="color:#3ecf8e;font-weight:600">✅ No pending dues</td></tr>`;
+    document.getElementById("pendingDuesTfoot").style.display = "none";
+    return;
+  }
+  document.getElementById("dueFootTotal").textContent = "₹ " + fmt(totalAmt);
+  document.getElementById("dueFootPaid").textContent  = "₹ " + fmt(totalPaid);
+  document.getElementById("dueFootDue").textContent   = "₹ " + fmt(totalDue);
+  document.getElementById("pendingDuesTfoot").style.display = "";
+  renderPage("due");
+}
+
+function computeProdPurch(data) {
+  allData.pp = data;
+  const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
+  document.getElementById("prodPurchTotal").textContent = "Total: ₹ " + fmt(total);
+  document.getElementById("sc_prodPurchase").textContent      = "₹ " + fmt(total);
+  document.getElementById("sc_prodPurchaseCount").textContent = data.length + " records";
+  pages.pp = 1;
+  renderPage("pp");
+}
+
+function computeCylPurch(data) {
+  allData.cp = data;
+  const total = data.reduce((s,r) => s + Number(r.totalAmount||0), 0);
+  document.getElementById("cylPurchTotal").textContent = "Total: ₹ " + fmt(total);
+  document.getElementById("sc_cylPurchase").textContent      = "₹ " + fmt(total);
+  document.getElementById("sc_cylPurchaseCount").textContent = data.length + " records";
+  pages.cp = 1;
+  renderPage("cp");
+}
+
+function computeMaint(data) {
+  allData.maint = data;
+  const total = data.reduce((s,m) => s + Number(m.fuel||0) + Number(m.otherExpense||0) + Number(m.employeePayment||0), 0);
+  document.getElementById("maintTotal").textContent = "Total: ₹ " + fmt(total);
+  document.getElementById("sc_maintenance").textContent      = "₹ " + fmt(total);
+  document.getElementById("sc_maintenanceCount").textContent = data.length + " records";
+  _totals.maint = total; _updateNetPosition();
+  pages.maint = 1;
+  renderPage("maint");
+}
+
+function computeBankDeposits(data) {
+  allData.bank = data;
+  _depTotal = data.reduce((s,d) => s + Number(d.totalDeposit||0), 0);
+  const depCash   = data.reduce((s,d) => s + Number(d.cashDeposit||0), 0);
+  const depOnline = data.reduce((s,d) => s + Number(d.onlineDeposit||0), 0);
+  document.getElementById("bankTotal").textContent              = "Total: ₹ " + fmt(_depTotal);
+  document.getElementById("bankDepositCashPill").textContent    = "💵 Cash: ₹ " + fmt(depCash);
+  document.getElementById("bankDepositOnlinePill").textContent  = "📱 Online: ₹ " + fmt(depOnline);
+  document.getElementById("sc_bankDeposit").textContent        = "₹ " + fmt(_depTotal);
+  document.getElementById("sc_bankDepositCount").textContent   = data.length + " records";
+  document.getElementById("sc_bankDepositCash").textContent    = "💵 Cash: ₹ " + fmt(depCash);
+  document.getElementById("sc_bankDepositOnline").textContent  = "📱 Online: ₹ " + fmt(depOnline);
+  pages.bank = 1;
+  renderPage("bank");
+  updateBankSummaryCards(_depTotal, _wdTotal);
+}
+
+function computeBankWithdrawals(data) {
+  allData.wd = data;
+  _wdTotal = data.reduce((s,w) => s + Number(w.totalWithdrawal||0), 0);
+  document.getElementById("wdTotal").textContent = "Total: ₹ " + fmt(_wdTotal);
+  pages.wd = 1;
+  renderPage("wd");
+  updateBankSummaryCards(_depTotal, _wdTotal);
 }
 
 // ══════════════════════════════════════════════
@@ -1559,7 +1748,7 @@ function runMaintViewer() {
     return date >= fromDate && date <= toDate;
   }
 
-  const records  = (allData.maint || []).slice().reverse(); // un-reverse to chronological order
+  const records  = (allData.maint || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")); // always chronological for this viewer
   const filtered = maintViewerMode === "range"
     ? records.filter(m => inRange(m.date))
     : records.filter(m => m.date && m.date.startsWith(prefix));
@@ -1639,8 +1828,8 @@ function runBankViewer() {
     return date >= fromDate && date <= toDate;
   }
 
-  const depsAll = (allData.bank || []).slice().reverse(); // un-reverse to chronological order
-  const wdsAll  = (allData.wd   || []).slice().reverse();
+  const depsAll = (allData.bank || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")); // always chronological for this viewer
+  const wdsAll  = (allData.wd   || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
 
   const deps = bankViewerMode === "range" ? depsAll.filter(d => inRange(d.date)) : depsAll.filter(d => d.date && d.date.startsWith(prefix));
   const wds  = bankViewerMode === "range" ? wdsAll.filter(w => inRange(w.date))  : wdsAll.filter(w => w.date && w.date.startsWith(prefix));
@@ -1760,7 +1949,7 @@ function runPLViewer() {
 
   function inRange(date) { return date && date >= fromDate && date <= toDate; }
   function filterData(arr) {
-    arr = (arr || []).slice().reverse();
+    arr = (arr || []).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")); // always chronological for this viewer
     return plViewerMode === "range" ? arr.filter(s => inRange(s.date)) : arr.filter(s => s.date && s.date.startsWith(prefix));
   }
 
