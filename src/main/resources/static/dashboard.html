@@ -569,7 +569,16 @@ tbody tr:last-child td { border-bottom: none; }
       <div class="vs-card">
         <div class="vs-label">💰 Net Profit / Loss</div>
         <div class="vs-val" id="pl_net" style="color:#a5d6a7">₹0</div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Bank Deposit + Maintenance − Sales</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px">Total Sales − Bank Deposit − Maintenance</div>
+      </div>
+    </div>
+
+    <!-- Previous month profit comparison (only shown in Monthly mode) -->
+    <div class="viewer-summary" id="plPrevSummary" style="display:none">
+      <div class="vs-card" style="border-color:rgba(144,202,249,0.35);flex:2">
+        <div class="vs-label">⏮️ Previous Month Profit / Loss (<span id="pl_prevLabel">—</span>)</div>
+        <div class="vs-val" id="pl_prevNet" style="color:#90caf9">₹0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px" id="pl_prevDelta">—</div>
       </div>
     </div>
 
@@ -1956,6 +1965,7 @@ function setPLViewerMode(mode, btn) {
     ? "Pick a month to see Profit & Loss for that month"
     : "Pick a from–to date range";
   document.getElementById("plViewerSummary").style.display = "none";
+  document.getElementById("plPrevSummary").style.display    = "none";
   document.getElementById("plTableWrap").style.display     = "none";
   if (mode === "monthly" && document.getElementById("plViewerMonth").value) runPLViewer();
 }
@@ -1997,7 +2007,8 @@ function runPLViewer() {
 
   const bankTotal = bank.reduce((a,d) => a + Number(d.totalDeposit||0), 0);
 
-  const netPL = bankTotal + totalMaint - totalSales;
+  // Net Profit = Total Sales − Bank Deposit − Total Maintenance
+  const netPL = totalSales - bankTotal - totalMaint;
 
   document.getElementById("pl_sales").textContent = "₹" + fmt(totalSales);
   document.getElementById("pl_maint").textContent  = "₹" + fmt(totalMaint);
@@ -2016,8 +2027,69 @@ function runPLViewer() {
     <tr><td>Bank Deposits (Total)</td><td>₹ ${fmt(bankTotal)}</td><td>All bank deposits in period</td></tr>
     <tr style="background:rgba(21,101,192,0.2)"><td style="font-weight:700">Net Profit / (Loss)</td>
         <td style="font-weight:700;color:${netPL < 0 ? "#ef9a9a" : "#a5d6a7"}">₹ ${fmt(netPL)}</td>
-        <td>Bank Deposit + Maintenance − Sales</td></tr>`;
+        <td>Total Sales − Bank Deposit − Maintenance</td></tr>`;
   document.getElementById("plTableWrap").style.display = "block";
+
+  // ── Previous month profit (only meaningful in Monthly mode) ──
+  const prevBox = document.getElementById("plPrevSummary");
+  if (plViewerMode === "monthly" && prefix) {
+    const prevPrefix = prevMonthPrefix(prefix);
+    const prev = computeMonthPL(prevPrefix);
+    document.getElementById("pl_prevLabel").textContent = monthLabel(prevPrefix);
+    document.getElementById("pl_prevNet").textContent =
+      (prev.netPL < 0 ? "-₹" : "₹") + fmt(Math.abs(prev.netPL));
+    document.getElementById("pl_prevNet").style.color = prev.netPL < 0 ? "#ef9a9a" : "#90caf9";
+
+    if (!prev.hasData) {
+      document.getElementById("pl_prevDelta").textContent = "No records for this month";
+    } else {
+      const diff = netPL - prev.netPL;
+      const arrow = diff >= 0 ? "▲" : "▼";
+      const diffColor = diff >= 0 ? "#a5d6a7" : "#ef9a9a";
+      document.getElementById("pl_prevDelta").innerHTML =
+        `<span style="color:${diffColor}">${arrow} ₹${fmt(Math.abs(diff))} vs previous month</span>`;
+    }
+    prevBox.style.display = "flex";
+  } else {
+    prevBox.style.display = "none";
+  }
+}
+
+// Returns "YYYY-MM" for the month before the given "YYYY-MM" prefix.
+function prevMonthPrefix(prefix) {
+  const [y, m] = prefix.split("-").map(Number);
+  const d = new Date(y, m - 2, 1); // m is 1-based; -2 steps back one month
+  const py = d.getFullYear();
+  const pm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${py}-${pm}`;
+}
+
+function monthLabel(prefix) {
+  const [y, m] = prefix.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+}
+
+// Computes Total Sales, Total Maintenance and Net Profit/Loss for an
+// arbitrary "YYYY-MM" month using the already-loaded allData arrays
+// (no extra network call needed).
+function computeMonthPL(prefix) {
+  const has = (arr) => (arr || []).some(s => s.date && s.date.startsWith(prefix));
+  const hasData = has(allData.cyl) || has(allData.prod) || has(allData.csc) ||
+                  has(allData.conn) || has(allData.maint) || has(allData.bank);
+
+  const f = (arr) => (arr || []).filter(s => s.date && s.date.startsWith(prefix));
+  const cylTotal  = f(allData.cyl).reduce((a,s)  => a + Number(s.cylinderTotal||0), 0);
+  const prodTotal = f(allData.prod).reduce((a,s) => a + Number(s.productTotal||0),  0);
+  const cscTotal  = f(allData.csc).reduce((a,s)  => a + Number(s.cylinderTotal||0), 0);
+  const connTotal = f(allData.conn).reduce((a,s) => a + Number(s.connectionPrice||0), 0);
+  const totalSales = cylTotal + prodTotal + cscTotal + connTotal;
+
+  const maint = f(allData.maint);
+  const totalMaint = maint.reduce((a,m) => a + Number(m.fuel||0) + Number(m.otherExpense||0) + Number(m.employeePayment||0), 0);
+
+  const bankTotal = f(allData.bank).reduce((a,d) => a + Number(d.totalDeposit||0), 0);
+
+  return { totalSales, totalMaint, bankTotal, netPL: totalSales - bankTotal - totalMaint, hasData };
 }
 
 function downloadPLPDF() {
@@ -2054,10 +2126,10 @@ function downloadPLPDF() {
           <tr><td>Total Sales</td><td>${fmt(p.totalSales)}</td><td>Cylinder + Product + CSC + New Connection</td></tr>
           <tr><td>Total Maintenance</td><td>${fmt(p.totalMaint)}</td><td>Fuel + Other expenses + Employee payment</td></tr>
           <tr><td>Bank Deposits (Total)</td><td>${fmt(p.bankTotal)}</td><td>All bank deposits in period</td></tr>
-          <tr class="net"><td>Net Profit / (Loss)</td><td class="${p.netPL < 0 ? 'neg' : 'pos'}">${fmt(p.netPL)}</td><td>Bank Deposit + Maintenance − Sales</td></tr>
+          <tr class="net"><td>Net Profit / (Loss)</td><td class="${p.netPL < 0 ? 'neg' : 'pos'}">${fmt(p.netPL)}</td><td>Total Sales − Bank Deposit − Maintenance</td></tr>
         </tbody>
       </table>
-      <p style="font-size:10px;color:#777;margin-top:16px">Formula: Net Profit/(Loss) = Bank Deposit + Total Maintenance − Total Sales.</p>
+      <p style="font-size:10px;color:#777;margin-top:16px">Formula: Net Profit/(Loss) = Total Sales − Bank Deposit − Total Maintenance.</p>
     </body></html>`);
   win.document.close();
   win.focus();
